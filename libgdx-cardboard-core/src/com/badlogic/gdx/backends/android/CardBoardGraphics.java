@@ -436,6 +436,7 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
 
    @Override
    public Monitor getMonitor() {
+      // TODO : Se över dessa metoder som returnerar null-värden, de har nog lagts till för att alla metoder i Graphics måste vara implementerade, jag tror inte de är med i originalfilen i CardBoardExtension.
       return null;
    }
 
@@ -460,13 +461,15 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
    }
 
    @Override
-   public DisplayMode getDisplayMode() {
-      return null;
+   public DisplayMode getDisplayMode () {
+      DisplayMetrics metrics = new DisplayMetrics();
+      app.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+      return new AndroidDisplayMode(metrics.widthPixels, metrics.heightPixels, 0, 0);
    }
 
    @Override
-   public DisplayMode getDisplayMode(Monitor monitor) {
-      return null;
+   public DisplayMode getDisplayMode (Monitor monitor) {
+      return getDisplayMode();
    }
 
    @Override
