@@ -507,7 +507,6 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
 
    @Override
    public SnapshotArray<LifecycleListener> getLifecycleListeners () {
-      // TODO Changed from returning Array<> to SnapshotArray<>
       return new SnapshotArray<LifecycleListener>(lifecycleListeners);
    }
 
