@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.google.vrtoolkit.cardboard.HeadTransform;
 
 public class Falling implements CardBoardApplicationListener {
 	SpriteBatch batch;

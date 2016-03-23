@@ -191,6 +191,16 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
       return height;
    }
 
+   @Override
+   public int getBackBufferWidth() {
+      return 0;
+   }
+
+   @Override
+   public int getBackBufferHeight() {
+      return 0;
+   }
+
    /** {@inheritDoc} */
    @Override
    public int getWidth () {
@@ -419,6 +429,21 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
    }
 
    @Override
+   public Monitor getPrimaryMonitor() {
+      return null;
+   }
+
+   @Override
+   public Monitor getMonitor() {
+      return null;
+   }
+
+   @Override
+   public Monitor[] getMonitors() {
+      return new Monitor[0];
+   }
+
+//   @Override
    public boolean setDisplayMode (DisplayMode displayMode) {
       return false;
    }
@@ -429,6 +454,31 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
    }
 
    @Override
+   public DisplayMode[] getDisplayModes(Monitor monitor) {
+      return new DisplayMode[0];
+   }
+
+   @Override
+   public DisplayMode getDisplayMode() {
+      return null;
+   }
+
+   @Override
+   public DisplayMode getDisplayMode(Monitor monitor) {
+      return null;
+   }
+
+   @Override
+   public boolean setFullscreenMode(DisplayMode displayMode) {
+      return false;
+   }
+
+   @Override
+   public boolean setWindowedMode(int width, int height) {
+      return false;
+   }
+
+//   @Override
    public boolean setDisplayMode (int width, int height, boolean fullscreen) {
       return false;
    }
@@ -444,7 +494,7 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
       }
    }
 
-   @Override
+//   @Override
    public DisplayMode getDesktopDisplayMode () {
       DisplayMetrics metrics = new DisplayMetrics();
       app.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -653,4 +703,9 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
     public void setCursor(Cursor cursor) {
 
     }
+
+   @Override
+   public void setSystemCursor(Cursor.SystemCursor systemCursor) {
+
+   }
 }

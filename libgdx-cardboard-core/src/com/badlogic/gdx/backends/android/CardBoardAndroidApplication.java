@@ -43,10 +43,7 @@ import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.android.surfaceview.FillResolutionStrategy;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Clipboard;
-import com.badlogic.gdx.utils.GdxNativesLoader;
-import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.*;
 import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
 
@@ -126,7 +123,7 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
          throw new GdxRuntimeException("LibGDX requires Android API Level " + MINIMUM_SDK + " or later.");
       }
       graphics = new CardBoardGraphics(this, config, config.resolutionStrategy == null ? new FillResolutionStrategy()
-         : config.resolutionStrategy);
+              : config.resolutionStrategy);
       input = AndroidInputFactory.newAndroidInput(this, this, graphics.view, config);
       audio = new AndroidAudio(this, config);
       this.getFilesDir(); // workaround for Android bug #10515463
@@ -191,16 +188,16 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
    }
 
    @Override
-    public void onCardboardTrigger() {
-       if (!(listener instanceof CardBoardApplicationListener)) {
-           throw new RuntimeException("should implement CardBoardApplicationListener");
-        }
-        ((CardBoardApplicationListener)listener).onCardboardTrigger();
-    }
+   public void onCardboardTrigger() {
+      if (!(listener instanceof CardBoardApplicationListener)) {
+         throw new RuntimeException("should implement CardBoardApplicationListener");
+      }
+      ((CardBoardApplicationListener)listener).onCardboardTrigger();
+   }
 
    protected FrameLayout.LayoutParams createLayoutParams () {
       FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-         android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+              android.view.ViewGroup.LayoutParams.MATCH_PARENT);
       layoutParams.gravity = Gravity.CENTER;
       return layoutParams;
    }
@@ -250,8 +247,8 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
       try {
          Method m = View.class.getMethod("setSystemUiVisibility", int.class);
          int code = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
+                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
          m.invoke(view, code);
       } catch (Exception e) {
          log("AndroidApplication", "Can't set immersive mode", e);
@@ -509,8 +506,9 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
    }
 
    @Override
-   public Array<LifecycleListener> getLifecycleListeners () {
-      return lifecycleListeners;
+   public SnapshotArray<LifecycleListener> getLifecycleListeners () {
+      // TODO Changed from returning Array<> to SnapshotArray<>
+      return new SnapshotArray<LifecycleListener>(lifecycleListeners);
    }
 
    @Override
