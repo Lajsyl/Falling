@@ -63,7 +63,7 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
    protected boolean firstResume = true;
    protected final Array<Runnable> runnables = new Array<Runnable>();
    protected final Array<Runnable> executedRunnables = new Array<Runnable>();
-   protected final Array<LifecycleListener> lifecycleListeners = new Array<LifecycleListener>();
+   protected final SnapshotArray<LifecycleListener> lifecycleListeners = new SnapshotArray<LifecycleListener>(LifecycleListener.class);
    private final Array<AndroidEventListener> androidEventListeners = new Array<AndroidEventListener>();
    protected int logLevel = LOG_INFO;
    protected boolean useImmersiveMode = false;
@@ -507,7 +507,7 @@ public class CardBoardAndroidApplication extends CardboardActivity implements An
 
    @Override
    public SnapshotArray<LifecycleListener> getLifecycleListeners () {
-      return new SnapshotArray<LifecycleListener>(lifecycleListeners);
+      return lifecycleListeners;
    }
 
    @Override

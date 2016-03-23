@@ -46,6 +46,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.WindowedMean;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.google.vrtoolkit.cardboard.CardboardView;
 import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
@@ -618,11 +619,13 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
       }
 
       if (lresume) {
-         Array<LifecycleListener> listeners = app.getLifecycleListeners();
-         synchronized (listeners) {
-            for (LifecycleListener listener : listeners) {
-               listener.resume();
+         SnapshotArray<LifecycleListener> lifecycleListeners = app.getLifecycleListeners();
+         synchronized (lifecycleListeners) {
+            LifecycleListener[] listeners = lifecycleListeners.begin();
+            for (int i = 0, n = lifecycleListeners.size; i < n; ++i) {
+               listeners[i].resume();
             }
+            lifecycleListeners.end();
          }
          app.getApplicationListener().resume();
          Gdx.app.log(LOG_TAG, "resumed");
@@ -648,10 +651,11 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
       }
 
       if (lpause) {
-         Array<LifecycleListener> listeners = app.getLifecycleListeners();
-         synchronized (listeners) {
-            for (LifecycleListener listener : listeners) {
-               listener.pause();
+         SnapshotArray<LifecycleListener> lifecycleListeners = app.getLifecycleListeners();
+         synchronized (lifecycleListeners) {
+            LifecycleListener[] listeners = lifecycleListeners.begin();
+            for (int i = 0, n = lifecycleListeners.size; i < n; ++i) {
+               listeners[i].pause();
             }
          }
          app.getApplicationListener().pause();
@@ -659,10 +663,11 @@ public class CardBoardGraphics implements Graphics, CardboardView.StereoRenderer
       }
 
       if (ldestroy) {
-         Array<LifecycleListener> listeners = app.getLifecycleListeners();
-         synchronized (listeners) {
-            for (LifecycleListener listener : listeners) {
-               listener.dispose();
+         SnapshotArray<LifecycleListener> lifecycleListeners = app.getLifecycleListeners();
+         synchronized (lifecycleListeners) {
+            LifecycleListener[] listeners = lifecycleListeners.begin();
+            for (int i = 0, n = lifecycleListeners.size; i < n; ++i) {
+               listeners[i].dispose();
             }
          }
          app.getApplicationListener().dispose();
