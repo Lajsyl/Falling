@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter() /*Cardboard*/
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
@@ -26,6 +27,7 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        jcenter() /*Cardboard*/
     }
 }
 
@@ -58,6 +60,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+        compile "com.github.yangweigbh:libgdx-cardboard-core:0.2" /*Cardboard*/
+        compile fileTree(dir: '../libs', include: '*.jar') /*Cardboard*/
     }
 }
 
@@ -68,6 +72,8 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+        compile "com.github.yangweigbh:libgdx-cardboard-core:0.2" /*Cardboard*/
+        compile fileTree(dir: '../libs', include: '*.jar') /*Cardboard*/
     }
 }
 
