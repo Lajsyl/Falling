@@ -42,4 +42,29 @@ public class Vector {
         return x*other.x + y*other.y + z*other.z;
     }
 
+    Vector cross(Vector other) {
+        return new Vector(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() == this.getClass()) {
+            Vector v = (Vector) obj;
+            if (x == v.x && y == v.y && z == v.z) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Double.hashCode(x);
+        result = 31*result + Double.hashCode(y);
+        result = 31*result + Double.hashCode(z);
+        return result;
+    }
+
 }
