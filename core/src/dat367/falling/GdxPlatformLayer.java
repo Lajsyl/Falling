@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 
@@ -57,15 +58,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game = new FallingGame();
 		loadResources(game.getCurrentJump().getResourceRequirements());
 
-		camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(0f, 100f, 100f);
-		camera.lookAt(0f,100f,0f);
+		camera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.set(0f, 0.5f, -1.7f);
+		camera.lookAt(5f,-0.5f,-2.7f);
 		camera.near = Z_NEAR;
 		camera.far = Z_FAR;
 
 		cardboardCamera = new CardboardCamera();
-		cardboardCamera.position.set(0f, 100f, 100f);
-		cardboardCamera.lookAt(0f,100f,0f);
+		cardboardCamera.position.set(0f, 0.5f, -1.7f);
+		cardboardCamera.lookAt(0f,0.5f,-2f);
 		cardboardCamera.near = 0.1f;
 		cardboardCamera.far = 300f;
 
@@ -73,7 +74,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		modelBatch = new ModelBatch();
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1.0f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
 
 	}
 
@@ -125,6 +126,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+		int dX = Gdx.input.getDeltaX();
+		camera.rotate(-dX / 30f, 0, 1, 0);
+		int dY = Gdx.input.getDeltaY();
+		camera.rotate(-dY / 30f, 0, 0, 1);
+
+
 		camera.update();
 
 		update();
@@ -150,6 +157,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 		update();
+		RenderQueue.saveQueue();
 	}
 
 	@Override
@@ -164,6 +172,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		cardboardCamera.update();
 
 		renderScene(cardboardCamera);
+		RenderQueue.reloadQueue();
 	}
 
 	@Override

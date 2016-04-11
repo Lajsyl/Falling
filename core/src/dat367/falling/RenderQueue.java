@@ -7,6 +7,7 @@ import java.util.Queue;
 
 public class RenderQueue {
     private static Queue<RenderTask> queue = new LinkedList<RenderTask>();
+    private static Queue<RenderTask> savedQueue = new LinkedList<RenderTask>();
 
     public static void addTask(RenderTask task) {
         queue.add(task);
@@ -32,6 +33,14 @@ public class RenderQueue {
             this.orientation = orientation;
             this.scale = scale;
         }
+    }
+
+    public static void saveQueue() {
+        savedQueue = new LinkedList<RenderTask>(queue);
+    }
+
+    public static void reloadQueue() {
+        queue = new LinkedList<RenderTask>(savedQueue);
     }
 
 

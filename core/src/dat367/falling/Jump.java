@@ -8,7 +8,7 @@ public class Jump {
     private World world;
     private ResourceRequirements resourceRequirements;
 
-    Model zombie = new Model("walking_3.g3db");
+    Model zombie = new Model("airplane.g3db");
 
     public Jump() {
         player = new Player();
