@@ -2,7 +2,7 @@ package dat367.falling;
 
 public class Player {
 
-    private FallState fallState;
+    private FallState fallState = new PreJumpState();
 
     Vector position, velocity, acceleration;
     Vector lookVector;

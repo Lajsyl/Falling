@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -22,22 +21,42 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 
-public class Falling implements CardBoardApplicationListener {
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Responsibilites
+ * Create game
+ * ask game for resources
+ * update
+ * when something in game wants to be drawn, draw it
+ * sound, etc
+ */
+
+public class GdxPlatformLayer implements CardBoardApplicationListener {
+
+	private FallingGame game;
+
 	private CardboardCamera cardboardCamera;
-
 	private PerspectiveCamera camera;
-	private ModelBatch modelBatch;
-	private Model model;
-	private ModelInstance modelInstance;
-	private Environment environment;
-	private AnimationController controller;
-
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 300f;
+
+	private UBJsonReader jsonReader = new UBJsonReader();
+	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
+
+	private ModelBatch modelBatch;
+	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
+	private Environment environment;
+
 
 	@Override
 
 	public void create() {
+
+		game = new FallingGame();
+		loadResources(game.getCurrentJump().getResourceRequirements());
+
 		camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(0f, 100f, 100f);
 		camera.lookAt(0f,100f,0f);
@@ -53,17 +72,20 @@ public class Falling implements CardBoardApplicationListener {
 
 		modelBatch = new ModelBatch();
 
-		UBJsonReader jsonReader = new UBJsonReader();
-
-		G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
-		model = modelLoader.loadModel(Gdx.files.getFileHandle("walking_3.g3db", Files.FileType.Internal));
-		modelInstance = new ModelInstance(model);
-
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1.0f));
 
-		controller = new AnimationController(modelInstance);
-		controller.setAnimation("Mixamo.com", -1);
+	}
+
+	public void loadResources(ResourceRequirements resourceRequirements) {
+		for (Model model : resourceRequirements.getModels()) {
+			String fileName = model.getModelFileName();
+			if (!models.containsKey(fileName)) {
+				com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
+				ModelInstance gdxModelInstance = new ModelInstance(gdxModel);
+				models.put(fileName, gdxModelInstance);
+			}
+		}
 	}
 
 	@Override
@@ -74,12 +96,26 @@ public class Falling implements CardBoardApplicationListener {
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
-		model.dispose();
+		//model.dispose();
 	}
 
 	private void renderScene(Camera camera) {
 		modelBatch.begin(camera);
-		modelBatch.render(modelInstance, environment);
+
+		while(RenderQueue.hasMoreTasks()) {
+			RenderQueue.RenderTask task = RenderQueue.getNextTask();
+
+			// Fetch model instance
+			if (models.containsKey(task.model.getModelFileName())) {
+				ModelInstance instance = models.get(task.model.getModelFileName());
+
+				// Set transform of model instance
+				//task.position
+
+				modelBatch.render(instance, environment);
+			}
+		}
+
 		modelBatch.end();
 	}
 
@@ -90,10 +126,15 @@ public class Falling implements CardBoardApplicationListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		camera.update();
-		controller.update(Gdx.graphics.getDeltaTime());
+
+		update();
 
 		renderScene(camera);
 
+	}
+
+	private void update() {
+		game.update(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override
@@ -108,7 +149,7 @@ public class Falling implements CardBoardApplicationListener {
 
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
-		controller.update(Gdx.graphics.getDeltaTime());
+		update();
 	}
 
 	@Override

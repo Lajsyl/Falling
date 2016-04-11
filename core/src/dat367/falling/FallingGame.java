@@ -2,8 +2,17 @@ package dat367.falling;
 
 public class FallingGame {
     private Jump currentJump;
+    private ResourceRequirements resourceRequirements;
+
+    public FallingGame() {
+        currentJump = new Jump();
+    }
 
     public void update(float deltaTime) {
         currentJump.update(deltaTime);
+    }
+
+    public Jump getCurrentJump() {
+        return currentJump;
     }
 }
