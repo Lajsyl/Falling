@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
-    final boolean USING_DEBUG_CAMERA = true;
+    final boolean USING_DEBUG_CAMERA = false;
 	private FallingGame game;
 
 	private CardboardCamera cardboardCamera;
@@ -165,9 +165,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) translation.sub(up);
             translation.nor().scl(speed);
             camera.translate(translation);
-
-            camera.update();
         }
+
+        camera.update();
 
 		update();
 		renderScene(camera);
