@@ -66,15 +66,15 @@ public class Vector {
 
     @Override
     public int hashCode() {
-        int result = Float.hashCode(x);
-        result = 31*result + Float.hashCode(y);
-        result = 31*result + Float.hashCode(z);
+        int result = Float.valueOf(x).hashCode();
+        result = 31*result + Float.valueOf(y).hashCode();
+        result = 31*result + Float.valueOf(z).hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "(" + (int)Math.round(x) + ", " + (int)Math.round(y) + ", " + (int)Math.round(z) + ")";
+        return "(" + Math.round(x) + ", " + Math.round(y) + ", " + Math.round(z) + ")";
     }
 
 }

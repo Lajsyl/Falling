@@ -1,7 +1,5 @@
 package dat367.falling;
 
-import com.sun.jmx.remote.internal.ArrayQueue;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
