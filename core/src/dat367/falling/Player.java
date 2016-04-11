@@ -2,13 +2,16 @@ package dat367.falling;
 
 public class Player {
 
+    private FallState fallState;
+
     Vector position, velocity, acceleration;
     Vector lookVector;
 
-    public void update() {
-        // Get head rotation, set look vector
-
-        // Fall down, acc. move, etc.
+    public void update(float deltaTime) {
+        FallState newState = fallState.handleFalling(deltaTime, this);
+        if (newState != null) {
+            this.fallState = newState;
+        }
     }
 
 }
