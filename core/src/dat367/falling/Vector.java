@@ -61,9 +61,9 @@ public class Vector {
 
     @Override
     public int hashCode() {
-        int result = Double.hashCode(x);
-        result = 31*result + Double.hashCode(y);
-        result = 31*result + Double.hashCode(z);
+        int result = Float.hashCode(x);
+        result = 31*result + Float.hashCode(y);
+        result = 31*result + Float.hashCode(z);
         return result;
     }
 
