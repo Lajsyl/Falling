@@ -10,39 +10,44 @@ public class Vector {
         this.z = z;
     }
 
-    float getX() {
+    public float getX() {
         return x;
     }
 
-    float getY() {
+    public float getY() {
         return y;
     }
 
-    float getZ() {
+    public float getZ() {
         return z;
     }
 
-    Vector add(Vector other) {
+    public Vector add(Vector other) {
         return new Vector(x + other.x, y + other.y, z + other.z);
     }
 
-    Vector sub(Vector other) {
+    public Vector sub(Vector other) {
         return new Vector(x - other.x, y - other.y, z - other.z);
     }
 
-    float length() {
+    public float length() {
         return (float)Math.sqrt(lengthSquared());
     }
 
-    float lengthSquared() {
+    public float lengthSquared() {
         return x*x + y*y + z*z;
     }
 
-    float dot(Vector other) {
+    public Vector normalized() {
+        float length = length();
+        return new Vector(x / length, y / length, z / length);
+    }
+
+    public float dot(Vector other) {
         return x*other.x + y*other.y + z*other.z;
     }
 
-    Vector cross(Vector other) {
+    public Vector cross(Vector other) {
         return new Vector(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
     }
 
