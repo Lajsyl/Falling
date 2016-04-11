@@ -29,4 +29,8 @@ public class Jump {
     public ResourceRequirements getResourceRequirements() {
         return resourceRequirements;
     }
+
+    public Player getPlayer() {
+        return player;
+    }
 }

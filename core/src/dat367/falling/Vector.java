@@ -72,4 +72,9 @@ public class Vector {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "(" + (int)Math.round(x) + ", " + (int)Math.round(y) + ", " + (int)Math.round(z) + ")";
+    }
+
 }
