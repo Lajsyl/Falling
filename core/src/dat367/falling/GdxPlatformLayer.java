@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -31,7 +32,8 @@ import java.util.Map;
 
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
-    final boolean USING_DEBUG_CAMERA = false;
+	boolean platformIsAndroid;
+	final boolean USING_DEBUG_CAMERA = true;
 	private FallingGame game;
 
 	private CardboardCamera cardboardCamera;
@@ -46,10 +48,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
 	private Environment environment;
 
+	public GdxPlatformLayer(boolean platformIsAndroid) {
+		this.platformIsAndroid = platformIsAndroid;
+	}
 
 	@Override
-
 	public void create() {
+
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
 
 		game = new FallingGame();
 		loadResources(game.getCurrentJump().getResourceRequirements());
@@ -91,94 +98,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	@Override
-	public void dispose() {
-		modelBatch.dispose();
-		//model.dispose();
-	}
-
-	private void renderScene(Camera camera) {
-		modelBatch.begin(camera);
-
-		while(RenderQueue.hasMoreTasks()) {
-			RenderQueue.RenderTask task = RenderQueue.getNextTask();
-
-			// Fetch model instance
-			if (models.containsKey(task.model.getModelFileName())) {
-				ModelInstance instance = models.get(task.model.getModelFileName());
-
-				// Set transform of model instance
-				//task.position
-
-				modelBatch.render(instance, environment);
-			}
-		}
-
-		modelBatch.end();
-	}
-
-	@Override
-	public void render() {
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-        //
-        // Desktop FPS camera movement
-        //
-        if (USING_DEBUG_CAMERA) {
-            final float mouseSensitivity = 0.1f;
-            final float speed = 0.05f;
-            final float rollSpeed = 15.0f;
-
-            Vector3 up = new Vector3(camera.up).nor();
-            Vector3 forward = new Vector3(camera.direction).nor();
-            Vector3 right = forward.cpy().crs(up).nor();
-
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                Gdx.input.setCursorCatched(true);
-            }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                Gdx.input.setCursorCatched(false);
-            }
-
-            // Rotation
-            if (Gdx.input.isCursorCatched()) {
-                int dX = Gdx.input.getDeltaX();
-                int dY = Gdx.input.getDeltaY();
-
-                float rotationZ = 0.0f;
-                if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
-                if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
-
-                camera.rotate(-dX * mouseSensitivity, up.x, up.y, up.z);
-                camera.rotate(-dY * mouseSensitivity, right.x, right.y, right.z);
-                camera.rotate(rotationZ * mouseSensitivity, forward.x, forward.y, forward.z);
-            }
-
-            // Translation
-            Vector3 translation = new Vector3(0, 0, 0);
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) translation.add(forward);
-            if (Gdx.input.isKeyPressed(Input.Keys.S)) translation.sub(forward);
-            if (Gdx.input.isKeyPressed(Input.Keys.D)) translation.add(right);
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) translation.sub(right);
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) translation.add(up);
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) translation.sub(up);
-            translation.nor().scl(speed);
-            camera.translate(translation);
-        }
-
-        camera.update();
-
-		update();
-		renderScene(camera);
-
-	}
-
-	private void update() {
-		game.update(Gdx.graphics.getDeltaTime());
-	}
-
-	@Override
 	public void pause() {
 
 	}
@@ -189,15 +108,108 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	@Override
+	public void dispose() {
+		modelBatch.dispose();
+		//model.dispose();
+	}
+
+	private void renderScene(Camera camera) {
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		modelBatch.begin(camera);
+
+		for (RenderQueue.RenderTask task : RenderQueue.getTasks()) {
+			// Fetch model instance
+			if (models.containsKey(task.model.getModelFileName())) {
+				ModelInstance instance = models.get(task.model.getModelFileName());
+
+				// TODO Set transform of model instance
+				// task.position
+
+				modelBatch.render(instance, environment);
+			}
+		}
+
+		modelBatch.end();
+	}
+
+	private void update() {
+		RenderQueue.clear();
+		game.update(Gdx.graphics.getDeltaTime());
+	}
+
+	//---- DESKTOP-SPECIFIC ----//
+
+	@Override
+	public void render() {
+		if (!platformIsAndroid) {
+			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+			// Desktop FPS camera movement
+			if (USING_DEBUG_CAMERA) {
+				handleDebugCameraControl();
+			}
+
+			camera.update();
+
+			update();
+			renderScene(camera);
+		}
+	}
+
+	private void handleDebugCameraControl() {
+		final float mouseSensitivity = 0.1f;
+		final float speed = 0.05f;
+		final float rollSpeed = 15.0f;
+
+		Vector3 up = new Vector3(camera.up).nor();
+		Vector3 forward = new Vector3(camera.direction).nor();
+		Vector3 right = forward.cpy().crs(up).nor();
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+			Gdx.input.setCursorCatched(true);
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.input.setCursorCatched(false);
+		}
+
+		// Rotation
+		if (Gdx.input.isCursorCatched()) {
+			int dX = Gdx.input.getDeltaX();
+			int dY = Gdx.input.getDeltaY();
+
+			float rotationZ = 0.0f;
+			if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
+			if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
+
+			camera.rotate(-dX * mouseSensitivity, up.x, up.y, up.z);
+			camera.rotate(-dY * mouseSensitivity, right.x, right.y, right.z);
+			camera.rotate(rotationZ * mouseSensitivity, forward.x, forward.y, forward.z);
+		}
+
+		// Translation
+		Vector3 translation = new Vector3(0, 0, 0);
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) translation.add(forward);
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) translation.sub(forward);
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) translation.add(right);
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) translation.sub(right);
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) translation.add(up);
+		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) translation.sub(up);
+		translation.nor().scl(speed);
+		camera.translate(translation);
+	}
+
+
+	//---- ANDROID-VR-SPECIFIC ----//
+
+	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 		update();
-		RenderQueue.saveQueue();
 	}
 
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {
-		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		cardboardCamera.setEyeViewAdjustMatrix(new Matrix4(eye.getEyeView()));
 
@@ -206,7 +218,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		cardboardCamera.update();
 
 		renderScene(cardboardCamera);
-		RenderQueue.reloadQueue();
 	}
 
 	@Override
