@@ -38,9 +38,13 @@ public class Vector {
         return x*x + y*y + z*z;
     }
 
+    public Vector scale(float scale) {
+        return new Vector(x * scale, y * scale, z * scale);
+    }
+
     public Vector normalized() {
         float length = length();
-        return new Vector(x / length, y / length, z / length);
+        return scale(1.0f / length);
     }
 
     public float dot(Vector other) {
