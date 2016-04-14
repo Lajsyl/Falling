@@ -8,6 +8,12 @@ public class Jumper {
     private Vector neutralDirection;
     private Vector lookDirection;
 
+    public Jumper(Vector position, Vector neutralDirection) {
+        this.position = position;
+        this.neutralDirection = neutralDirection;
+        fallState.setup(this);
+    }
+
     public void update(float deltaTime) {
         FallState newState = fallState.handleFalling(deltaTime, this);
         if (newState != null) {

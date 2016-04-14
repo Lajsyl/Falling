@@ -137,6 +137,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void update() {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
+
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
