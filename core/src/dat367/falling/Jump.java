@@ -1,24 +1,22 @@
 package dat367.falling;
 
-import java.util.List;
-
 public class Jump {
 
-    private Player player;
+    private Jumper jumper;
     private World world;
     private ResourceRequirements resourceRequirements;
 
     Model zombie = new Model("airplane.g3db");
 
     public Jump() {
-        player = new Player();
+        jumper = new Jumper();
         world = new World();
         resourceRequirements = new ResourceRequirements();
         resourceRequirements.require(zombie);
     }
 
     public void update(float deltaTime) {
-        player.update(deltaTime);
+        jumper.update(deltaTime);
         world.update(deltaTime);
 
         // In zombie.update()
@@ -30,7 +28,7 @@ public class Jump {
         return resourceRequirements;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Jumper getJumper() {
+        return jumper;
     }
 }

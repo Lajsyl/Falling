@@ -1,6 +1,6 @@
 package dat367.falling;
 
-public class Player {
+public class Jumper {
 
     private FallState fallState = new PreJumpState();
 
