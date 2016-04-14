@@ -10,7 +10,10 @@ public class Jumper {
 
     public Jumper(Vector position, Vector neutralDirection) {
         this.position = position;
+
         this.neutralDirection = neutralDirection;
+        this.lookDirection = neutralDirection;
+
         fallState.setup(this);
     }
 
@@ -19,7 +22,6 @@ public class Jumper {
         if (newState != null) {
             this.fallState = newState;
         }
-        System.out.println(lookDirection);
     }
 
     public Vector getLookDirection() {

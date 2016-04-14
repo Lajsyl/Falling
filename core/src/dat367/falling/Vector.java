@@ -78,7 +78,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "(" + Math.round(x) + ", " + Math.round(y) + ", " + Math.round(z) + ")";
+        return "(" + x + ", " + y + ", " + z + ")";
     }
 
 }

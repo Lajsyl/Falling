@@ -9,8 +9,12 @@ public class Jump {
     Model zombie = new Model("airplane.g3db");
 
     public Jump() {
-        jumper = new Jumper();
+        // Create world
         world = new World();
+
+        // Create jumper using the world start position etc.
+        jumper = new Jumper(world.getStartPosition(), world.getStartLookDirection());
+
         resourceRequirements = new ResourceRequirements();
         resourceRequirements.require(zombie);
     }

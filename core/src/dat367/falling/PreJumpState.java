@@ -39,7 +39,8 @@ public class PreJumpState implements FallState {
                 .add(neutralDirection.scale(rotatedHeadPosition.getZ()))
                 .add(hipToHead.scale(rotatedHeadPosition.getY()));
 
-        jumper.setPosition(finalHeadPosition);
+        // TODO: Uncomment!
+        //jumper.setPosition(finalHeadPosition);
 
         // If look direction is "big" enough
         if (interpolation >= 1.0f) {
