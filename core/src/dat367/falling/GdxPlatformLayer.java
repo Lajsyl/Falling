@@ -195,7 +195,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void handleDesktopControls() {
-		final float MOUSE_SENSITIVITY = 1000f;
+		final float MOUSE_SENSITIVITY = 2000f;
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			Gdx.input.setCursorCatched(false);
@@ -212,20 +212,24 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			float dY = Gdx.input.getY() - Gdx.graphics.getBackBufferHeight() / 2.0f;
 
 			// Discard minor noise
-			if (Math.abs(dX) < 4) dX = 0;
-			if (Math.abs(dY) < 4) dY = 0;
+			if (Math.abs(dX) < 15) dX = 0;
+			if (Math.abs(dY) < 15) dY = 0;
 
-			// Clamp to range [-10..10]
-			dX = Math.min(10, Math.max(dX, -10));
-			dY = Math.min(10, Math.max(dY, -10));
+			// Clamp to range [-30..30]
+			dX = Math.min(30, Math.max(dX, -30));
+			dY = Math.min(30, Math.max(dY, -30));
 
 			// Scale movement
 			dX /= MOUSE_SENSITIVITY;
 			dY /= MOUSE_SENSITIVITY;
 
-			Vector lookDirection = new Vector(0, -dY, dX);
-			Vector currentLookDirection = game.getLookDirection();
-			game.setLookDirection(currentLookDirection.add(lookDirection).normalized());
+			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
+			mainCamera.normalizeUp();
+			Vector3 lookDirection = currentLookDirection
+					.rotateRad(mainCamera.up, -dX)
+					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
+
+			game.setLookDirection(gameVector(lookDirection));
 		}
 	}
 
@@ -352,6 +356,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private Vector3 libGdxVector(Vector vector) {
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	private Vector gameVector(Vector3 vector) {
+		return new Vector(vector.x, vector.y, vector.z);
 	}
 
 }
