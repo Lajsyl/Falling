@@ -19,4 +19,8 @@ public class FallingGame {
     public void setLookDirection(Vector vector) {
         currentJump.getJumper().setLookDirection(vector);
     }
+
+    public Vector getLookDirection() {
+        return currentJump.getJumper().getLookDirection();
+    }
 }

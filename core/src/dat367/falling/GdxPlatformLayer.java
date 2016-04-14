@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	boolean platformIsAndroid;
-	final boolean USING_DEBUG_CAMERA = true;
+	final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
@@ -146,6 +147,22 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					"Look dir: " + camera.direction;
 
 			font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+
+			// Draw crosshair etc. for desktop control
+			if (!platformIsAndroid) {
+				Color color = font.getColor().cpy();
+				{
+					font.setColor(Color.RED);
+					font.draw(spriteBatch, "o",
+							Gdx.graphics.getBackBufferWidth() / 2.0f - 4f,
+							Gdx.graphics.getBackBufferHeight() / 2.0f - 4f);
+
+					font.draw(spriteBatch, "*",
+							Gdx.input.getX() - 4,
+							Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4f);
+				}
+				font.setColor(color);
+			}
 		}
 		spriteBatch.end();
 	}
@@ -177,8 +194,40 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
+	private int lockedMouseX, lockedMouseY;
+
 	private void handleDesktopControls() {
-		// TODO: Implement!
+		final float MOUSE_SENSITIVITY = 1000f;
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.input.setCursorCatched(false);
+		}
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+			// Save position before catching the mouse
+			lockedMouseX = Gdx.input.getX();
+			lockedMouseY = Gdx.input.getY();
+			Gdx.input.setCursorCatched(true);
+
+		}
+
+		if (Gdx.input.isCursorCatched()) {
+
+			float dX = (Gdx.input.getX() - lockedMouseX);
+			float dY = (Gdx.input.getY() - lockedMouseY);
+
+			// Clamp to range [-10..10]
+			dX = Math.min(10, Math.max(dX, -10));
+			dY = Math.min(10, Math.max(dY, -10));
+
+			// Scale movement
+			dX /= MOUSE_SENSITIVITY;
+			dY /= MOUSE_SENSITIVITY;
+
+			Vector lookDirection = new Vector(0, -dY, dX);
+			Vector currentLookDirection = game.getLookDirection();
+			game.setLookDirection(currentLookDirection.add(lookDirection).normalized());
+		}
 	}
 
 	private void setDesktopCameraPosAndOrientation() {
@@ -251,6 +300,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
+
+		// Set look direction from actual vr-headset look direction
+		float[] vecComponents = new float[3];
+		paramHeadTransform.getForwardVector(vecComponents, 0);
+		Vector lookDirection = new Vector(vecComponents[0], vecComponents[1], vecComponents[2]);
+		game.setLookDirection(lookDirection);
+
+		// Update game logic
 		updateGame();
 
 		// Set camera position depending on jumper position
