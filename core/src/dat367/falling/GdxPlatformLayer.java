@@ -149,17 +149,17 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
 
 			// Draw crosshair etc. for desktop control
-			if (!platformIsAndroid) {
+			if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
 				Color color = font.getColor().cpy();
 				{
 					font.setColor(Color.RED);
 					font.draw(spriteBatch, "o",
-							Gdx.graphics.getBackBufferWidth() / 2.0f - 4f,
-							Gdx.graphics.getBackBufferHeight() / 2.0f - 4f);
+							Gdx.graphics.getBackBufferWidth() / 2.0f - 5,
+							Gdx.graphics.getBackBufferHeight() / 2.0f + 8);
 
 					font.draw(spriteBatch, "*",
 							Gdx.input.getX() - 4,
-							Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4f);
+							Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4);
 				}
 				font.setColor(color);
 			}
@@ -194,8 +194,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
-	private int lockedMouseX, lockedMouseY;
-
 	private void handleDesktopControls() {
 		final float MOUSE_SENSITIVITY = 1000f;
 
@@ -204,17 +202,18 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		}
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			// Save position before catching the mouse
-			lockedMouseX = Gdx.input.getX();
-			lockedMouseY = Gdx.input.getY();
 			Gdx.input.setCursorCatched(true);
 
 		}
 
 		if (Gdx.input.isCursorCatched()) {
 
-			float dX = (Gdx.input.getX() - lockedMouseX);
-			float dY = (Gdx.input.getY() - lockedMouseY);
+			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
+			float dY = Gdx.input.getY() - Gdx.graphics.getBackBufferHeight() / 2.0f;
+
+			// Discard minor noise
+			if (Math.abs(dX) < 4) dX = 0;
+			if (Math.abs(dY) < 4) dY = 0;
 
 			// Clamp to range [-10..10]
 			dX = Math.min(10, Math.max(dX, -10));
