@@ -32,6 +32,14 @@ public class Jumper {
         this.lookDirection = lookDirection;
     }
 
+    public Vector getNeutralDirection() {
+        return neutralDirection;
+    }
+
+    public void setNeutralDirection(Vector neutralDirection) {
+        this.neutralDirection = neutralDirection;
+    }
+
     public Vector getPosition() {
         return position;
     }

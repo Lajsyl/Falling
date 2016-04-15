@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Responsibilites
+ * Responsibilities
  * Create game
  * ask game for resources
  * updateGame
