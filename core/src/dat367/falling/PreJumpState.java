@@ -15,9 +15,11 @@ public class PreJumpState implements FallState {
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
 
-        float cosDeviation = jumper.getLookDirection().normalized().dot(jumper.getNeutralDirection().normalized());
-        cosDeviation = FallingMath.clamp0_1(cosDeviation);
+//        System.out.println(jumper.getLookDirection().normalized());
 
+        float cosDeviation = jumper.getLookDirection().normalized().dot(jumper.getNeutralDirection().normalized());
+//        cosDeviation = FallingMath.clamp0_1(cosDeviation);
+/*
         double angleDeviation = Math.acos(cosDeviation);
         float interpolation = (float) (angleDeviation / (Math.PI / 2.0));
         interpolation = FallingMath.clamp0_1(interpolation);
@@ -35,13 +37,17 @@ public class PreJumpState implements FallState {
         Vector finalHeadPosition = hipPosition
                 .add(jumper.getNeutralDirection().scale(rotatedHeadPosition.getZ()))
                 .add(hipToHead.scale(rotatedHeadPosition.getY()));
-
-        jumper.setPosition(finalHeadPosition);
+*/
+//        jumper.setPosition(finalHeadPosition);
 
         // If look direction is "big" enough
-        if (interpolation >= 1.0f) {
-            // switch to FreeFallingState
-            return null;//new FreeFallingState();
+//        if (interpolation >= 1.0f) {
+//            // switch to FreeFallingState
+//            return null;//new FreeFallingState();
+//        }
+
+        if (cosDeviation < 0.1f && jumper.getLookDirection().getY() < 0) {
+            return new FreeFallingState();
         }
 
         return null;

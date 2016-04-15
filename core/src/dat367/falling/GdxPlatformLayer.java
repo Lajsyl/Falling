@@ -58,6 +58,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void create() {
+
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
 		game = new FallingGame();
@@ -65,12 +66,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
+			setCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 			if (USING_DEBUG_CAMERA) {
 				// Set position first frame
-				setDesktopCameraPosAndOrientation();
+				setCameraPosAndOrientation();
 			}
 		}
 		mainCamera.near = Z_NEAR;
@@ -189,7 +191,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			// Update game logic
 			updateGame();
 
-			setDesktopCameraPosAndOrientation();
+			setCameraPosAndOrientation();
 		}
 
 	}
@@ -233,7 +235,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		}
 	}
 
-	private void setDesktopCameraPosAndOrientation() {
+	private void setCameraPosAndOrientation() {
 		// Set camera position depending on jumper position
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
@@ -307,8 +309,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Set look direction from actual vr-headset look direction
 		float[] vecComponents = new float[3];
 		paramHeadTransform.getForwardVector(vecComponents, 0);
-		Vector lookDirection = new Vector(vecComponents[0], vecComponents[1], vecComponents[2]);
+
+		// Invert all axes and swap x and z
+		Vector lookDirection = new Vector(-vecComponents[2], -vecComponents[1], -vecComponents[0]);
 		game.setLookDirection(lookDirection);
+		System.out.println(lookDirection);
 
 		// Update game logic
 		updateGame();
