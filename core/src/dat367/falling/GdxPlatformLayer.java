@@ -6,8 +6,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -18,14 +21,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Responsibilites
+ * Responsibilities
  * Create game
  * ask game for resources
- * update
+ * updateGame
  * when something in game wants to be drawn, draw it
  * sound, etc
  */
@@ -33,11 +35,10 @@ import java.util.Map;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	boolean platformIsAndroid;
-	final boolean USING_DEBUG_CAMERA = true;
-	private FallingGame game;
+	final boolean USING_DEBUG_CAMERA = false;
 
-	private CardboardCamera cardboardCamera;
-	private PerspectiveCamera camera;
+	private FallingGame game;
+	private Camera mainCamera;
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 300f;
 
@@ -48,6 +49,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
 	private Environment environment;
 
+	private SpriteBatch spriteBatch;
+	private BitmapFont font;
+
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
 	}
@@ -57,28 +61,30 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
-
 		game = new FallingGame();
 		loadResources(game.getCurrentJump().getResourceRequirements());
 
-		camera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(0f, 0.5f, -1.7f);
-		camera.lookAt(5f,-0.5f,-2.7f);
-		camera.near = Z_NEAR;
-		camera.far = Z_FAR;
+		if (platformIsAndroid) {
+			mainCamera = new CardboardCamera();
+			setCameraPosAndOrientation();
+		} else {
+			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		cardboardCamera = new CardboardCamera();
-		cardboardCamera.position.set(0f, 0.5f, -1.7f);
-		cardboardCamera.lookAt(0f,0.5f,-2f);
-		cardboardCamera.near = 0.1f;
-		cardboardCamera.far = 300f;
-
+			if (USING_DEBUG_CAMERA) {
+				// Set position first frame
+				setCameraPosAndOrientation();
+			}
+		}
+		mainCamera.near = Z_NEAR;
+		mainCamera.far = Z_FAR;
 
 		modelBatch = new ModelBatch();
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
 
+		spriteBatch = new SpriteBatch();
+		font = new BitmapFont();
 	}
 
 	public void loadResources(ResourceRequirements resourceRequirements) {
@@ -110,51 +116,145 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
-		//model.dispose();
+		spriteBatch.dispose();
+		// TODO: Dispose of all resources!
 	}
 
 	private void renderScene(Camera camera) {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+		// Render 3D
 		modelBatch.begin(camera);
+		{
+			for (RenderQueue.RenderTask task : RenderQueue.getTasks()) {
+				// Fetch model instance
+				if (models.containsKey(task.model.getModelFileName())) {
+					ModelInstance instance = models.get(task.model.getModelFileName());
 
-		for (RenderQueue.RenderTask task : RenderQueue.getTasks()) {
-			// Fetch model instance
-			if (models.containsKey(task.model.getModelFileName())) {
-				ModelInstance instance = models.get(task.model.getModelFileName());
+					// TODO: Set transform of model instance
+					// task.position
 
-				// TODO Set transform of model instance
-				// task.position
-
-				modelBatch.render(instance, environment);
+					modelBatch.render(instance, environment);
+				}
 			}
 		}
-
 		modelBatch.end();
+
+		// Render 2D
+		spriteBatch.begin();
+		{
+			String debugText =
+					"Camera pos: " + camera.position + "\n" +
+					"Look dir: " + camera.direction;
+
+			font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+
+			// Draw crosshair etc. for desktop control
+			if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
+				Color color = font.getColor().cpy();
+				{
+					font.setColor(Color.RED);
+					font.draw(spriteBatch, "o",
+							Gdx.graphics.getBackBufferWidth() / 2.0f - 5,
+							Gdx.graphics.getBackBufferHeight() / 2.0f + 8);
+
+					font.draw(spriteBatch, "*",
+							Gdx.input.getX() - 4,
+							Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4);
+				}
+				font.setColor(color);
+			}
+		}
+		spriteBatch.end();
 	}
 
-	private void update() {
+	private void updateGame() {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
+
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
 
+	private void desktopUpdate() {
+
+		// Set look direction depending on mouse position
+		handleDesktopControls();
+
+		// Desktop FPS camera movement
+		if (USING_DEBUG_CAMERA) {
+			handleDebugCameraControl();
+			updateGame();
+		} else {
+
+			// Update game logic
+			updateGame();
+
+			setCameraPosAndOrientation();
+		}
+
+	}
+
+	private void handleDesktopControls() {
+		final float MOUSE_SENSITIVITY = 2000f;
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.input.setCursorCatched(false);
+		}
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+			Gdx.input.setCursorCatched(true);
+
+		}
+
+		if (Gdx.input.isCursorCatched()) {
+
+			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
+			float dY = Gdx.input.getY() - Gdx.graphics.getBackBufferHeight() / 2.0f;
+
+			// Discard minor noise
+			if (Math.abs(dX) < 15) dX = 0;
+			if (Math.abs(dY) < 15) dY = 0;
+
+			// Clamp to range [-30..30]
+			dX = Math.min(30, Math.max(dX, -30));
+			dY = Math.min(30, Math.max(dY, -30));
+
+			// Scale movement
+			dX /= MOUSE_SENSITIVITY;
+			dY /= MOUSE_SENSITIVITY;
+
+			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
+			mainCamera.normalizeUp();
+			Vector3 lookDirection = currentLookDirection
+					.rotateRad(mainCamera.up, -dX)
+					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
+
+			game.setLookDirection(gameVector(lookDirection));
+		}
+	}
+
+	private void setCameraPosAndOrientation() {
+		// Set camera position depending on jumper position
+		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
+		mainCamera.position.set(libGdxVector(jumperHeadPosition));
+
+		// Set camera orientation depending on jumper look direction
+		Vector jumperLookDirection = game.getCurrentJump().getJumper().getLookDirection();
+		Vector lookAtPoint = jumperHeadPosition.add(jumperLookDirection);
+		mainCamera.lookAt(libGdxVector(lookAtPoint));
+	}
+
 	@Override
 	public void render() {
 		if (!platformIsAndroid) {
+
+			desktopUpdate();
+
 			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-			// Desktop FPS camera movement
-			if (USING_DEBUG_CAMERA) {
-				handleDebugCameraControl();
-			}
-
-			camera.update();
-
-			update();
-			renderScene(camera);
+			mainCamera.update();
+			renderScene(mainCamera);
 		}
 	}
 
@@ -163,8 +263,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		final float speed = 0.05f;
 		final float rollSpeed = 15.0f;
 
-		Vector3 up = new Vector3(camera.up).nor();
-		Vector3 forward = new Vector3(camera.direction).nor();
+		Vector3 up = new Vector3(mainCamera.up).nor();
+		Vector3 forward = new Vector3(mainCamera.direction).nor();
 		Vector3 right = forward.cpy().crs(up).nor();
 
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -183,9 +283,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
 			if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
 
-			camera.rotate(-dX * mouseSensitivity, up.x, up.y, up.z);
-			camera.rotate(-dY * mouseSensitivity, right.x, right.y, right.z);
-			camera.rotate(rotationZ * mouseSensitivity, forward.x, forward.y, forward.z);
+			mainCamera.rotate(-dX * mouseSensitivity, up.x, up.y, up.z);
+			mainCamera.rotate(-dY * mouseSensitivity, right.x, right.y, right.z);
+			mainCamera.rotate(rotationZ * mouseSensitivity, forward.x, forward.y, forward.z);
 		}
 
 		// Translation
@@ -197,7 +297,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) translation.add(up);
 		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) translation.sub(up);
 		translation.nor().scl(speed);
-		camera.translate(translation);
+		mainCamera.translate(translation);
 	}
 
 
@@ -205,19 +305,41 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
-		update();
+
+		// Set look direction from actual vr-headset look direction
+		float[] vecComponents = new float[3];
+		paramHeadTransform.getForwardVector(vecComponents, 0);
+
+		// Invert all axes and swap x and z
+		Vector lookDirection = new Vector(-vecComponents[2], -vecComponents[1], -vecComponents[0]);
+		game.setLookDirection(lookDirection);
+		System.out.println(lookDirection);
+
+		// Update game logic
+		updateGame();
+
+		// Set camera position depending on jumper position
+		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
+		mainCamera.position.set(libGdxVector(jumperHeadPosition));
 	}
 
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {
 
-		cardboardCamera.setEyeViewAdjustMatrix(new Matrix4(eye.getEyeView()));
+		if (mainCamera instanceof CardboardCamera) {
+			CardboardCamera cardboardCamera = (CardboardCamera)mainCamera;
 
-		float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
-		cardboardCamera.setEyeProjection(new Matrix4(perspective));
-		cardboardCamera.update();
+			cardboardCamera.setEyeViewAdjustMatrix(new Matrix4(eye.getEyeView()));
+			float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
+			cardboardCamera.setEyeProjection(new Matrix4(perspective));
 
-		renderScene(cardboardCamera);
+			cardboardCamera.update();
+
+			renderScene(cardboardCamera);
+
+		} else {
+			System.err.println("onDrawEye called and camera is not a CardboardCamera instance!");
+		}
 	}
 
 	@Override
@@ -234,4 +356,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	public void onCardboardTrigger() {
 
 	}
+
+	//---- UTILITIES ----//
+
+	private Vector3 libGdxVector(Vector vector) {
+		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	private Vector gameVector(Vector3 vector) {
+		return new Vector(vector.x, vector.y, vector.z);
+	}
+
 }
