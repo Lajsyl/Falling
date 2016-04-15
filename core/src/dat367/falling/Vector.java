@@ -9,6 +9,11 @@ public class Vector {
         this.y = y;
         this.z = z;
     }
+    public Vector(Vector v){
+        this.x = v.getX();
+        this.y = v.getY();
+        this.z = v.getZ();
+    }
 
     public float getX() {
         return x;
@@ -47,12 +52,36 @@ public class Vector {
         return scale(1.0f / length);
     }
 
+    public Vector projectedXZ(){
+
+        return new Vector(this.multWithMatrix(new Matrix(1,0,0,
+                                                        0,0,0,
+                                                        0,0,1)));
+
+
+    }
+
+    public Vector mirrorY(){
+
+        return new Vector(this.multWithMatrix(new Matrix(-1,0,0,
+                                                        0,1,0,
+                                                        0,0,-1)));
+    }
+
+    public Vector scale(float factor){
+        return new Vector(this.getX()*factor, this.getY()*factor, this.getZ()*factor);
+    }
+
     public float dot(Vector other) {
         return x*other.x + y*other.y + z*other.z;
     }
 
     public Vector cross(Vector other) {
         return new Vector(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
+    }
+
+    public Vector multWithMatrix(Matrix A){
+        return new Vector(A.getI1().dot(this), A.getI2().dot(this), A.getI3().dot(this));
     }
 
     @Override
