@@ -2,7 +2,9 @@ package dat367.falling;
 
 public class World {
     private Ground ground;
-    public static final float GRAVITATION = 9.82f;
+
+    //defined according to the coordinate system used
+    public static final float GRAVITATION = -9.82f;
 
     public void update(float deltaTime) {
 
