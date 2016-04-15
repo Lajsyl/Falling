@@ -68,10 +68,6 @@ public class Vector {
                                                         0,0,-1)));
     }
 
-    public Vector scale(float factor){
-        return new Vector(this.getX()*factor, this.getY()*factor, this.getZ()*factor);
-    }
-
     public float dot(Vector other) {
         return x*other.x + y*other.y + z*other.z;
     }
