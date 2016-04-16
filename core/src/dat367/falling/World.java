@@ -15,6 +15,7 @@ public class World {
     }
 
     public Vector getStartLookDirection() {
-        return new Vector(0.975f, -0.206f, -0.070f);
+//        return new Vector(0.975f, -0.206f, -0.070f);
+        return new Vector(0.975f, 0, -0.070f).normalized();
     }
 }

@@ -1,5 +1,7 @@
 package dat367.falling;
 
+import java.text.DecimalFormat;
+
 public class Vector {
 
     private float x, y, z;
@@ -103,7 +105,9 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ", " + z + ")";
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(1);
+        return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(z) + ")";
     }
 
 }

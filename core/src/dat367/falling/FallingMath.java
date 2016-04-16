@@ -10,4 +10,12 @@ public class FallingMath {
         return clamp(x, 0.0f, 1.0f);
     }
 
+    public static double clamp(double x, double min, double max) {
+        return Math.max(min, Math.min(x, max));
+    }
+
+    public static double interpolateSmooth(double x) {
+        return (Math.sin((x - 0.5) * Math.PI) + 1.0) / 2;
+    }
+
 }
