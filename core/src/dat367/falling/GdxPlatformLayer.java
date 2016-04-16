@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 
@@ -146,12 +147,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		{
 			String debugText =
 					"Camera pos: " + camera.position + "\n" +
-					"Look dir: " + camera.direction + "\n\n" +
+					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration().length() + "\n" +
 					"Speed: " + game.getCurrentJump().getJumper().getVelocity().length();
 
 							font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
-
 			// Draw crosshair etc. for desktop control
 			if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
 				Color color = font.getColor().cpy();
@@ -308,14 +308,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 
-		// Set look direction from actual vr-headset look direction
-		float[] vecComponents = new float[3];
-		paramHeadTransform.getForwardVector(vecComponents, 0);
-
-		// Invert all axes and swap x and z
-		Vector lookDirection = new Vector(-vecComponents[2], -vecComponents[1], -vecComponents[0]);
-		game.setLookDirection(lookDirection);
-		System.out.println(lookDirection);
+		game.setLookDirection(getVRLookDirection(paramHeadTransform));
 
 		// Update game logic
 		updateGame();
@@ -323,6 +316,19 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Set camera position depending on jumper position
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
+	}
+
+	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
+		// Since the look vector provided by getForwardVector() seems inaccurate,
+		// compute it from the Euler angles instead
+		float[] eulerAngles = new float[3];
+		paramHeadTransform.getEulerAngles(eulerAngles, 0);
+		double yaw = eulerAngles[1];
+		double pitch = eulerAngles[0];
+		float x = (float)(Math.cos(yaw)*Math.cos(pitch));
+		float y = (float)(Math.sin(pitch));
+		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
+		return new Vector(x, y, z);
 	}
 
 	@Override
