@@ -148,8 +148,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			String debugText =
 					"Camera pos: " + camera.position + "\n" +
 					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
-					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration().length() + "\n" +
-					"Speed: " + game.getCurrentJump().getJumper().getVelocity().length();
+					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
+					"Speed: " + game.getCurrentJump().getJumper().getVelocity();
 
 							font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
 			// Draw crosshair etc. for desktop control
