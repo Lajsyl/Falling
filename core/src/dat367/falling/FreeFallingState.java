@@ -24,7 +24,6 @@ public class FreeFallingState implements FallState {
     }
 
 
-    //Ska vi avrunda acc så att den blir 0 nån gång?
     //Denna gör att acc i Y-led går från 9.82 mot 0
     //Hamnar på ca -34, verklighet ca -56
     private Vector calcAccY(Jumper jumper){
@@ -33,10 +32,12 @@ public class FreeFallingState implements FallState {
         return new Vector(jumper.getAcceleration().getX(), newY, jumper.getAcceleration().getZ());
     }
 
+
+    //Skalning är väldigt tveksam just nu
     private Vector calcAccXZ(Jumper jumper){
         Vector v = jumper.getLookDirection().normalized();
         v = v.projectedXZ();
-        return v.scale(1);
+        return v.scale(0.01f);
     }
 
     
