@@ -23,9 +23,13 @@ public class FreeFallingState implements FallState {
         return calcAccY(jumper).add(calcAccXZ(jumper));
     }
 
+
+    //Ska vi avrunda acc så att den blir 0 nån gång?
+    //Denna gör att acc i Y-led går från 9.82 mot 0
+    //Hamnar på ca -34, verklighet ca -56
     private Vector calcAccY(Jumper jumper){
-        float drag = (float)(0.5*1.3*1.2041*0.85)*jumper.getAcceleration().getY();
-        float newY =(World.GRAVITATION*80 - drag)/80;
+        float drag = (float)(0.5*1.3*1.2041*0.85)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
+        float newY =(World.GRAVITATION*80 + drag)/80;
         return new Vector(jumper.getAcceleration().getX(), newY, jumper.getAcceleration().getZ());
     }
 
