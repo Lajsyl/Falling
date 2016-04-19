@@ -6,7 +6,7 @@ public class Jump {
     private World world;
     private ResourceRequirements resourceRequirements;
 
-    Model zombie = new Model("airplane.g3db");
+    Model airplane = new Model("airplane.g3db");
 
     public Jump() {
         // Create world
@@ -16,15 +16,15 @@ public class Jump {
         jumper = new Jumper(world.getStartPosition(), world.getStartLookDirection());
 
         resourceRequirements = new ResourceRequirements();
-        resourceRequirements.require(zombie);
+        resourceRequirements.require(airplane);
     }
 
     public void update(float deltaTime) {
         jumper.update(deltaTime);
         world.update(deltaTime);
 
-        // In zombie.update()
-        RenderQueue.RenderTask task = new RenderQueue.RenderTask(zombie, new Vector(0,0,0),new Vector(0,0,0),new Vector(1,1,1));
+        // In airplane.update()
+        RenderQueue.RenderTask task = new RenderQueue.RenderTask(airplane, new Vector(0,0,0),new Vector(0,0,0),new Vector(1,1,1));
         RenderQueue.addTask(task);
     }
 
