@@ -1,4 +1,6 @@
-package dat367.falling;
+package dat367.falling.core;
+
+import dat367.falling.math.Vector;
 
 public class Jumper {
 

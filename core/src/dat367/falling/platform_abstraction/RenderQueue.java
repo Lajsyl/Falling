@@ -1,4 +1,6 @@
-package dat367.falling;
+package dat367.falling.platform_abstraction;
+
+import dat367.falling.math.Vector;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -28,11 +30,11 @@ public class RenderQueue {
         return Collections.unmodifiableCollection(queue);
     }
 
-    static class RenderTask {
-        Model model;
-        Vector position;
-        Vector orientation;
-        Vector scale;
+    public static class RenderTask {
+        public Model model;
+        public Vector position;
+        public Vector orientation;
+        public Vector scale;
 
         public RenderTask(Model model, Vector position, Vector orientation, Vector scale) {
             this.model = model;

@@ -1,4 +1,4 @@
-package dat367.falling;
+package dat367.falling.platform_abstraction;
 
 public class Model {
 

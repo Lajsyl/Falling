@@ -1,4 +1,4 @@
-package dat367.falling;
+package dat367.falling.core;
 
 public interface FallState {
     void setup(Jumper jumper);

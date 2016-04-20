@@ -1,4 +1,10 @@
-package dat367.falling;
+package dat367.falling.core;
+
+import dat367.falling.core.world.World;
+import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.Model;
+import dat367.falling.platform_abstraction.RenderQueue;
+import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Jump {
 

@@ -1,4 +1,4 @@
-package dat367.falling;
+package dat367.falling.platform;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
@@ -17,9 +17,13 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
+import dat367.falling.core.FallingGame;
+import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.Model;
+import dat367.falling.platform_abstraction.RenderQueue;
+import dat367.falling.platform_abstraction.ResourceRequirements;
 
 import java.util.HashMap;
 import java.util.Map;
