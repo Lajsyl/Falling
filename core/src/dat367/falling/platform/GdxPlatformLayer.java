@@ -21,9 +21,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -132,16 +130,25 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Render 3D
 		modelBatch.begin(camera);
 		{
-			for (RenderQueue.RenderTask task : RenderQueue.getTasks()) {
-				// Fetch model instance
-				if (models.containsKey(task.model.getModelFileName())) {
-					ModelInstance instance = models.get(task.model.getModelFileName());
+			for (RenderTask task : RenderQueue.getTasks()) {
 
-					// TODO: Set transform of model instance
-					// task.position
+				if (task instanceof ModelRenderTask) {
+					ModelRenderTask modelTask = (ModelRenderTask) task;
 
-					modelBatch.render(instance, environment);
+					// Fetch model instance
+					if (models.containsKey(modelTask.getModel().getModelFileName())) {
+						ModelInstance instance = models.get(modelTask.getModel().getModelFileName());
+
+						// TODO: Set transform of model instance
+						// task.position
+
+						modelBatch.render(instance, environment);
+					}
 				}
+
+				// TODO: Implement!
+				//else if (task instanceof QuadRenderTask)
+
 			}
 		}
 		modelBatch.end();
