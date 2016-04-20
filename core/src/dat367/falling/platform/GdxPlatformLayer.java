@@ -5,17 +5,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
@@ -50,6 +51,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private ModelBatch modelBatch;
 	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
+	private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
+	private ModelInstance quadModel;
 	private Environment environment;
 
 	private SpriteBatch spriteBatch;
@@ -99,6 +102,48 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 				models.put(fileName, gdxModelInstance);
 			}
 		}
+
+		// Create the quad model if quads are required
+		if (resourceRequirements.getQuads().size() > 0) {
+
+			ModelBuilder modelBuilder = new ModelBuilder();
+			final long attributes = VertexAttributes.Usage.Position |
+					VertexAttributes.Usage.Normal |
+					VertexAttributes.Usage.TextureCoordinates;
+
+			com.badlogic.gdx.graphics.g3d.Model quadModel = modelBuilder.createRect(
+					// Corners
+					-1, 0, -1,
+					-1, 0, +1,
+					+1, 0, +1,
+					+1, 0, -1,
+
+					// Normal
+					0, 1, 0,
+
+					// Material
+					new Material(
+							// (Just add a blend attribute, the texture attibute will be set for every render)
+							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+					),
+
+					// Attributes
+					attributes
+			);
+			this.quadModel = new ModelInstance(quadModel);
+		}
+
+		for (Quad quad : resourceRequirements.getQuads()) {
+			String textureFileName = quad.getTextureFileName();
+			if (!quadTextureAttributes.containsKey(textureFileName)) {
+				Texture quadTexture = new Texture(textureFileName);
+				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
+				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
+
+				// Report aspect ratio back to Quad
+				quad.setAspectRatio((float) quadTexture.getWidth() / (float) quadTexture.getHeight());
+			}
+		}
 	}
 
 	@Override
@@ -124,7 +169,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void renderScene(Camera camera) {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(165/255f, 215/255f, 250/255f, 1.0f); // (Bright desaturated sky blue)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		// Render 3D
@@ -134,10 +179,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 				if (task instanceof ModelRenderTask) {
 					ModelRenderTask modelTask = (ModelRenderTask) task;
+					String modelFileName = modelTask.getModel().getModelFileName();
 
 					// Fetch model instance
-					if (models.containsKey(modelTask.getModel().getModelFileName())) {
-						ModelInstance instance = models.get(modelTask.getModel().getModelFileName());
+					if (models.containsKey(modelFileName)) {
+						ModelInstance instance = models.get(modelFileName);
 
 						// TODO: Set transform of model instance
 						// task.position
@@ -146,8 +192,36 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					}
 				}
 
-				// TODO: Implement!
-				//else if (task instanceof QuadRenderTask)
+				else if (task instanceof QuadRenderTask) {
+					QuadRenderTask quadTask = (QuadRenderTask) task;
+					String textureFileName = quadTask.getQuad().getTextureFileName();
+
+					// Fetch quad
+					if (quadTextureAttributes.containsKey(textureFileName)) {
+						TextureAttribute currentTextureAttribute = quadTextureAttributes.get(textureFileName);
+
+						// Render using the shared quadModel
+						ModelInstance sharedInstance = this.quadModel;
+
+						// NOTE: Will overwrite previous attribute of the same type!
+						sharedInstance.materials.get(0).set(currentTextureAttribute);
+
+						// NOTE: No rotation (for now?)!
+						sharedInstance.transform = new Matrix4()
+								.translate(libGdxVector(quadTask.getPosition()))
+								.scale(quadTask.getScale().getX(), quadTask.getScale().getY(), quadTask.getScale().getZ());
+
+						// Scale for aspect ratio
+						if (quadTask.getQuad().shouldAspectRatioAdjust()) {
+							Float aspectRatio = quadTask.getQuad().getAspectRatio();
+							if (aspectRatio != null && aspectRatio != 0.0f) {
+								sharedInstance.transform.scl(aspectRatio, 1, 1);
+							}
+						}
+
+						modelBatch.render(sharedInstance, environment);
+					}
+				}
 
 			}
 		}
