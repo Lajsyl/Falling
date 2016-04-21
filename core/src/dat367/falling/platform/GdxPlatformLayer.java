@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -138,7 +139,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		for (Quad quad : resourceRequirements.getQuads()) {
 			String textureFileName = quad.getTextureFileName();
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
-				Texture quadTexture = new Texture(textureFileName);
+				FileHandle fileHandle = Gdx.files.internal(textureFileName);
+				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -221,7 +223,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 							}
 						}
 
-						modelBatch.render(sharedInstance, environment);
+						modelBatch.render(new ModelInstance(sharedInstance), environment);
 					}
 				}
 
