@@ -18,6 +18,8 @@ public class FreeFallingState implements FallState {
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
+        //TODO: if parachute pulled, return new parachutefallingstate
+
         return null;
     }
 
