@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -44,7 +45,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private FallingGame game;
 	private Camera mainCamera;
 	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 300f;
+	private static final float Z_FAR = 10000.0f;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
 	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
@@ -123,8 +124,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 					// Material
 					new Material(
-							// (Just add a blend attribute, the texture attibute will be set for every render)
-							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
+							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
+							IntAttribute.createCullFace(GL20.GL_NONE)
 					),
 
 					// Attributes
