@@ -6,7 +6,6 @@ import dat367.falling.platform_abstraction.*;
 
 public class Jump {
 
-    private Jumper jumper;
     private World world;
     private ResourceRequirements resourceRequirements;
 
@@ -14,19 +13,16 @@ public class Jump {
     Quad cloud = new Quad("cloud_01.png", true);
 
     public Jump() {
-        // Create world
-        world = new World();
-
-        // Create jumper using the world start position etc.
-        jumper = new Jumper(world.getStartPosition(), world.getStartLookDirection());
-
         resourceRequirements = new ResourceRequirements();
+
+        // Create world
+        world = new World(resourceRequirements);
+
         resourceRequirements.require(airplane);
         resourceRequirements.require(cloud);
     }
 
     public void update(float deltaTime) {
-        jumper.update(deltaTime);
         world.update(deltaTime);
 
         // In airplane.update()
@@ -42,7 +38,11 @@ public class Jump {
         return resourceRequirements;
     }
 
+    public World getWorld() {
+        return world;
+    }
+
     public Jumper getJumper() {
-        return jumper;
+        return world.getJumper();
     }
 }
