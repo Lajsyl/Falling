@@ -27,6 +27,8 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -179,7 +181,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Render 3D
 		modelBatch.begin(camera);
 		{
-			for (RenderTask task : RenderQueue.getTasks()) {
+			Iterable<RenderTask> tasks = RenderQueue.getTasks();
+			for (RenderTask task : tasks) {
 
 				if (task instanceof ModelRenderTask) {
 					ModelRenderTask modelTask = (ModelRenderTask) task;
@@ -193,7 +196,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
 								.translate(libGdxVector(task.getPosition()));
-
 
 						modelBatch.render(instance, environment);
 					}
@@ -213,10 +215,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 						// NOTE: Will overwrite previous attribute of the same type!
 						sharedInstance.materials.get(0).set(currentTextureAttribute);
 
-						// NOTE: No rotation (for now?)!
-						sharedInstance.transform = new Matrix4()
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
-								.translate(libGdxVector(task.getPosition()));
+						sharedInstance.transform = new Matrix4();
 
 						// Scale for aspect ratio
 						if (quadTask.getQuad().shouldAspectRatioAdjust()) {
@@ -225,6 +224,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								sharedInstance.transform.scl(aspectRatio, 1, 1);
 							}
 						}
+
+						// NOTE: No rotation (for now?)!
+						sharedInstance.transform = sharedInstance.transform
+								.translate(libGdxVector(task.getPosition()))
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
 						modelBatch.render(new ModelInstance(sharedInstance), environment);
 					}

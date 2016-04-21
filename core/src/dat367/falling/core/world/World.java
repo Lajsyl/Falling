@@ -1,34 +1,38 @@
 package dat367.falling.core.world;
 
+import dat367.falling.core.Jumper;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 public class World {
-    private Ground ground;
 
-    Model airplane = new Model("airplane.g3db");
-    Quad cloud = new Quad("cloud_01.png", true, true);
+    private Ground ground;
+    private CloudSimulator cloudSimulator;
+    private Jumper jumper;
+
+    private Model airplane = new Model("airplane.g3db");
 
     //defined according to the coordinate system used
     public static final float GRAVITATION = -9.82f;
 
     public World(ResourceRequirements resourceRequirements) {
+        // Create jumper using the world start position etc.
+        jumper = new Jumper(getStartPosition(), getStartLookDirection());
+
         ground = new Ground(resourceRequirements);
+        cloudSimulator = new CloudSimulator(30, resourceRequirements, jumper);
 
         resourceRequirements.require(airplane);
-        resourceRequirements.require(cloud);
     }
 
     public void update(float deltaTime) {
+        jumper.update(deltaTime);
         ground.update(deltaTime);
+        cloudSimulator.update(deltaTime, jumper);
 
         // In airplane.update()
         RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Vector(0,0,0), new Vector(1,1,1));
         RenderQueue.addTask(airplaneTask);
-
-        // In cloud.update() or similar
-        RenderTask cloudTask = new QuadRenderTask(cloud, new Vector(0,3970,0), new Vector(0,0,0), new Vector(10,10,10));
-        RenderQueue.addTask(cloudTask);
     }
 
     public Vector getStartPosition() {
@@ -38,5 +42,9 @@ public class World {
     public Vector getStartLookDirection() {
 //        return new Vector(0.975f, -0.206f, -0.070f);
         return new Vector(0.975f, 0, -0.070f).normalized();
+    }
+
+    public Jumper getJumper() {
+        return jumper;
     }
 }
