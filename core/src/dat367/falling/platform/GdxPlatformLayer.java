@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,6 +27,8 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -138,7 +141,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		for (Quad quad : resourceRequirements.getQuads()) {
 			String textureFileName = quad.getTextureFileName();
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
-				Texture quadTexture = new Texture(textureFileName);
+				FileHandle fileHandle = Gdx.files.internal(textureFileName);
+				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -177,7 +181,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Render 3D
 		modelBatch.begin(camera);
 		{
-			for (RenderTask task : RenderQueue.getTasks()) {
+			Iterable<RenderTask> tasks = RenderQueue.getTasks();
+			for (RenderTask task : tasks) {
 
 				if (task instanceof ModelRenderTask) {
 					ModelRenderTask modelTask = (ModelRenderTask) task;
@@ -187,8 +192,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					if (models.containsKey(modelFileName)) {
 						ModelInstance instance = models.get(modelFileName);
 
-						// TODO: Set transform of model instance
-						// task.position
+						instance.transform = new Matrix4()
+								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
+								.translate(libGdxVector(task.getPosition()));
 
 						modelBatch.render(instance, environment);
 					}
@@ -208,10 +215,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 						// NOTE: Will overwrite previous attribute of the same type!
 						sharedInstance.materials.get(0).set(currentTextureAttribute);
 
-						// NOTE: No rotation (for now?)!
-						sharedInstance.transform = new Matrix4()
-								.translate(libGdxVector(quadTask.getPosition()))
-								.scale(quadTask.getScale().getX(), quadTask.getScale().getY(), quadTask.getScale().getZ());
+						sharedInstance.transform = new Matrix4();
 
 						// Scale for aspect ratio
 						if (quadTask.getQuad().shouldAspectRatioAdjust()) {
@@ -221,7 +225,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 							}
 						}
 
-						modelBatch.render(sharedInstance, environment);
+						// NOTE: No rotation (for now?)!
+						sharedInstance.transform = sharedInstance.transform
+								.translate(libGdxVector(task.getPosition()))
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
+
+						modelBatch.render(new ModelInstance(sharedInstance), environment);
 					}
 				}
 

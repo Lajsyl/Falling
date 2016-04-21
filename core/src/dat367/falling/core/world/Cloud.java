@@ -1,26 +1,25 @@
 package dat367.falling.core.world;
 
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Quad;
-import dat367.falling.platform_abstraction.QuadRenderTask;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 public class Cloud {
     private Quad quad;
-    private Vector position;
-    private Vector velocity;
-    private float scale;
+    private Vector position = new Vector(0, 0, 0);
+    private Vector velocity = new Vector(0, 0, 0);
+    private float scale = 1.0f;
 
     public Cloud(ResourceRequirements resourceRequirements) {
-        quad = new Quad("cloud_01.png", true);
+        quad = new Quad("cloud_01.png");
         resourceRequirements.require(quad);
     }
 
 
     public void update(float deltaTime) {
-        position.add(velocity.scale(deltaTime));
-        RenderQueue.addTask(new QuadRenderTask(quad, position, new Vector(0, 0, 0), new Vector(scale, scale, scale)));
+        this.position = position.add(velocity.scale(deltaTime));
+
+        RenderTask cloudTask = new QuadRenderTask(quad, position, new Vector(0,0,0), new Vector(scale,1,scale));
+        RenderQueue.addTask(cloudTask);
     }
 
     public Vector getPosition() {

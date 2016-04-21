@@ -12,9 +12,9 @@ public class CloudSimulator {
     List<Cloud> clouds = new ArrayList<Cloud>();
     int numberOfClouds;
     private Vector basePosition;
-    private float heightAbove = 50;
+    private float heightAbove = 300;
     private float heightBelow = 500;
-    private float radius = 400;
+    private float radius = 600;
     private Random random = new Random();
 
     public CloudSimulator(int numberOfClouds, ResourceRequirements resourceRequirements, Jumper jumper) {
@@ -48,7 +48,7 @@ public class CloudSimulator {
     }
 
     private void randomizeScale(Cloud cloud) {
-        cloud.setScale(50 + random.nextFloat() * 75);
+        cloud.setScale(75 + random.nextFloat() * 100);
     }
 
     private void randomizeVelocity(Cloud cloud) {
