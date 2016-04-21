@@ -189,8 +189,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					if (models.containsKey(modelFileName)) {
 						ModelInstance instance = models.get(modelFileName);
 
-						// TODO: Set transform of model instance
-						// task.position
+						instance.transform = new Matrix4()
+								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
+								.translate(libGdxVector(task.getPosition()));
+
 
 						modelBatch.render(instance, environment);
 					}
@@ -212,8 +215,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 						// NOTE: No rotation (for now?)!
 						sharedInstance.transform = new Matrix4()
-								.translate(libGdxVector(quadTask.getPosition()))
-								.scale(quadTask.getScale().getX(), quadTask.getScale().getY(), quadTask.getScale().getZ());
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
+								.translate(libGdxVector(task.getPosition()));
 
 						// Scale for aspect ratio
 						if (quadTask.getQuad().shouldAspectRatioAdjust()) {

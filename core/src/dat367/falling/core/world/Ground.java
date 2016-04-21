@@ -19,7 +19,7 @@ public class Ground {
 
         renderGround = new QuadRenderTask(
                 this.groundQuad,
-                new Vector(0, -4000, 0),
+                new Vector(0, 0, 0),
                 new Vector(0, 0, 0),
                 new Vector(GROUND_SCALE, 1, GROUND_SCALE)
         );

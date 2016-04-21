@@ -23,16 +23,16 @@ public class World {
         ground.update(deltaTime);
 
         // In airplane.update()
-        RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,0,0), new Vector(0,0,0), new Vector(1,1,1));
+        RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Vector(0,0,0), new Vector(1,1,1));
         RenderQueue.addTask(airplaneTask);
 
         // In cloud.update() or similar
-        RenderTask cloudTask = new QuadRenderTask(cloud, new Vector(0,-30,0), new Vector(0,0,0), new Vector(10,10,10));
+        RenderTask cloudTask = new QuadRenderTask(cloud, new Vector(0,3970,0), new Vector(0,0,0), new Vector(10,10,10));
         RenderQueue.addTask(cloudTask);
     }
 
     public Vector getStartPosition() {
-        return new Vector(0f, 0.5f, -1.8f);
+        return new Vector(0f, 4000.5f, -1.8f);
     }
 
     public Vector getStartLookDirection() {
