@@ -2,9 +2,7 @@ package dat367.falling.core;
 
 import dat367.falling.core.world.World;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 public class Jump {
 
@@ -13,6 +11,7 @@ public class Jump {
     private ResourceRequirements resourceRequirements;
 
     Model airplane = new Model("airplane.g3db");
+    Quad cloud = new Quad("cloud_01.png", true);
 
     public Jump() {
         // Create world
@@ -23,6 +22,7 @@ public class Jump {
 
         resourceRequirements = new ResourceRequirements();
         resourceRequirements.require(airplane);
+        resourceRequirements.require(cloud);
     }
 
     public void update(float deltaTime) {
@@ -30,8 +30,12 @@ public class Jump {
         world.update(deltaTime);
 
         // In airplane.update()
-        RenderQueue.RenderTask task = new RenderQueue.RenderTask(airplane, new Vector(0,0,0),new Vector(0,0,0),new Vector(1,1,1));
-        RenderQueue.addTask(task);
+        RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,0,0), new Vector(0,0,0), new Vector(1,1,1));
+        RenderQueue.addTask(airplaneTask);
+
+        // In cloud.update() or similar
+        RenderTask cloudTask = new QuadRenderTask(cloud, new Vector(0,-30,0), new Vector(0,0,0), new Vector(10,10,10));
+        RenderQueue.addTask(cloudTask);
     }
 
     public ResourceRequirements getResourceRequirements() {
