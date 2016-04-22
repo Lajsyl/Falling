@@ -9,7 +9,7 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public void setup(Jumper jumper) {
-
+        jumper.setNeutralDirection(jumper.getLookDirection().projectedXZ().normalized());
     }
 
     @Override
@@ -23,7 +23,9 @@ public class ParachuteFallingState implements FallState {
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
 
-        //TODO: if landed, do something
+        if (jumper.getPosition().getY() < 1){
+            return new LandedState();
+        }
 
         return null;
     }
