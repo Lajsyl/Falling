@@ -1,6 +1,7 @@
 package dat367.falling.core;
 
 
+import dat367.falling.core.world.World;
 import dat367.falling.math.Vector;
 
 
@@ -16,10 +17,10 @@ public class ParachuteFallingState implements FallState {
 
         jumper.setAcceleration(calculateAcceleration(jumper));
 
-        Vector v0 = jumper.getVelocity(); //maybe??
+        Vector v0 = jumper.getVelocity();
 
-        jumper.setVelocity(calculateVelocity(jumper));
-        jumper.setPosition(calculatePosition(jumper));
+        jumper.setVelocity(calculateVelocity(deltaTime, jumper));
+        jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
 
         //TODO: if landed, do something
@@ -29,18 +30,32 @@ public class ParachuteFallingState implements FallState {
 
 
     private Vector calculateAcceleration(Jumper jumper){
-
-        return null;
+        return calcAccY(jumper).add(calcAccXZ(jumper));
     }
 
-    private Vector calculateVelocity(Jumper jumper){
+    //Looks exactly like the one in FreeFalling, except different surface area...
+    private Vector calcAccY(Jumper jumper){
+        float drag = (float)(0.5*1.0*1.2041*17)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
 
-        return null;
+        float newY = (World.GRAVITATION*90 + drag)/90;
+        return new Vector(0,newY,0);
     }
 
-    private Vector calculatePosition(Jumper jumper){
 
-        return null;
+    //TODO more complicated steering
+    private Vector calcAccXZ(Jumper jumper){
+
+        return new Vector(0,0,0);
+    }
+
+    private Vector calculateVelocity(float deltaTime, Jumper jumper){
+
+        return new Vector(jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime)));
+    }
+
+    private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
+
+        return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
     }
 
 
