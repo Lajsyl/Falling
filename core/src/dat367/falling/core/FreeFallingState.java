@@ -32,9 +32,9 @@ public class FreeFallingState implements FallState {
     //Denna gör att acc i Y-led går från 9.82 mot 0
     //Hamnar på ca -34, verklighet ca -56
     private Vector calcAccY(Jumper jumper){
-        float drag = (float)(0.5*1.3*1.2041*0.85)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
-        float newY =(World.GRAVITATION*80 + drag)/80;
-        return new Vector(jumper.getAcceleration().getX(), newY, jumper.getAcceleration().getZ());
+        float drag = (float)(0.5*0.8*1.2041*0.70)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
+        float newY =(World.GRAVITATION*90 + drag)/90;
+        return new Vector(0, newY, 0);
     }
 
 
@@ -42,7 +42,7 @@ public class FreeFallingState implements FallState {
     private Vector calcAccXZ(Jumper jumper){
         Vector v = jumper.getLookDirection().normalized();
         v = v.projectedXZ();
-        return v.scale(0.01f);
+        return v.scale(-15f);
     }
 
     
