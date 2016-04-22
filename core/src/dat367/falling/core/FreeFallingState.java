@@ -32,7 +32,7 @@ public class FreeFallingState implements FallState {
     private Vector calcAccY(Jumper jumper){
         float drag = (float)(0.5*1.3*1.2041*0.85)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
         float newY =(World.GRAVITATION*80 + drag)/80;
-        return new Vector(jumper.getAcceleration().getX(), newY, jumper.getAcceleration().getZ());
+        return new Vector(0, newY, 0);
     }
 
 
