@@ -21,7 +21,7 @@ public class Matrix {
     }
 
     public Vector getI2(){
-        return new Vector(this.i2j1, this.i1j2, this.i2j3);
+        return new Vector(this.i2j1, this.i2j2, this.i2j3);
     }
 
     public Vector getI3(){
