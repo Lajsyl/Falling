@@ -38,9 +38,15 @@ public class FreeFallingState implements FallState {
 
     //Skalning är väldigt tveksam just nu
     private Vector calcAccXZ(Jumper jumper){
-        Vector v = jumper.getLookDirection().normalized();
-        v = v.projectedXZ();
-        return v.scale(-15f);
+        Vector targetVelocity = jumper.getLookDirection().normalized();
+        targetVelocity = targetVelocity.projectedXZ().mirrorY().scale(30);
+
+        Vector currentVelocity = jumper.getVelocity();
+        currentVelocity = currentVelocity.projectedXZ();
+
+        Vector newAcc = targetVelocity.sub(currentVelocity);
+
+        return newAcc.scale(0.8f);
     }
 
     
