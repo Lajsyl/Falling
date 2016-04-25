@@ -65,7 +65,7 @@ public class PreJumpState implements FallState {
 
         // When the player leans out far enough, jump!
         if (interpolation > JUMP_THRESHOLD) {
-            return new FreeFallingState();
+            return new FreeFallingState(jumper);
         }
 
         return null;

@@ -3,7 +3,17 @@ package dat367.falling.core;
 import dat367.falling.core.world.World;
 import dat367.falling.math.Vector;
 
-public class FreeFallingState implements FallState {
+import java.util.Observable;
+import java.util.Observer;
+
+public class FreeFallingState implements FallState, Observer {
+
+    private boolean parachutePulled = false;
+
+
+    public FreeFallingState(Jumper jumper){
+        observe(jumper);
+    }
 
     @Override
     public void setup(Jumper jumper) {
@@ -18,7 +28,10 @@ public class FreeFallingState implements FallState {
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
-        //TODO: if parachute pulled, return new parachutefallingstate
+
+        if (parachutePulled){
+            return new ParachuteFallingState();
+        }
 
         return null;
     }
@@ -30,7 +43,7 @@ public class FreeFallingState implements FallState {
 
 
     //Denna gör att acc i Y-led går från 9.82 mot 0
-    //Hamnar på ca -34, verklighet ca -56
+    //Hamnar på ca -51, verklighet ca -56
     private Vector calcAccY(Jumper jumper){
         float drag = (float)(0.5*0.8*1.2041*0.70)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
         float newY =(World.GRAVITATION*90 + drag)/90;
@@ -69,5 +82,12 @@ public class FreeFallingState implements FallState {
     }
 
 
+    public void observe(Observable o){
+        o.addObserver(this);
+    }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        parachutePulled = ((Jumper) o).getScreenClicked();
+    }
 }

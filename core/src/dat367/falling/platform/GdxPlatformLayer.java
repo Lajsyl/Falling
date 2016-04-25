@@ -306,6 +306,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
+			game.screenClicked(true);
+		}
+
 		if (Gdx.input.isCursorCatched()) {
 
 			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
@@ -456,9 +460,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
+	//screen clicks should release the parachute
 	@Override
 	public void onCardboardTrigger() {
-
+		game.screenClicked(true);
 	}
 
 	//---- UTILITIES ----//

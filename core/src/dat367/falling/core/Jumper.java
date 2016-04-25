@@ -2,7 +2,9 @@ package dat367.falling.core;
 
 import dat367.falling.math.Vector;
 
-public class Jumper {
+import java.util.Observable;
+
+public class Jumper extends Observable {
 
     private FallState fallState = new PreJumpState();
 
@@ -11,6 +13,7 @@ public class Jumper {
     private Vector acceleration = new Vector(0, 0, 0);
     private Vector neutralDirection;
     private Vector lookDirection;
+    private boolean screenClicked = false;
 
     public Jumper(Vector position, Vector neutralDirection) {
         this.position = position;
@@ -76,5 +79,15 @@ public class Jumper {
 
     public void setAcceleration(Vector acceleration) {
         this.acceleration = acceleration;
+    }
+
+    public void setScreenClicked(boolean screenClicked){
+        this.screenClicked = screenClicked;
+        setChanged();
+        notifyObservers();
+    }
+
+    public boolean getScreenClicked(){
+        return screenClicked;
     }
 }

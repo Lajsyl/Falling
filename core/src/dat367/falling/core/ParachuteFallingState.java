@@ -7,6 +7,7 @@ import dat367.falling.math.Vector;
 
 public class ParachuteFallingState implements FallState {
 
+
     @Override
     public void setup(Jumper jumper) {
         jumper.setNeutralDirection(jumper.getLookDirection().projectedXZ().normalized());
