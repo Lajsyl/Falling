@@ -11,13 +11,9 @@ public class FreeFallingState implements FallState, Observer {
     private boolean parachutePulled = false;
 
 
-    public FreeFallingState(Jumper jumper){
-        observe(jumper);
-    }
-
     @Override
     public void setup(Jumper jumper) {
-
+        observe(jumper);
     }
 
     @Override

@@ -28,6 +28,7 @@ public class Jumper extends Observable {
         FallState newState = fallState.handleFalling(deltaTime, this);
         if (newState != null) {
             this.fallState = newState;
+            fallState.setup(this);
         }
     }
 

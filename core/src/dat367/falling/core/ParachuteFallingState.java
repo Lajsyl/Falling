@@ -37,15 +37,17 @@ public class ParachuteFallingState implements FallState {
     }
 
     //Looks exactly like the one in FreeFalling, except different surface area...
+    //TODO adjust for optimal speed
     private Vector calcAccY(Jumper jumper){
         float drag = (float)(0.5*1.0*1.2041*17)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
 
         float newY = (World.GRAVITATION*90 + drag)/90;
+
         return new Vector(0,newY,0);
     }
 
 
-    //TODO more complicated steering
+    //TODO steering
     private Vector calcAccXZ(Jumper jumper){
 
         return new Vector(0,0,0);
