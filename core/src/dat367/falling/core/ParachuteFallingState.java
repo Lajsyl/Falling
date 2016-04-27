@@ -7,10 +7,13 @@ import dat367.falling.math.Vector;
 
 public class ParachuteFallingState implements FallState {
 
+    private Vector parachuteDirection;
+
 
     @Override
     public void setup(Jumper jumper) {
         jumper.setNeutralDirection(jumper.getLookDirection().projectedXZ().normalized());
+        setParachuteDirection(jumper.getNeutralDirection());
     }
 
     @Override
@@ -50,7 +53,20 @@ public class ParachuteFallingState implements FallState {
     //TODO steering
     private Vector calcAccXZ(Jumper jumper){
 
-        return new Vector(0,0,0);
+        Vector targetVelocity = parachuteDirection.normalized();
+        targetVelocity = targetVelocity.projectedXZ()/*.mirrorY()*/.scale(80);
+        float maxSpeed = 35f;
+        if (targetVelocity.length() > maxSpeed) {
+            targetVelocity = targetVelocity.normalized().scale(maxSpeed);
+        }
+
+        Vector currentVelocity = jumper.getVelocity();
+        currentVelocity = currentVelocity.projectedXZ();
+
+        Vector newAcc = targetVelocity.sub(currentVelocity);
+
+        return newAcc.scale(10f);
+
     }
 
     private Vector calculateVelocity(float deltaTime, Jumper jumper){
@@ -61,6 +77,10 @@ public class ParachuteFallingState implements FallState {
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
 
         return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
+    }
+
+    private void setParachuteDirection(Vector vector){
+        parachuteDirection = vector;
     }
 
 

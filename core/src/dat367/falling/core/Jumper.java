@@ -13,6 +13,7 @@ public class Jumper extends Observable {
     private Vector acceleration = new Vector(0, 0, 0);
     private Vector neutralDirection;
     private Vector lookDirection;
+    private Vector upVector;
     private boolean screenClicked = false;
 
     public Jumper(Vector position, Vector neutralDirection) {
@@ -48,6 +49,11 @@ public class Jumper extends Observable {
 
     public void setLookDirection(Vector lookDirection) {
         this.lookDirection = lookDirection;
+    }
+
+    public void setUpVector(Vector upVector){ this.upVector = upVector;
+        System.out.println(lookDirection.dot(upVector));
+
     }
 
     public Vector getNeutralDirection() {

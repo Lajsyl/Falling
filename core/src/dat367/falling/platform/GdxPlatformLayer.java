@@ -409,6 +409,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 
 		game.setLookDirection(getVRLookDirection(paramHeadTransform));
+		game.setUpVector(getVRUpVector(paramHeadTransform));
 
 		// Update game logic
 		updateGame();
@@ -429,6 +430,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		float y = (float)(Math.sin(pitch));
 		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
 		return new Vector(x, y, z);
+	}
+
+	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+
+		float[] upVector = new float[3];
+		paramHeadTransform.getUpVector(upVector, 0);
+		return new Vector(upVector[0], upVector[1], upVector[2]);
 	}
 
 	@Override
