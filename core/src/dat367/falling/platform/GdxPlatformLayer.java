@@ -334,6 +334,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
 
 			game.setLookDirection(gameVector(lookDirection));
+
 		}
 	}
 
