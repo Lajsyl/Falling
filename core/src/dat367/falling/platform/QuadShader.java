@@ -1,14 +1,15 @@
 package dat367.falling.platform;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import dat367.falling.platform_abstraction.Quad;
 
 public class QuadShader extends BaseShader {
-
-    public static final String QUAD_INDENTIFIER = "renderable-quad";
 
     // NOTE: These will be invalid after init()!
     private ShaderProgram program;
@@ -31,6 +32,26 @@ public class QuadShader extends BaseShader {
     }
 
     @Override
+    public void begin(Camera camera, RenderContext context) {
+        super.begin(camera, context);
+    }
+
+    @Override
+    public void render(Renderable renderable) {
+        Quad quad = (Quad) renderable.userData;
+
+        // TODO: Set shader uniforms from the quad proprties
+        //float uvXScale = quad.getUvXScale();
+
+        super.render(renderable);
+    }
+
+    @Override
+    public void end() {
+        super.end();
+    }
+
+    @Override
     public int compareTo(Shader other) {
         // TODO: Implement!
         return 0;
@@ -44,7 +65,7 @@ public class QuadShader extends BaseShader {
     public static boolean canRenderRenderable(Renderable renderable) {
         return renderable != null &&
                 renderable.userData != null &&
-                renderable.userData.equals(QUAD_INDENTIFIER);
+                renderable.userData instanceof Quad;
     }
 
 }

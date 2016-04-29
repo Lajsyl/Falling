@@ -9,23 +9,22 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultRenderableSorter;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import dat367.falling.platform_abstraction.Model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -148,7 +147,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					attributes
 			);
 			this.quadModel = new ModelInstance(quadModelSource);
-			this.quadModel.userData = QuadShader.QUAD_INDENTIFIER;
 		}
 
 		for (Quad quad : resourceRequirements.getQuads()) {
@@ -245,7 +243,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 						// Make copy, since stuff like transform and materials would be shared if not
 						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
-						modelInstanceCopy.userData = sharedInstance.userData;
+
+						// Set quad as user data so that the shader can use its properties
+						modelInstanceCopy.userData = quadTask.getQuad();
 						modelBatch.render(modelInstanceCopy, environment);
 					}
 				}
