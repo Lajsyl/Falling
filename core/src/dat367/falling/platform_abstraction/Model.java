@@ -4,8 +4,6 @@ public class Model {
 
     private String modelFileName;
 
-    private boolean visible;
-
     public Model(String modelFileName) {
         this.modelFileName = modelFileName;
     }

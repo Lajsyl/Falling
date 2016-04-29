@@ -10,7 +10,7 @@ public class Cloud {
     private float scale = 1.0f;
 
     public Cloud(ResourceRequirements resourceRequirements) {
-        quad = new Quad("cloud_01.png");
+        quad = new Quad("cloud_01.png", true, true, 600, 100, 1, 1);
         resourceRequirements.require(quad);
     }
 

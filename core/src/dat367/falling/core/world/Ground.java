@@ -14,7 +14,7 @@ public class Ground {
     public static final float GROUND_SCALE = 7000.0f;
 
     public Ground(ResourceRequirements resourceRequirements) {
-        this.groundQuad = new Quad("ground_test.jpg", true, true);
+        this.groundQuad = new Quad("ground_test.jpg", true, true, 6000, 25, 1000, 1000);
         resourceRequirements.require(groundQuad);
 
         renderGround = new QuadRenderTask(

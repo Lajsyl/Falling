@@ -9,26 +9,25 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultRenderableSorter;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
+import dat367.falling.platform_abstraction.Model;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,8 +41,8 @@ import java.util.Map;
 
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
-	boolean platformIsAndroid;
-	final boolean USING_DEBUG_CAMERA = false;
+	private boolean platformIsAndroid;
+	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
@@ -88,7 +87,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
 
-		modelBatch = new ModelBatch();
+		// Create a new model batch that uses our custom shader provider
+		modelBatch = new ModelBatch(new FallingShaderProvider());
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
@@ -97,7 +97,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		font = new BitmapFont();
 	}
 
-	public void loadResources(ResourceRequirements resourceRequirements) {
+	private void loadResources(ResourceRequirements resourceRequirements) {
 		for (Model model : resourceRequirements.getModels()) {
 			String fileName = model.getModelFileName();
 			if (!models.containsKey(fileName)) {
@@ -115,7 +115,19 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					VertexAttributes.Usage.Normal |
 					VertexAttributes.Usage.TextureCoordinates;
 
-			com.badlogic.gdx.graphics.g3d.Model quadModel = modelBuilder.createRect(
+			/*
+			MeshBuilder builder = new MeshBuilder();
+			builder.begin(attributes, GL20.GL_TRIANGLES);
+			builder.rect(
+					new MeshPartBuilder.VertexInfo().setPos(-1, 0, -1).setUV(0, 0).setCol(null).setNor(0, 1, 0),
+					new MeshPartBuilder.VertexInfo().setPos(-1, 0, +1).setUV(0, 1).setCol(null).setNor(0, 1, 0),
+					new MeshPartBuilder.VertexInfo().setPos(+1, 0, +1).setUV(1, 1).setCol(null).setNor(0, 1, 0),
+					new MeshPartBuilder.VertexInfo().setPos(+1, 0, -1).setUV(1, 0).setCol(null).setNor(0, 1, 0)
+			);
+			Mesh quadMesh = builder.end();
+			*/
+
+			com.badlogic.gdx.graphics.g3d.Model quadModelSource = modelBuilder.createRect(
 					// Corners
 					-1, 0, -1,
 					-1, 0, +1,
@@ -135,7 +147,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Attributes
 					attributes
 			);
-			this.quadModel = new ModelInstance(quadModel);
+			this.quadModel = new ModelInstance(quadModelSource);
+			this.quadModel.userData = QuadShader.QUAD_INDENTIFIER;
 		}
 
 		for (Quad quad : resourceRequirements.getQuads()) {
@@ -230,7 +243,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								.translate(libGdxVector(task.getPosition()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-						modelBatch.render(new ModelInstance(sharedInstance), environment);
+						// Make copy, since stuff like transform and materials would be shared if not
+						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
+						modelInstanceCopy.userData = sharedInstance.userData;
+						modelBatch.render(modelInstanceCopy, environment);
 					}
 				}
 
