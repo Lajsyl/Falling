@@ -11,8 +11,7 @@ import dat367.falling.platform_abstraction.Quad;
 
 public class QuadShader extends BaseShader {
 
-    // NOTE: These will be invalid after init()!
-    private ShaderProgram program;
+    // The renderable used to create this shader, invalid after the call to init
     private Renderable renderable;
 
     public QuadShader(Renderable renderable) {
