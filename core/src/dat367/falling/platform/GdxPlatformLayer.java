@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
+import dat367.falling.math.Matrix;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -428,16 +429,29 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		double pitch = eulerAngles[0];
 		float x = (float)(Math.cos(yaw)*Math.cos(pitch));
 		float y = (float)(Math.sin(pitch));
-		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
+		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
 		return new Vector(x, y, z);
 	}
 
 	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+		float[] eulerAngles = new float[3];
+		paramHeadTransform.getEulerAngles(eulerAngles, 0);
+		double yaw = eulerAngles[1];
+		double pitch = eulerAngles[0];
+		double roll = eulerAngles[2];
 
-		float[] upVector = new float[3];
-		paramHeadTransform.getUpVector(upVector, 0);
-		return new Vector(upVector[0], upVector[1], upVector[2]);
+		Vector up = new Vector(0, 1, 0);
+		Vector yawLookDirection = new Vector((float) Math.cos(yaw), 0, (float) -Math.sin(yaw));
+		Vector yawPitchLookDirection = getVRLookDirection(paramHeadTransform);
+		Vector yawPitchUpDirection = yawLookDirection.scale((float)-Math.sin(pitch))
+									.add(up.scale((float)Math.cos(pitch)));
+		Vector yawPitchLeftDirection = yawPitchUpDirection.cross(yawPitchLookDirection);
+		Vector upDirection = yawPitchLeftDirection.scale((float)Math.sin(roll))
+							.add(yawPitchUpDirection.scale((float)Math.cos(roll)));
+
+		return upDirection;
 	}
+
 
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {

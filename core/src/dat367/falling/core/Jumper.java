@@ -51,9 +51,8 @@ public class Jumper extends Observable {
         this.lookDirection = lookDirection;
     }
 
-    public void setUpVector(Vector upVector){ this.upVector = upVector;
-        System.out.println(lookDirection.dot(upVector));
-
+    public void setUpVector(Vector upVector) {
+        this.upVector = upVector;
     }
 
     public Vector getNeutralDirection() {
