@@ -115,18 +115,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					VertexAttributes.Usage.Normal |
 					VertexAttributes.Usage.TextureCoordinates;
 
-			/*
-			MeshBuilder builder = new MeshBuilder();
-			builder.begin(attributes, GL20.GL_TRIANGLES);
-			builder.rect(
-					new MeshPartBuilder.VertexInfo().setPos(-1, 0, -1).setUV(0, 0).setCol(null).setNor(0, 1, 0),
-					new MeshPartBuilder.VertexInfo().setPos(-1, 0, +1).setUV(0, 1).setCol(null).setNor(0, 1, 0),
-					new MeshPartBuilder.VertexInfo().setPos(+1, 0, +1).setUV(1, 1).setCol(null).setNor(0, 1, 0),
-					new MeshPartBuilder.VertexInfo().setPos(+1, 0, -1).setUV(1, 0).setCol(null).setNor(0, 1, 0)
-			);
-			Mesh quadMesh = builder.end();
-			*/
-
 			com.badlogic.gdx.graphics.g3d.Model quadModelSource = modelBuilder.createRect(
 					// Corners
 					-1, 0, -1,
@@ -140,6 +128,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Material
 					new Material(
 							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
+							// This is actually not currently used, since the QuadShader does its own thing
 							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
 							IntAttribute.createCullFace(GL20.GL_NONE)
 					),
