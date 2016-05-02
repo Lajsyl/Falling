@@ -77,4 +77,8 @@ public class Jumper {
     public void setAcceleration(Vector acceleration) {
         this.acceleration = acceleration;
     }
+
+    public FallState getFallState() {
+        return fallState;
+    }
 }

@@ -22,6 +22,6 @@ public class DefaultCloudSimulationConfig implements CloudSimulator.CloudSimulat
 
     @Override
     public float getWindSpeedForHeight(float height) {
-        return (height / maxHeight) * 10.0f;
+        return (height / maxHeight) * 25.0f;
     }
 }

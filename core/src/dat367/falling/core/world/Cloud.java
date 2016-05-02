@@ -37,4 +37,8 @@ public class Cloud {
     public void setScale(float scale) {
         this.scale = scale;
     }
+
+    public float getScale() {
+        return scale;
+    }
 }

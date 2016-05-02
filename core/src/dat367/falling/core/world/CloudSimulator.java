@@ -1,6 +1,7 @@
 package dat367.falling.core.world;
 
 import dat367.falling.core.Jumper;
+import dat367.falling.core.PreJumpState;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
@@ -11,12 +12,11 @@ import java.util.Random;
 public class CloudSimulator {
 
     public static final float SIMULATION_SCALE = 0.35f;
-    public static final float RADIUS = 1200 * SIMULATION_SCALE;
-
     public static final float CLOUD_MIN_SIZE = 75.0f * SIMULATION_SCALE;
     public static final float CLOUD_MAX_SIZE = 800.0f * SIMULATION_SCALE;
 
     public static final float CLOUD_SPAWN_AREA_HEIGHT = 1000.0f;
+    public static final float CLOUD_SPAWN_AREA_RADIUS = CLOUD_SPAWN_AREA_HEIGHT / 2;
 
     public static final int MAX_NUMBER_OF_CLOUDS = 75;
     public static final float WIND_DIRECTION_DEVIATION_SCALE = 0.25f;
@@ -44,7 +44,6 @@ public class CloudSimulator {
         }
 
         float currentCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
-        assert currentCloudCount < MAX_NUMBER_OF_CLOUDS;
         for (int i = 0; i < currentCloudCount; i++) {
             // Get cloud from passive clouds
             Cloud cloud = passiveClouds.remove();
@@ -57,21 +56,42 @@ public class CloudSimulator {
         }
     }
 
+    private boolean cloudIsOutsideBounds(Cloud cloud) {
+
+        // Is cloud above "roof"?
+        float currentRoof = basePosition.getY() + CLOUD_SPAWN_AREA_HEIGHT / 2;
+        if (cloud.getPosition().getY() > currentRoof) {
+            return true;
+        }
+
+        // Is cloud outside radius?
+        final float distanceToCloudCenter = cloud.getPosition().sub(basePosition).length();
+        final float distanceToCloudEdge = distanceToCloudCenter - cloud.getScale() / 2;
+        if (distanceToCloudEdge > CLOUD_SPAWN_AREA_RADIUS) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void update(float deltaTime, Jumper jumper) {
         this.basePosition = jumper.getPosition();
-        float currentRoof = basePosition.getY() + CLOUD_SPAWN_AREA_HEIGHT / 2;
         float recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
 
         Iterator<Cloud> cloudIterator = activeClouds.iterator();
         while (cloudIterator.hasNext()) {
             Cloud cloud = cloudIterator.next();
-            if (cloud.getPosition().getY() > currentRoof) {
+            if (cloudIsOutsideBounds(cloud)) {
                 // If there are more active clouds that recommended, put it in the passive list
                 if (activeClouds.size() > recommendedCloudCount) {
                     passiveClouds.add(cloud);
                     cloudIterator.remove();
                 } else {
-                    spawnCloudAtBottom(cloud);
+                    if (jumper.getFallState() instanceof PreJumpState) {
+                        spawnCloudAtSpawnBorders(cloud);
+                    } else {
+                        spawnCloudAtBottom(cloud);
+                    }
                 }
             }
             cloud.update(deltaTime);
@@ -88,10 +108,26 @@ public class CloudSimulator {
         randomizeVelocity(cloud);
         randomizeScale(cloud);
     }
+    
+    private void spawnCloudAtSpawnBorders(Cloud cloud) {
+        randomizeSpawnBorderPosition(cloud);
+        randomizeYPosition(cloud);
+        randomizeVelocity(cloud);
+        randomizeScale(cloud);
+    }
+
+    private void randomizeSpawnBorderPosition(Cloud cloud) {
+        float distanceAlongBorder = (random.nextFloat() - 0.5f) * 2 * CLOUD_SPAWN_AREA_RADIUS * 2;
+        Vector spawnAreaCorner = basePosition.sub(new Vector(CLOUD_SPAWN_AREA_RADIUS, 0, CLOUD_SPAWN_AREA_RADIUS));
+        Vector newPosition = random.nextBoolean() ? spawnAreaCorner.add(new Vector(distanceAlongBorder, 0, 0))
+                                                  : spawnAreaCorner.add(new Vector(0, 0, distanceAlongBorder));
+
+        cloud.setPosition(newPosition);
+    }
 
     private void randomizePosition(Cloud cloud) {
-        float x = basePosition.getX() + (random.nextFloat() - 0.5f) * 2 * RADIUS;
-        float z = basePosition.getZ() + (random.nextFloat() - 0.5f) * 2 * RADIUS;
+        float x = basePosition.getX() + (random.nextFloat() - 0.5f) * 2 * CLOUD_SPAWN_AREA_RADIUS;
+        float z = basePosition.getZ() + (random.nextFloat() - 0.5f) * 2 * CLOUD_SPAWN_AREA_RADIUS;
         float y = basePosition.getY() - CLOUD_SPAWN_AREA_HEIGHT / 2;
 
         cloud.setPosition(new Vector(x, y, z));
@@ -116,7 +152,7 @@ public class CloudSimulator {
     }
 
     private Vector getRandomWindDirection() {
-        return new Vector(random.nextFloat(), 0, random.nextFloat()).normalized();
+        return new Vector(random.nextFloat() - 0.5f, 0, random.nextFloat() - 0.5f).normalized();
     }
 
     private float getJumperHeight() {
