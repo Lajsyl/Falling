@@ -53,12 +53,13 @@ public class ParachuteFallingState implements FallState {
     //TODO steering
     private Vector calcAccXZ(Jumper jumper){
 
-        Vector targetVelocity = parachuteDirection.normalized();
-        targetVelocity = targetVelocity.projectedXZ()/*.mirrorY()*/.scale(80);
-        float maxSpeed = 35f;
-        if (targetVelocity.length() > maxSpeed) {
-            targetVelocity = targetVelocity.normalized().scale(maxSpeed);
-        }
+        Vector rightDirection = parachuteDirection.cross(jumper.getUpVector());
+
+        Vector projected = jumper.getUpVector().lineProjection(rightDirection);
+
+        Float rollAmount = rightDirection.sub(projected).length()-1;
+
+        Vector targetVelocity = jumper.getVelocity().projectedXZ().rotateAroundY(rollAmount);
 
         Vector currentVelocity = jumper.getVelocity();
         currentVelocity = currentVelocity.projectedXZ();

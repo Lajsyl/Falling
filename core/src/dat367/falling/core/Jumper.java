@@ -55,6 +55,10 @@ public class Jumper extends Observable {
         this.upVector = upVector;
     }
 
+    public Vector getUpVector(){
+        return upVector;
+    }
+
     public Vector getNeutralDirection() {
         return neutralDirection;
     }
