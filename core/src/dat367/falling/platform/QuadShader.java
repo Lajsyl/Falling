@@ -55,7 +55,7 @@ public class QuadShader extends BaseShader {
     public void begin(Camera camera, RenderContext context) {
         super.begin(camera, context);
 
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        // Since many/most quads can be visible from both sides
         Gdx.gl.glDisable(GL20.GL_CULL_FACE);
     }
 
@@ -81,12 +81,19 @@ public class QuadShader extends BaseShader {
 
         set(cameraPositionUniform, camera.position);
 
+        if (quad.isOpaque()) {
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+            Gdx.gl.glDepthMask(true);
+        } else {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glDepthMask(false);
+        }
+
         super.render(renderable);
     }
 
     @Override
     public void end() {
-        Gdx.gl.glDisable(GL20.GL_BLEND);
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         super.end();
     }

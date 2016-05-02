@@ -10,7 +10,7 @@ public class Cloud {
     private float scale = 1.0f;
 
     public Cloud(ResourceRequirements resourceRequirements) {
-        quad = new Quad("cloud_01.png", true, true, CloudSimulator.HEIGHT_BELOW, 75, 1, 1);
+        quad = new Quad("cloud_01.png", true, true, CloudSimulator.CLOUD_SPAWN_AREA_HEIGHT / 2, 250, 1, 1, false);
         resourceRequirements.require(quad);
     }
 

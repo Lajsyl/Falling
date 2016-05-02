@@ -16,10 +16,9 @@ public class CloudSimulator {
     public static final float CLOUD_MIN_SIZE = 75.0f * SIMULATION_SCALE;
     public static final float CLOUD_MAX_SIZE = 800.0f * SIMULATION_SCALE;
 
-    public static final float HEIGHT_ABOVE = 300;
-    public static final float HEIGHT_BELOW = 500;
+    public static final float CLOUD_SPAWN_AREA_HEIGHT = 1000.0f;
 
-    public static final int MAX_NUMBER_OF_CLOUDS = 50;
+    public static final int MAX_NUMBER_OF_CLOUDS = 75;
     public static final float WIND_DIRECTION_DEVIATION_SCALE = 0.25f;
 
     private LinkedList<Cloud> activeClouds = new LinkedList<Cloud>();
@@ -60,14 +59,13 @@ public class CloudSimulator {
 
     public void update(float deltaTime, Jumper jumper) {
         this.basePosition = jumper.getPosition();
-        float currentRoof = basePosition.getY() + HEIGHT_ABOVE;
+        float currentRoof = basePosition.getY() + CLOUD_SPAWN_AREA_HEIGHT / 2;
+        float recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
 
         Iterator<Cloud> cloudIterator = activeClouds.iterator();
         while (cloudIterator.hasNext()) {
             Cloud cloud = cloudIterator.next();
             if (cloud.getPosition().getY() > currentRoof) {
-                float recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
-
                 // If there are more active clouds that recommended, put it in the passive list
                 if (activeClouds.size() > recommendedCloudCount) {
                     passiveClouds.add(cloud);
@@ -77,6 +75,11 @@ public class CloudSimulator {
                 }
             }
             cloud.update(deltaTime);
+        }
+
+        // Spawn extra clouds if needed
+        while (activeClouds.size() < recommendedCloudCount) {
+            activeClouds.add(passiveClouds.remove());
         }
     }
 
@@ -89,7 +92,7 @@ public class CloudSimulator {
     private void randomizePosition(Cloud cloud) {
         float x = basePosition.getX() + (random.nextFloat() - 0.5f) * 2 * RADIUS;
         float z = basePosition.getZ() + (random.nextFloat() - 0.5f) * 2 * RADIUS;
-        float y = basePosition.getY() - HEIGHT_BELOW;
+        float y = basePosition.getY() - CLOUD_SPAWN_AREA_HEIGHT / 2;
 
         cloud.setPosition(new Vector(x, y, z));
     }
@@ -108,7 +111,7 @@ public class CloudSimulator {
     }
 
     private void randomizeYPosition(Cloud cloud) {
-        float y = basePosition.getY() - HEIGHT_BELOW + random.nextFloat() * (HEIGHT_BELOW + HEIGHT_ABOVE);
+        float y = (basePosition.getY() - CLOUD_SPAWN_AREA_HEIGHT / 2) + random.nextFloat() * CLOUD_SPAWN_AREA_HEIGHT;
         cloud.setPosition(new Vector(cloud.getPosition().getX(), y, cloud.getPosition().getZ()));
     }
 
