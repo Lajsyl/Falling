@@ -1,5 +1,7 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Vector;
+
 /**
  * Created by Lisa on 2016-05-01.
  */
@@ -13,11 +15,10 @@ public class LandedState implements FallState {
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
 
-        //For Y-acc look att the parachute. Should be the same.
+
         return null;
     }
 
-    public boolean isPosYZero(Jumper jumper){
-     return false;
-    }
+
+
 }
