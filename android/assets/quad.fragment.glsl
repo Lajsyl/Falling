@@ -2,15 +2,22 @@
     precision mediump float;
 #endif
 
-varying vec4 v_color;
 varying vec2 v_texCoords;
+varying vec3 v_fragWorldPosition;
+
 uniform sampler2D u_texture;
-uniform mat4 u_projTrans;
+uniform float u_maxDrawDistance;
+uniform float u_maxOpacityDistance;
+uniform vec3 u_cameraPosition;
 
-void main() {
-        vec3 color = texture2D(u_texture, v_texCoords).rgb;
-        float gray = (color.r + color.g + color.b) / 3.0;
-        vec3 grayscale = vec3(gray);
+void main()
+{
+    vec4 textureColor = texture2D(u_texture, v_texCoords);
 
-        gl_FragColor = vec4(grayscale, 1.0);
+    float fragmentToCameraDistance = length(u_cameraPosition - v_fragWorldPosition);
+    float alphaScale = smoothstep(u_maxOpacityDistance, u_maxDrawDistance, fragmentToCameraDistance);
+    alphaScale = 1.0 - alphaScale;
+    textureColor.a = textureColor.a * alphaScale;
+
+    gl_FragColor = textureColor;
 }

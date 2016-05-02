@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.world.Ground;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -46,7 +47,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private FallingGame game;
 	private Camera mainCamera;
 	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 10000.0f;
+	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
 	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
@@ -154,6 +155,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
 				FileHandle fileHandle = Gdx.files.internal(textureFileName);
 				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
+				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+				quadTexture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
