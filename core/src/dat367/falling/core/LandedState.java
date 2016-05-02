@@ -12,4 +12,9 @@ public class LandedState implements FallState {
     public FallState handleFalling(float deltaTime, Jumper jumper) {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "Landed";
+    }
 }

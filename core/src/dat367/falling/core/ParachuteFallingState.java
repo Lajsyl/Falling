@@ -14,11 +14,13 @@ public class ParachuteFallingState implements FallState {
     public void setup(Jumper jumper) {
         jumper.setNeutralDirection(jumper.getLookDirection().projectedXZ().normalized());
         setParachuteDirection(jumper.getNeutralDirection());
+        jumper.setVelocity(jumper.getNeutralDirection().scale(1000));
+
     }
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-
+        System.out.println("handle Falling");
         jumper.setAcceleration(calculateAcceleration(jumper));
 
         Vector v0 = jumper.getVelocity();
@@ -36,6 +38,7 @@ public class ParachuteFallingState implements FallState {
 
 
     private Vector calculateAcceleration(Jumper jumper){
+        System.out.println("calculateAcceleration");
         return calcAccY(jumper).add(calcAccXZ(jumper));
     }
 
@@ -58,13 +61,16 @@ public class ParachuteFallingState implements FallState {
         Vector projected = jumper.getUpVector().lineProjection(rightDirection);
 
         Float rollAmount = rightDirection.sub(projected).length()-1;
+        System.out.println("rollAmount = " + rollAmount);
 
-        Vector targetVelocity = jumper.getVelocity().projectedXZ().rotateAroundY(rollAmount);
+        Vector targetVelocity = jumper.getVelocity().projectedXZ().rotateAroundY(rollAmount*1);
 
         Vector currentVelocity = jumper.getVelocity();
         currentVelocity = currentVelocity.projectedXZ();
 
         Vector newAcc = targetVelocity.sub(currentVelocity);
+
+        System.out.println("currentVelocity = " + currentVelocity);
 
         return newAcc.scale(10f);
 
@@ -84,5 +90,8 @@ public class ParachuteFallingState implements FallState {
         parachuteDirection = vector;
     }
 
-
+    @Override
+    public String toString() {
+        return "Parachute";
+    }
 }

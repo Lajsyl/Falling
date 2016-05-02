@@ -100,4 +100,8 @@ public class Jumper extends Observable {
     public boolean getScreenClicked(){
         return screenClicked;
     }
+
+    public String getFallStateDebugString() {
+        return fallState.toString();
+    }
 }

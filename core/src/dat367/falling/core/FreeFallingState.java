@@ -18,7 +18,6 @@ public class FreeFallingState implements FallState, Observer {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-
         jumper.setAcceleration(calculateAcceleration(jumper));
         Vector v0 = new Vector(jumper.getVelocity());
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
@@ -85,5 +84,10 @@ public class FreeFallingState implements FallState, Observer {
     @Override
     public void update(Observable o, Object arg) {
         parachutePulled = ((Jumper) o).getScreenClicked();
+    }
+
+    @Override
+    public String toString() {
+        return "Free falling";
     }
 }

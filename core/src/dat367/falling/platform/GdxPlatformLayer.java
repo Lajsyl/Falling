@@ -22,14 +22,12 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
+import dat367.falling.core.FallState;
 import dat367.falling.core.FallingGame;
-import dat367.falling.math.Matrix;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -243,6 +241,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		spriteBatch.begin();
 		{
 			String debugText =
+					getFallStateString() + "\n" +
 					"Camera pos: " + camera.position + "\n" +
 					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
@@ -272,6 +271,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
 
+	}
+
+	private String getFallStateString() {
+		return game.getCurrentJump().getJumper().getFallStateDebugString();
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
@@ -412,6 +415,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		game.setLookDirection(getVRLookDirection(paramHeadTransform));
 		game.setUpVector(getVRUpVector(paramHeadTransform));
+
+		if (Gdx.input.justTouched()) {
+			game.screenClicked(true);
+		}
 
 		// Update game logic
 		updateGame();
