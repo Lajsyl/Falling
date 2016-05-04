@@ -306,6 +306,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
+			game.screenClicked(true);
+		}
+
 		if (Gdx.input.isCursorCatched()) {
 
 			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
@@ -405,6 +409,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 
 		game.setLookDirection(getVRLookDirection(paramHeadTransform));
+		game.setUpVector(getVRUpVector(paramHeadTransform));
 
 		// Update game logic
 		updateGame();
@@ -425,6 +430,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		float y = (float)(Math.sin(pitch));
 		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
 		return new Vector(x, y, z);
+	}
+
+	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+
+		float[] upVector = new float[3];
+		paramHeadTransform.getUpVector(upVector, 0);
+		return new Vector(upVector[0], upVector[1], upVector[2]);
 	}
 
 	@Override
@@ -456,9 +468,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
+	//screen clicks should release the parachute
 	@Override
 	public void onCardboardTrigger() {
-
+		game.screenClicked(true);
 	}
 
 	//---- UTILITIES ----//

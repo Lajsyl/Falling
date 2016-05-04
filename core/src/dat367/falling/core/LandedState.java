@@ -40,4 +40,5 @@ public class LandedState implements FallState {
         Vector v = v0.add(jumper.getVelocity().scale(deltaTime/2));
         return v.add(jumper.getPosition());
     }
+
 }
