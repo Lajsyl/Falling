@@ -17,6 +17,10 @@ public class FallingGame {
 
     public void screenClicked(boolean screenClicked) {
         currentJump.getJumper().setScreenClicked(screenClicked);
+        //Can be done before you've stopped
+        if(currentJump.getJumper().getFallState() instanceof LandedState){
+            this.resetGame();
+        }
     }
 
     public Jump getCurrentJump() {
@@ -36,6 +40,11 @@ public class FallingGame {
     private void setCurrentJump(Jump jump){
         this.currentJump = jump;
     }
+
+    private void resetGame(){
+        setCurrentJump(new Jump());
+    }
+
 
 
 }
