@@ -11,6 +11,11 @@ import java.util.Random;
 
 public class CloudSimulator {
 
+    interface CloudSimulationConfig {
+        int getCloudAmountForHeight(float height, int maxAmountOfClouds);
+        float getWindSpeedForHeight(float height);
+    }
+
     public static final float SIMULATION_SCALE = 0.35f;
     public static final float CLOUD_MIN_SIZE = 75.0f * SIMULATION_SCALE;
     public static final float CLOUD_MAX_SIZE = 800.0f * SIMULATION_SCALE;
@@ -27,6 +32,8 @@ public class CloudSimulator {
     private CloudSimulationConfig simulationConfig;
     private Vector defaultWindDirection;
     private Vector basePosition;
+
+    private Vector airplaneVelocity;
 
     private Random random = new Random();
 
@@ -76,11 +83,23 @@ public class CloudSimulator {
 
     public void update(float deltaTime, Jumper jumper) {
         this.basePosition = jumper.getPosition();
-        float recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
+        int recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
 
-        Iterator<Cloud> cloudIterator = activeClouds.iterator();
-        while (cloudIterator.hasNext()) {
+        // Get additional velocity from the airplane
+        // TODO: Implement properly!
+        if (airplaneVelocity == null) {
+            final float airplaneSpeed = 85.0f;
+            airplaneVelocity = new Vector(0, 0, 1).normalized().scale(airplaneSpeed);
+        }
+        else if (!(jumper.getFallState() instanceof PreJumpState)) {
+            airplaneVelocity = airplaneVelocity.scale(0.999f);
+        }
+        Vector cloudAirplaneVelocity = airplaneVelocity.scale(-1);
+
+        // Update and "distribute" available clouds
+        for (Iterator<Cloud> cloudIterator = activeClouds.iterator(); cloudIterator.hasNext(); /*_*/) {
             Cloud cloud = cloudIterator.next();
+
             if (cloudIsOutsideBounds(cloud)) {
                 // If there are more active clouds that recommended, put it in the passive list
                 if (activeClouds.size() > recommendedCloudCount) {
@@ -88,13 +107,18 @@ public class CloudSimulator {
                     cloudIterator.remove();
                 } else {
                     if (jumper.getFallState() instanceof PreJumpState) {
-                        spawnCloudAtSpawnBorders(cloud);
+                        // TODO: Make sure clouds only spawn in the leading edge of the airplane direction, now it's possible that it spawn on the left side, and since the place goes right in high speed we will never see them.
+                        //spawnCloudAtSpawnBorders(cloud);
+                        spawnCloudAtBottom(cloud);
+                        randomizeYPosition(cloud);
                     } else {
+                        // TODO: Make sure there isn't a big blob of clouds when you encounter the first clouds spawned at the bottom (i.e. when fall state initially is changed to FreeFallingState here below)
                         spawnCloudAtBottom(cloud);
                     }
                 }
             }
-            cloud.update(deltaTime);
+
+            cloud.update(deltaTime, cloudAirplaneVelocity);
         }
 
         // Spawn extra clouds if needed
@@ -157,11 +181,6 @@ public class CloudSimulator {
 
     private float getJumperHeight() {
         return basePosition.getY();
-    }
-
-    interface CloudSimulationConfig {
-        float getCloudAmountForHeight(float height, int maxAmountOfClouds);
-        float getWindSpeedForHeight(float height);
     }
 
 

@@ -14,10 +14,10 @@ public class DefaultCloudSimulationConfig implements CloudSimulator.CloudSimulat
     }
 
     @Override
-    public float getCloudAmountForHeight(float height, int maxAmountOfClouds) {
+    public int getCloudAmountForHeight(float height, int maxAmountOfClouds) {
         // Only clouds in height 1000m-4000m, and most at 4000.
         float multiple = FallingMath.smoothstep(4000, 1000, height);
-        return (1.0f - multiple) * maxAmountOfClouds;
+        return Math.round((1.0f - multiple) * maxAmountOfClouds);
     }
 
     @Override

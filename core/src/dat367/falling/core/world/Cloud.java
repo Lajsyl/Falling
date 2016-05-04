@@ -15,8 +15,16 @@ public class Cloud {
     }
 
 
-    public void update(float deltaTime) {
-        this.position = position.add(velocity.scale(deltaTime));
+    /**
+     *
+     * Update cloud
+     *
+     * @param deltaTime deltaTime
+     * @param additionalVelocity deltaTime-premultiplied velocity
+     */
+    public void update(float deltaTime, Vector additionalVelocity) {
+        Vector additional = additionalVelocity.scale(deltaTime);
+        this.position = position.add(velocity.scale(deltaTime)).add(additional);
 
         RenderTask cloudTask = new QuadRenderTask(quad, position, new Vector(0,0,0), new Vector(scale,1,scale));
         RenderQueue.addTask(cloudTask);
