@@ -26,14 +26,21 @@ public class LandedState implements FallState {
     public Vector calculateAcceleration(Jumper jumper){
         Vector targetVelocity = new Vector(0,0,0);
         Vector currentVelocity = jumper.getVelocity();
-        currentVelocity = currentVelocity.projectedXZ();
-        Vector newAcc = targetVelocity.sub(currentVelocity);
 
-        return newAcc.scale(10f);
+        Vector newAcc = targetVelocity.sub(currentVelocity);
+        return newAcc.scale(1.1f);
     }
 
     public Vector calculateVelocity(float deltaTime, Jumper jumper){
-        return jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
+
+        Vector v = jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
+
+        v = v.projectedXZ();
+
+        if(v.length() < 0.001){
+            return new Vector(0,0,0);
+        }else
+            return v;
     }
 
     public Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
