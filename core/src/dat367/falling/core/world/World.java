@@ -20,7 +20,7 @@ public class World {
         jumper = new Jumper(getStartPosition(), getStartLookDirection());
 
         ground = new Ground(resourceRequirements);
-        cloudSimulator = new CloudSimulator(50, resourceRequirements, jumper);
+        cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
 
         resourceRequirements.require(airplane);
     }

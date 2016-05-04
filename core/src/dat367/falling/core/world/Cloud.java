@@ -10,13 +10,21 @@ public class Cloud {
     private float scale = 1.0f;
 
     public Cloud(ResourceRequirements resourceRequirements) {
-        quad = new Quad("cloud_01.png", true, true, CloudSimulator.HEIGHT_BELOW, CloudSimulator.HEIGHT_BELOW / 5, 1, 1);
+        quad = new Quad("cloud_01.png", true, true, CloudSimulator.CLOUD_SPAWN_AREA_HEIGHT / 2, 250, 1, 1, false);
         resourceRequirements.require(quad);
     }
 
 
-    public void update(float deltaTime) {
-        this.position = position.add(velocity.scale(deltaTime));
+    /**
+     *
+     * Update cloud
+     *
+     * @param deltaTime deltaTime
+     * @param additionalVelocity deltaTime-premultiplied velocity
+     */
+    public void update(float deltaTime, Vector additionalVelocity) {
+        Vector additional = additionalVelocity.scale(deltaTime);
+        this.position = position.add(velocity.scale(deltaTime)).add(additional);
 
         RenderTask cloudTask = new QuadRenderTask(quad, position, new Vector(0,0,0), new Vector(scale,1,scale));
         RenderQueue.addTask(cloudTask);
@@ -36,5 +44,9 @@ public class Cloud {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public float getScale() {
+        return scale;
     }
 }

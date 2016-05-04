@@ -9,6 +9,7 @@ public class Quad {
 
     private final boolean aspectRatioAdjust;
     private final boolean useMipMaps;
+    private final boolean isOpaque;
 
     private final float maxDrawDistance;
     private final float fadeOutDistance;
@@ -17,11 +18,12 @@ public class Quad {
     private Float aspectRatio = null;
 
     public Quad(String textureFileName) {
-        this(textureFileName, true, true, 400, 50, 1f, 1f);
+        this(textureFileName, true, true, 400, 50, 1f, 1f, false);
     }
 
     public Quad(String textureFileName, boolean aspectRatioAdjust, boolean useMipMaps,
-                float maxDrawDistance, float fadeOutDistance, float uvXScale, float uvYScale) {
+                float maxDrawDistance, float fadeOutDistance, float uvXScale, float uvYScale,
+                boolean isOpaque) {
         this.textureFileName = textureFileName;
 
         this.uvXScale = uvXScale;
@@ -29,6 +31,7 @@ public class Quad {
 
         this.aspectRatioAdjust = aspectRatioAdjust;
         this.useMipMaps = useMipMaps;
+        this.isOpaque = isOpaque;
 
         this.maxDrawDistance = maxDrawDistance;
         this.fadeOutDistance = fadeOutDistance;
@@ -50,6 +53,10 @@ public class Quad {
 
     public boolean shouldUseMipMaps() {
         return useMipMaps;
+    }
+
+    public boolean isOpaque() {
+        return isOpaque;
     }
 
     public float getMaxDrawDistance() {

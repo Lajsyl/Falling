@@ -13,12 +13,12 @@ public class Ground {
 
     public static final float SCALE = 70000.0f;
 
-    public static final String TEXTURE_NAME = "repeating_forest.jpg";
-    public static final float ESTIMATED_TEXTURE_SIZE = 60.0f; /* meters */
+    public static final String TEXTURE_NAME = "repeating_water.jpg";
+    public static final float ESTIMATED_TEXTURE_SIZE = 10.0f; /* meters */
     public static final float UV_SCALE = SCALE / ESTIMATED_TEXTURE_SIZE;
 
     public Ground(ResourceRequirements resourceRequirements) {
-        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 500, UV_SCALE, UV_SCALE);
+        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 500, UV_SCALE, UV_SCALE, true);
         resourceRequirements.require(groundQuad);
 
         renderGround = new QuadRenderTask(
