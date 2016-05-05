@@ -34,7 +34,7 @@ eclipse {
     }
 }
 
-task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
+task afterEclipseImport(description: "Post processing after projectOntoLine generation", group: "IDE") {
   doLast {
     def classpath = new XmlParser().parse(file(".classpath"))
     new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);

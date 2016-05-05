@@ -15,7 +15,7 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public void setup(Jumper jumper) {
-        jumper.setNeutralDirection(jumper.getLookDirection().projectedXZ().normalized());
+        jumper.setNeutralDirection(jumper.getLookDirection().projectOntoPlaneXZ().normalized());
         setParachuteDirection(jumper.getNeutralDirection());
         jumper.setVelocity(jumper.getVelocity().add(jumper.getNeutralDirection().scale(10)));
 
@@ -70,11 +70,11 @@ public class ParachuteFallingState implements FallState {
 //
 //        float rotationalSpeed = calculcateRotationalSpeed(deltaTime);
 //
-//        Vector targetVelocity = jumper.getVelocity().projectedXZ().rotateAroundY(rotationalSpeed);
+//        Vector targetVelocity = jumper.getVelocity().projectOntoPlaneXZ().rotateAroundY(rotationalSpeed);
 //
 //
 //        Vector currentVelocity = jumper.getVelocity();
-//        currentVelocity = currentVelocity.projectedXZ();
+//        currentVelocity = currentVelocity.projectOntoPlaneXZ();
 //
 //        Vector newAcc = targetVelocity.sub(currentVelocity);
 //
@@ -92,9 +92,9 @@ public class ParachuteFallingState implements FallState {
     private float calculateRotationalAcceleration(float deltaTime, Jumper jumper) {
         Vector up = new Vector(0, 1, 0);
 
-        Vector rightDirection = jumper.getVelocity().projectedXZ().normalized().cross(up);
+        Vector rightDirection = jumper.getVelocity().projectOntoPlaneXZ().normalized().cross(up);
 
-        Vector projected = jumper.getUpVector().lineProjection(rightDirection);
+        Vector projected = jumper.getUpVector().projectOntoLine(rightDirection);
 
         Float rollAmount = rightDirection.sub(projected).length() - 1;
         System.out.println("rollAmount = " + rollAmount);

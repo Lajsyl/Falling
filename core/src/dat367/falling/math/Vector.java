@@ -4,17 +4,18 @@ import java.text.DecimalFormat;
 
 public class Vector {
 
-    private float x, y, z;
+    private final float x;
+    private final float y;
+    private final float z;
 
     public Vector(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    public Vector(Vector v){
-        this.x = v.getX();
-        this.y = v.getY();
-        this.z = v.getZ();
+
+    public Vector(Vector other) {
+        this(other.getX(), other.getY(), other.getZ());
     }
 
     public float getX() {
@@ -37,6 +38,30 @@ public class Vector {
         return new Vector(x - other.x, y - other.y, z - other.z);
     }
 
+    public float dot(Vector other) {
+        return (x * other.x) + (y * other.y) + (z * other.z);
+    }
+
+    public Vector cross(Vector other) {
+        return new Vector(
+                y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x
+        );
+    }
+
+    public Vector mul(Matrix matrix) {
+        return new Vector(
+                matrix.getColumn1().dot(this),
+                matrix.getColumn2().dot(this),
+                matrix.getColumn3().dot(this)
+        );
+    }
+
+    public Vector scale(float scale) {
+        return new Vector(x * scale, y * scale, z * scale);
+    }
+
     public float length() {
         return (float)Math.sqrt(lengthSquared());
     }
@@ -45,56 +70,33 @@ public class Vector {
         return x*x + y*y + z*z;
     }
 
-    public Vector scale(float scale) {
-        return new Vector(x * scale, y * scale, z * scale);
-    }
-
     public Vector normalized() {
         float length = length();
         return scale(1.0f / length);
     }
 
-    public Vector projectedXZ(){
-
-        return (this.multWithMatrix(new Matrix(1,0,0,
-                                                0,0,0,
-                                                0,0,1)));
-
-
+    public Vector projectOntoLine(Vector line) {
+        Vector direction = line.normalized();
+        float length = this.dot(line);
+        return direction.scale(length);
     }
 
-    public Vector lineProjection(Vector line){
-
-        return line.scale((this.dot(line))/(line.dot(line)));
+    public Vector projectOntoPlaneXZ() {
+        return new Vector(this.getX(), 0, this.getZ());
     }
 
-    public Vector rotateAroundY(float degrees){
-
-        double theta = (double) degrees;
-
-        return (this.multWithMatrix(new Matrix((float) Math.cos(theta), 0, (float)Math.sin(theta),
-                                                        0, 1, 0,
-                                                (float)-Math.sin(theta), 0, (float) Math.cos(theta))));
-
+    public Vector mirrorPlaneXZ() {
+        return new Vector(-getX(), getY(), -getZ());
     }
 
-    public Vector mirrorY(){
-
-        return new Vector(this.multWithMatrix(new Matrix(-1,0,0,
-                                                        0,1,0,
-                                                        0,0,-1)));
-    }
-
-    public float dot(Vector other) {
-        return x*other.x + y*other.y + z*other.z;
-    }
-
-    public Vector cross(Vector other) {
-        return new Vector(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
-    }
-
-    public Vector multWithMatrix(Matrix A){
-        return new Vector(A.getI1().dot(this), A.getI2().dot(this), A.getI3().dot(this));
+    public Vector rotateAroundY(float radians) {
+        return this.mul(
+                new Matrix(
+                        (float) Math.cos(radians), 0, (float)Math.sin(radians),
+                        0, 1, 0,
+                        (float)-Math.sin(radians), 0, (float) Math.cos(radians)
+                )
+        );
     }
 
     @Override

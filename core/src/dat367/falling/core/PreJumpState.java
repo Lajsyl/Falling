@@ -35,9 +35,9 @@ public class PreJumpState implements FallState {
         final Vector up = new Vector(0, 1, 0);
 
         float cosPitch = lookDirection.dot(horizontalLookDirection);
-        cosPitch = FallingMath.clamp0_1(cosPitch);
+        cosPitch = FallingMath.clamp01(cosPitch);
         float cosYaw = outwards.dot(horizontalLookDirection);
-        cosYaw = FallingMath.clamp0_1(cosYaw);
+        cosYaw = FallingMath.clamp01(cosYaw);
 
         double interpolation;
         if (lookDirection.getY() > 0) {

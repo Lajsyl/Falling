@@ -71,7 +71,7 @@ task run(type: Exec) {
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'dat367.falling/dat367.falling.AndroidLauncher'
 }
 
-// sets up the Android Eclipse project, using the old Ant based build.
+// sets up the Android Eclipse projectOntoLine, using the old Ant based build.
 eclipse {
     // need to specify Java source sets explicitly, SpringSource Gradle Eclipse plugin
     // ignores any nodes added in classpath.file.withXml
@@ -102,7 +102,7 @@ eclipse {
     }
 }
 
-// sets up the Android Idea project, using the old Ant based build.
+// sets up the Android Idea projectOntoLine, using the old Ant based build.
 idea {
     module {
         sourceDirs += file("src");

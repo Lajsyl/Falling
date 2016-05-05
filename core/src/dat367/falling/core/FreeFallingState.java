@@ -49,14 +49,14 @@ public class FreeFallingState implements FallState, Observer {
     //Skalning är väldigt tveksam just nu
     private Vector calcAccXZ(Jumper jumper){
         Vector targetVelocity = jumper.getLookDirection().normalized();
-        targetVelocity = targetVelocity.projectedXZ()/*.mirrorY()*/.scale(80);
+        targetVelocity = targetVelocity.projectOntoPlaneXZ()/*.mirrorPlaneXZ()*/.scale(80);
         float maxSpeed = 35f;
         if (targetVelocity.length() > maxSpeed) {
             targetVelocity = targetVelocity.normalized().scale(maxSpeed);
         }
 
         Vector currentVelocity = jumper.getVelocity();
-        currentVelocity = currentVelocity.projectedXZ();
+        currentVelocity = currentVelocity.projectOntoPlaneXZ();
 
         Vector newAcc = targetVelocity.sub(currentVelocity);
 
