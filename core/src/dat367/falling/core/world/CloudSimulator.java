@@ -23,7 +23,7 @@ public class CloudSimulator {
     public static final float CLOUD_SPAWN_AREA_HEIGHT = 1000.0f;
     public static final float CLOUD_SPAWN_AREA_RADIUS = CLOUD_SPAWN_AREA_HEIGHT / 2;
 
-    public static final int MAX_NUMBER_OF_CLOUDS = 75;
+    public static final int MAX_NUMBER_OF_CLOUDS = 25;
     public static final float WIND_DIRECTION_DEVIATION_SCALE = 0.25f;
 
     private LinkedList<Cloud> activeClouds = new LinkedList<Cloud>();

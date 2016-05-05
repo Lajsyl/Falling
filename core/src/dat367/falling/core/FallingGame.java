@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 
 public class FallingGame {
@@ -25,11 +26,15 @@ public class FallingGame {
         return currentJump;
     }
 
-    public void setLookDirection(Vector vector) {
-        currentJump.getJumper().setLookDirection(vector);
+    public void setJumperHeadRotation(Rotation rotation) {
+        currentJump.getJumper().setHeadRotation(rotation);
     }
 
-    public void setUpVector(Vector vector) { currentJump.getJumper().setUpVector(vector);}
+//    public void setLookDirection(Vector vector) {
+//        currentJump.getJumper().setLookDirection(vector);
+//    }
+
+//    public void setUpVector(Vector vector) { currentJump.getJumper().setUpVector(vector);}
 
     public Vector getLookDirection() {
         return currentJump.getJumper().getLookDirection();
@@ -43,6 +48,7 @@ public class FallingGame {
         setCurrentJump(new Jump());
     }
 
-
-
+    public Rotation getJumperBodyRotation() {
+        return currentJump.getJumper().getBodyRotation();
+    }
 }

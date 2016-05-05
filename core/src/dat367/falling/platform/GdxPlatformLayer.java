@@ -26,6 +26,7 @@ import dat367.falling.core.FallingGame;
 import dat367.falling.core.ParachuteFallingState;
 import dat367.falling.core.world.Ground;
 import dat367.falling.math.FallingMath;
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -436,8 +437,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 
-		game.setLookDirection(getVRLookDirection(paramHeadTransform));
-		game.setUpVector(getVRUpVector(paramHeadTransform));
+		Rotation bodyRotation = game.getJumperBodyRotation();
+		Rotation headRotation = new Rotation(getVRLookDirection(bodyRotation, paramHeadTransform),
+											 getVRUpVector(bodyRotation, paramHeadTransform));
+
+//		game.setLookDirection(getVRLookDirection(paramHeadTransform));
+//		game.setUpVector(getVRUpVector(paramHeadTransform));
+
+		game.setJumperHeadRotation(headRotation);
 
 		if (Gdx.input.justTouched()) {
 			game.screenClicked(true);
@@ -449,9 +456,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Set camera position depending on jumper position
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
+		// Also set camera orientation depending on jumper neutral direction
+		mainCamera.direction.set(libGdxVector(bodyRotation.getDirection()));
+		mainCamera.up.set(libGdxVector(bodyRotation.getUp()));
 	}
 
-	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
+	private Vector getVRLookDirection(Rotation bodyRotation, com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 		// Since the look vector provided by getForwardVector() seems inaccurate,
 		// compute it from the Euler angles instead
 		float[] eulerAngles = new float[3];
@@ -464,7 +474,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		return new Vector(x, y, z);
 	}
 
-	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+	private Vector getVRUpVector(Rotation bodyRotation, com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
 		float[] eulerAngles = new float[3];
 		paramHeadTransform.getEulerAngles(eulerAngles, 0);
 		double yaw = eulerAngles[1];

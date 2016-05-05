@@ -15,9 +15,9 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public void setup(Jumper jumper) {
-        jumper.setNeutralDirection(jumper.getLookDirection().projectOntoPlaneXZ().normalized());
-        setParachuteDirection(jumper.getNeutralDirection());
-        jumper.setVelocity(jumper.getVelocity().add(jumper.getNeutralDirection().scale(10)));
+        jumper.setNeutralLookDirection(jumper.getLookDirection().projectOntoPlaneXZ().normalized());
+        setParachuteDirection(jumper.getNeutralLookDirection());
+        jumper.setVelocity(jumper.getVelocity().add(jumper.getNeutralLookDirection().scale(10)));
 
     }
 

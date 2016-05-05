@@ -31,7 +31,7 @@ public class PreJumpState implements FallState {
     public FallState handleFalling(float deltaTime, Jumper jumper) {
         final Vector lookDirection = jumper.getLookDirection().normalized();
         final Vector horizontalLookDirection = (new Vector(lookDirection.getX(), 0, lookDirection.getZ())).normalized(); // Look direction projected at the horizontal plane
-        final Vector outwards = jumper.getNeutralDirection().normalized();
+        final Vector outwards = jumper.getNeutralLookDirection().normalized();
         final Vector up = new Vector(0, 1, 0);
 
         float cosPitch = lookDirection.dot(horizontalLookDirection);
