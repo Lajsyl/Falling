@@ -70,4 +70,9 @@ public class PreJumpState implements FallState {
 
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "About to jump";
+    }
 }

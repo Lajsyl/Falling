@@ -23,7 +23,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.ParachuteFallingState;
 import dat367.falling.core.world.Ground;
+import dat367.falling.math.FallingMath;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -250,6 +252,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		spriteBatch.begin();
 		{
 			String debugText =
+					getFallStateString() + "\n" +
 					"Camera pos: " + camera.position + "\n" +
 					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
@@ -276,9 +279,25 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void updateGame() {
-		RenderQueue.clear();
-		game.update(Gdx.graphics.getDeltaTime());
+		if (game.getCurrentJump().getJumper().getFallState() instanceof ParachuteFallingState) {
+			RenderQueue.clear();
+			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			game.update(Gdx.graphics.getDeltaTime());
+			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			float deltaYaw = (float)Math.acos(FallingMath.clamp0_1(newXZDirection.dot(oldXZDirection)));
+			deltaYaw *= Math.signum(oldXZDirection.cross(newXZDirection).getY());
+			System.out.println("deltaYaw = " + (deltaYaw * 180 / Math.PI) + " degrees");
+			mainCamera.rotate((float)(deltaYaw * 180 / Math.PI), 0, 1, 0);
+			System.out.println(game.getCurrentJump().getJumper().getPosition());
+		} else {
+			RenderQueue.clear();
+			game.update(Gdx.graphics.getDeltaTime());
+		}
 
+	}
+
+	private String getFallStateString() {
+		return game.getCurrentJump().getJumper().getFallStateDebugString();
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
@@ -314,6 +333,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
+			game.screenClicked(true);
+		}
+
 		if (Gdx.input.isCursorCatched()) {
 
 			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
@@ -338,6 +361,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
 
 			game.setLookDirection(gameVector(lookDirection));
+
 		}
 	}
 
@@ -413,6 +437,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
 
 		game.setLookDirection(getVRLookDirection(paramHeadTransform));
+		game.setUpVector(getVRUpVector(paramHeadTransform));
+
+		if (Gdx.input.justTouched()) {
+			game.screenClicked(true);
+		}
 
 		// Update game logic
 		updateGame();
@@ -431,9 +460,29 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		double pitch = eulerAngles[0];
 		float x = (float)(Math.cos(yaw)*Math.cos(pitch));
 		float y = (float)(Math.sin(pitch));
-		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
+		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
 		return new Vector(x, y, z);
 	}
+
+	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+		float[] eulerAngles = new float[3];
+		paramHeadTransform.getEulerAngles(eulerAngles, 0);
+		double yaw = eulerAngles[1];
+		double pitch = eulerAngles[0];
+		double roll = eulerAngles[2];
+
+		Vector up = new Vector(0, 1, 0);
+		Vector yawLookDirection = new Vector((float) Math.cos(yaw), 0, (float) -Math.sin(yaw));
+		Vector yawPitchLookDirection = getVRLookDirection(paramHeadTransform);
+		Vector yawPitchUpDirection = yawLookDirection.scale((float)-Math.sin(pitch))
+									.add(up.scale((float)Math.cos(pitch)));
+		Vector yawPitchLeftDirection = yawPitchUpDirection.cross(yawPitchLookDirection);
+		Vector upDirection = yawPitchLeftDirection.scale((float)Math.sin(roll))
+							.add(yawPitchUpDirection.scale((float)Math.cos(roll)));
+
+		return upDirection;
+	}
+
 
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {
@@ -464,9 +513,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
+	//screen clicks should release the parachute
 	@Override
 	public void onCardboardTrigger() {
-
+		game.screenClicked(true);
 	}
 
 	//---- UTILITIES ----//

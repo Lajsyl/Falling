@@ -13,6 +13,10 @@ public class FallingGame {
         currentJump.update(deltaTime);
     }
 
+    public void screenClicked(boolean screenClicked) {
+        currentJump.getJumper().setScreenClicked(screenClicked);
+    }
+
     public Jump getCurrentJump() {
         return currentJump;
     }
@@ -21,7 +25,10 @@ public class FallingGame {
         currentJump.getJumper().setLookDirection(vector);
     }
 
+    public void setUpVector(Vector vector) { currentJump.getJumper().setUpVector(vector);}
+
     public Vector getLookDirection() {
         return currentJump.getJumper().getLookDirection();
     }
+
 }

@@ -56,10 +56,25 @@ public class Vector {
 
     public Vector projectedXZ(){
 
-        return new Vector(this.multWithMatrix(new Matrix(1,0,0,
-                                                        0,0,0,
-                                                        0,0,1)));
+        return (this.multWithMatrix(new Matrix(1,0,0,
+                                                0,0,0,
+                                                0,0,1)));
 
+
+    }
+
+    public Vector lineProjection(Vector line){
+
+        return line.scale((this.dot(line))/(line.dot(line)));
+    }
+
+    public Vector rotateAroundY(float degrees){
+
+        double theta = (double) degrees;
+
+        return (this.multWithMatrix(new Matrix((float) Math.cos(theta), 0, (float)Math.sin(theta),
+                                                        0, 1, 0,
+                                                (float)-Math.sin(theta), 0, (float) Math.cos(theta))));
 
     }
 
