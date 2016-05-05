@@ -23,12 +23,13 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.ParachuteFallingState;
+import dat367.falling.core.world.Ground;
+import dat367.falling.math.FallingMath;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,13 +43,13 @@ import java.util.Map;
 
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
-	boolean platformIsAndroid;
-	final boolean USING_DEBUG_CAMERA = false;
+	private boolean platformIsAndroid;
+	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
 	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 10000.0f;
+	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
 	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
@@ -88,7 +89,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
 
-		modelBatch = new ModelBatch();
+		// Create a new model batch that uses our custom shader provider
+		modelBatch = new ModelBatch(new FallingShaderProvider());
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
@@ -97,7 +99,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		font = new BitmapFont();
 	}
 
-	public void loadResources(ResourceRequirements resourceRequirements) {
+	private void loadResources(ResourceRequirements resourceRequirements) {
 		for (Model model : resourceRequirements.getModels()) {
 			String fileName = model.getModelFileName();
 			if (!models.containsKey(fileName)) {
@@ -115,7 +117,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					VertexAttributes.Usage.Normal |
 					VertexAttributes.Usage.TextureCoordinates;
 
-			com.badlogic.gdx.graphics.g3d.Model quadModel = modelBuilder.createRect(
+			com.badlogic.gdx.graphics.g3d.Model quadModelSource = modelBuilder.createRect(
 					// Corners
 					-1, 0, -1,
 					-1, 0, +1,
@@ -128,6 +130,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Material
 					new Material(
 							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
+							// This is actually not currently used, since the QuadShader does its own thing
 							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
 							IntAttribute.createCullFace(GL20.GL_NONE)
 					),
@@ -135,7 +138,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Attributes
 					attributes
 			);
-			this.quadModel = new ModelInstance(quadModel);
+			this.quadModel = new ModelInstance(quadModelSource);
 		}
 
 		for (Quad quad : resourceRequirements.getQuads()) {
@@ -143,6 +146,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
 				FileHandle fileHandle = Gdx.files.internal(textureFileName);
 				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
+				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+				quadTexture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -230,7 +235,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								.translate(libGdxVector(task.getPosition()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-						modelBatch.render(new ModelInstance(sharedInstance), environment);
+						// Make copy, since stuff like transform and materials would be shared if not
+						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
+
+						// Set quad as user data so that the shader can use its properties
+						modelInstanceCopy.userData = quadTask.getQuad();
+						modelBatch.render(modelInstanceCopy, environment);
 					}
 				}
 
@@ -242,6 +252,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		spriteBatch.begin();
 		{
 			String debugText =
+					getFallStateString() + "\n" +
 					"Camera pos: " + camera.position + "\n" +
 					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
@@ -268,9 +279,25 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void updateGame() {
-		RenderQueue.clear();
-		game.update(Gdx.graphics.getDeltaTime());
+		if (game.getCurrentJump().getJumper().getFallState() instanceof ParachuteFallingState) {
+			RenderQueue.clear();
+			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			game.update(Gdx.graphics.getDeltaTime());
+			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			float deltaYaw = (float)Math.acos(FallingMath.clamp0_1(newXZDirection.dot(oldXZDirection)));
+			deltaYaw *= Math.signum(oldXZDirection.cross(newXZDirection).getY());
+			System.out.println("deltaYaw = " + (deltaYaw * 180 / Math.PI) + " degrees");
+			mainCamera.rotate((float)(deltaYaw * 180 / Math.PI), 0, 1, 0);
+			System.out.println(game.getCurrentJump().getJumper().getPosition());
+		} else {
+			RenderQueue.clear();
+			game.update(Gdx.graphics.getDeltaTime());
+		}
 
+	}
+
+	private String getFallStateString() {
+		return game.getCurrentJump().getJumper().getFallStateDebugString();
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
@@ -334,6 +361,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
 
 			game.setLookDirection(gameVector(lookDirection));
+
 		}
 	}
 
@@ -411,6 +439,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game.setLookDirection(getVRLookDirection(paramHeadTransform));
 		game.setUpVector(getVRUpVector(paramHeadTransform));
 
+		if (Gdx.input.justTouched()) {
+			game.screenClicked(true);
+		}
+
 		// Update game logic
 		updateGame();
 
@@ -428,16 +460,29 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		double pitch = eulerAngles[0];
 		float x = (float)(Math.cos(yaw)*Math.cos(pitch));
 		float y = (float)(Math.sin(pitch));
-		float z = -(float)(Math.sin(yaw)*Math.cos(pitch));
+		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
 		return new Vector(x, y, z);
 	}
 
 	private Vector getVRUpVector(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
+		float[] eulerAngles = new float[3];
+		paramHeadTransform.getEulerAngles(eulerAngles, 0);
+		double yaw = eulerAngles[1];
+		double pitch = eulerAngles[0];
+		double roll = eulerAngles[2];
 
-		float[] upVector = new float[3];
-		paramHeadTransform.getUpVector(upVector, 0);
-		return new Vector(upVector[0], upVector[1], upVector[2]);
+		Vector up = new Vector(0, 1, 0);
+		Vector yawLookDirection = new Vector((float) Math.cos(yaw), 0, (float) -Math.sin(yaw));
+		Vector yawPitchLookDirection = getVRLookDirection(paramHeadTransform);
+		Vector yawPitchUpDirection = yawLookDirection.scale((float)-Math.sin(pitch))
+									.add(up.scale((float)Math.cos(pitch)));
+		Vector yawPitchLeftDirection = yawPitchUpDirection.cross(yawPitchLookDirection);
+		Vector upDirection = yawPitchLeftDirection.scale((float)Math.sin(roll))
+							.add(yawPitchUpDirection.scale((float)Math.cos(roll)));
+
+		return upDirection;
 	}
+
 
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {

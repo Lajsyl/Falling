@@ -1,6 +1,5 @@
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Vector;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

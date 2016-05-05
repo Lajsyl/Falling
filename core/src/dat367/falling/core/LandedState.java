@@ -2,9 +2,6 @@ package dat367.falling.core;
 
 import dat367.falling.math.Vector;
 
-/**
- * Created by Lisa on 2016-05-01.
- */
 public class LandedState implements FallState {
     @Override
     public void setup(Jumper jumper) {
@@ -46,6 +43,11 @@ public class LandedState implements FallState {
     public Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
         Vector v = v0.add(jumper.getVelocity().scale(deltaTime/2));
         return v.add(jumper.getPosition());
+    }
+
+    @Override
+    public String toString() {
+        return "Landed";
     }
 
 }
