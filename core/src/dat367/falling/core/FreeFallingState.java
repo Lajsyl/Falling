@@ -10,6 +10,8 @@ public class FreeFallingState implements FallState, Observer {
 
     private boolean parachutePulled = false;
 
+    public static final float XZ_ACCELERATION_MULTIPLIER =  1200.0f;
+    public static final float Y_ACCELERATION_MULTIPLIER =  50.0f;
 
     @Override
     public void setup(Jumper jumper) {
@@ -63,6 +65,10 @@ public class FreeFallingState implements FallState, Observer {
 
         float drag = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 0.70f;
         float newY = (World.GRAVITATION * 90 + drag) / 90;
+
+        // TODO: I don't really know what's happening here, I'm just adding delta time and some arbitrary multiplier
+        newY = newY * deltaTime * Y_ACCELERATION_MULTIPLIER;
+
         return new Vector(0, newY, 0);
     }
 
@@ -80,7 +86,7 @@ public class FreeFallingState implements FallState, Observer {
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();
         Vector newAcceleration = targetVelocity.sub(currentVelocity);
-        return newAcceleration.scale(10);
+        return newAcceleration.scale(deltaTime * XZ_ACCELERATION_MULTIPLIER);
     }
 
     
