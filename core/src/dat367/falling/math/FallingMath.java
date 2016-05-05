@@ -18,4 +18,10 @@ public class FallingMath {
         return (Math.sin((x - 0.5) * Math.PI) + 1.0) / 2;
     }
 
+    public static float smoothstep(float edge0, float edge1, float x) {
+        // From https://www.opengl.org/sdk/docs/man/html/smoothstep.xhtml
+        float t = clamp0_1((x - edge0) / (edge1 - edge0));
+        return t * t * (3.0f - 2.0f * t);
+    }
+
 }

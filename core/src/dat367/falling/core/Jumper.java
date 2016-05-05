@@ -13,7 +13,7 @@ public class Jumper extends Observable {
     private Vector acceleration = new Vector(0, 0, 0);
     private Vector neutralDirection;
     private Vector lookDirection;
-    private Vector upVector;
+    private Vector upVector = new Vector(0, 1, 0);
     private boolean screenClicked = false;
 
     public Jumper(Vector position, Vector neutralDirection) {
@@ -108,4 +108,5 @@ public class Jumper extends Observable {
     public String getFallStateDebugString() {
         return fallState.toString();
     }
+
 }

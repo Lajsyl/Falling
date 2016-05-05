@@ -22,10 +22,9 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
-import dat367.falling.core.FallState;
 import dat367.falling.core.FallingGame;
-import dat367.falling.core.FreeFallingState;
 import dat367.falling.core.ParachuteFallingState;
+import dat367.falling.core.world.Ground;
 import dat367.falling.math.FallingMath;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -44,13 +43,13 @@ import java.util.Map;
 
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
-	boolean platformIsAndroid;
-	final boolean USING_DEBUG_CAMERA = false;
+	private boolean platformIsAndroid;
+	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
 	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 10000.0f;
+	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
 	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
@@ -90,7 +89,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
 
-		modelBatch = new ModelBatch();
+		// Create a new model batch that uses our custom shader provider
+		modelBatch = new ModelBatch(new FallingShaderProvider());
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
@@ -99,7 +99,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		font = new BitmapFont();
 	}
 
-	public void loadResources(ResourceRequirements resourceRequirements) {
+	private void loadResources(ResourceRequirements resourceRequirements) {
 		for (Model model : resourceRequirements.getModels()) {
 			String fileName = model.getModelFileName();
 			if (!models.containsKey(fileName)) {
@@ -117,7 +117,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					VertexAttributes.Usage.Normal |
 					VertexAttributes.Usage.TextureCoordinates;
 
-			com.badlogic.gdx.graphics.g3d.Model quadModel = modelBuilder.createRect(
+			com.badlogic.gdx.graphics.g3d.Model quadModelSource = modelBuilder.createRect(
 					// Corners
 					-1, 0, -1,
 					-1, 0, +1,
@@ -130,6 +130,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Material
 					new Material(
 							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
+							// This is actually not currently used, since the QuadShader does its own thing
 							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
 							IntAttribute.createCullFace(GL20.GL_NONE)
 					),
@@ -137,7 +138,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Attributes
 					attributes
 			);
-			this.quadModel = new ModelInstance(quadModel);
+			this.quadModel = new ModelInstance(quadModelSource);
 		}
 
 		for (Quad quad : resourceRequirements.getQuads()) {
@@ -145,6 +146,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
 				FileHandle fileHandle = Gdx.files.internal(textureFileName);
 				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
+				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+				quadTexture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -232,7 +235,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								.translate(libGdxVector(task.getPosition()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-						modelBatch.render(new ModelInstance(sharedInstance), environment);
+						// Make copy, since stuff like transform and materials would be shared if not
+						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
+
+						// Set quad as user data so that the shader can use its properties
+						modelInstanceCopy.userData = quadTask.getQuad();
+						modelBatch.render(modelInstanceCopy, environment);
 					}
 				}
 
