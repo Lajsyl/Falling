@@ -6,6 +6,9 @@ import java.util.Observable;
 
 public class Jumper extends Observable {
 
+    public static final float MASS = 70.0f;
+    public static final float AREA = 0.8f;
+
     private FallState fallState = new PreJumpState();
 
     private Vector position;

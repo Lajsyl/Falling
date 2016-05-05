@@ -13,16 +13,25 @@ public class FreeFallingState implements FallState, Observer {
 
     @Override
     public void setup(Jumper jumper) {
-        observe(jumper);
+        jumper.addObserver(this);
+    }
+
+    @Override // from Observer
+    public void update(Observable o, Object arg) {
+        if (o instanceof Jumper) {
+            Jumper jumper = (Jumper) o;
+            parachutePulled = jumper.getScreenClicked();
+        }
     }
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        jumper.setAcceleration(calculateAcceleration(jumper));
-        Vector v0 = new Vector(jumper.getVelocity());
-        jumper.setVelocity(calculateVelocity(deltaTime, jumper));
-        jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
+        // Save velocity for previous frame for later calculations
+        Vector previousFrameVelocity = new Vector(jumper.getVelocity());
 
+        jumper.setAcceleration(calculateAcceleration(jumper, deltaTime));
+        jumper.setVelocity(calculateVelocity(deltaTime, jumper));
+        jumper.setPosition(calculatePosition(deltaTime, jumper, previousFrameVelocity));
 
         if (parachutePulled){
             return new ParachuteFallingState();
@@ -31,69 +40,57 @@ public class FreeFallingState implements FallState, Observer {
         return null;
     }
 
-    private Vector calculateAcceleration(Jumper jumper){
-
-        return calcAccY(jumper).add(calcAccXZ(jumper));
+    private Vector calculateAcceleration(Jumper jumper, float deltaTime) {
+        return calculateAccelerationY(jumper, deltaTime).add(calculateAccelerationXZ(jumper, deltaTime));
     }
 
+    private Vector calculateAccelerationY(Jumper jumper, float deltaTime) {
+        final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
+        float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
 
-    //Denna gör att acc i Y-led går från 9.82 mot 0
-    //Hamnar på ca -51, verklighet ca -56
-    private Vector calcAccY(Jumper jumper){
-        float drag = (float)(0.5*0.8*1.2041*0.70)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
-        float newY =(World.GRAVITATION*90 + drag)/90;
+/*
+        // Calculate drag
+        float dragForce = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 1.70f;
+
+        // Calculate gravitational force
+        float gravitationalForce = World.GRAVITATION * Jumper.MASS;
+
+        float combinedForce = gravitationalForce + dragForce;
+
+        float acceleration = combinedForce / Jumper.MASS * deltaTime;
+        return new Vector(0, acceleration, 0);
+*/
+
+        float drag = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 0.70f;
+        float newY = (World.GRAVITATION * 90 + drag) / 90;
         return new Vector(0, newY, 0);
     }
 
-
-    //Skalning är väldigt tveksam just nu
-    private Vector calcAccXZ(Jumper jumper){
+    private Vector calculateAccelerationXZ(Jumper jumper, float deltaTime) {
+        // Calculate target velocity
         Vector targetVelocity = jumper.getLookDirection().normalized();
-        targetVelocity = targetVelocity.projectOntoPlaneXZ()/*.mirrorPlaneXZ()*/.scale(80);
+        targetVelocity = targetVelocity.projectOntoPlaneXZ().scale(80);
+
+        // Clamp speed
         float maxSpeed = 35f;
         if (targetVelocity.length() > maxSpeed) {
             targetVelocity = targetVelocity.normalized().scale(maxSpeed);
         }
 
-        Vector currentVelocity = jumper.getVelocity();
-        currentVelocity = currentVelocity.projectOntoPlaneXZ();
-
-        Vector newAcc = targetVelocity.sub(currentVelocity);
-
-        return newAcc.scale(10f);
+        // Calculate acceleration from target speed
+        Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();
+        Vector newAcceleration = targetVelocity.sub(currentVelocity);
+        return newAcceleration.scale(10);
     }
 
     
-    private Vector calculateVelocity(float deltaTime, Jumper jumper){
-        return new Vector(calcV(deltaTime, jumper.getVelocity().getX(), jumper.getAcceleration().getX()),
-                calcV(deltaTime, jumper.getVelocity().getY(), jumper.getAcceleration().getY()),
-                calcV(deltaTime, jumper.getVelocity().getZ(), jumper.getAcceleration().getZ()));
-    }
-
-    private float calcV(float deltaTime, float v0, float a){
-       return v0 + a*deltaTime;
+    private Vector calculateVelocity(float deltaTime, Jumper jumper) {
+        return jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
     }
 
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
-
-        return new Vector(calcPos(deltaTime, jumper.getPosition().getX(), jumper.getVelocity().getX(), v0.getX()),
-                calcPos(deltaTime, jumper.getPosition().getY(), jumper.getVelocity().getY(), v0.getY()),
-                calcPos(deltaTime, jumper.getPosition().getZ(), jumper.getVelocity().getZ(), v0.getZ()));
-    }
-
-    //calculates one coordinate of a new position vector
-    private float calcPos(float deltaTime, float pos, float v, float v0){
-        return pos +(v + v0)*deltaTime/2;
-    }
-
-
-    public void observe(Observable o){
-        o.addObserver(this);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        parachutePulled = ((Jumper) o).getScreenClicked();
+        Vector averageFrameAcceleration = jumper.getAcceleration().add(v0).scale(1.0f / 2.0f);
+        return jumper.getPosition().add(averageFrameAcceleration.scale(deltaTime));
     }
 
     @Override
