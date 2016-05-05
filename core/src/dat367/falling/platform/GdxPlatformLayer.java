@@ -24,6 +24,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallState;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.FreeFallingState;
+import dat367.falling.core.ParachuteFallingState;
+import dat367.falling.math.FallingMath;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -268,8 +271,20 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void updateGame() {
-		RenderQueue.clear();
-		game.update(Gdx.graphics.getDeltaTime());
+		if (game.getCurrentJump().getJumper().getFallState() instanceof ParachuteFallingState) {
+			RenderQueue.clear();
+			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			game.update(Gdx.graphics.getDeltaTime());
+			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			float deltaYaw = (float)Math.acos(FallingMath.clamp0_1(newXZDirection.dot(oldXZDirection)));
+			deltaYaw *= Math.signum(oldXZDirection.cross(newXZDirection).getY());
+			System.out.println("deltaYaw = " + (deltaYaw * 180 / Math.PI) + " degrees");
+			mainCamera.rotate((float)(deltaYaw * 180 / Math.PI), 0, 1, 0);
+			System.out.println(game.getCurrentJump().getJumper().getPosition());
+		} else {
+			RenderQueue.clear();
+			game.update(Gdx.graphics.getDeltaTime());
+		}
 
 	}
 

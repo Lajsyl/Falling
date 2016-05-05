@@ -101,6 +101,10 @@ public class Jumper extends Observable {
         return screenClicked;
     }
 
+    public FallState getFallState() {
+        return fallState;
+    }
+
     public String getFallStateDebugString() {
         return fallState.toString();
     }
