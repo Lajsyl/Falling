@@ -91,6 +91,10 @@ public class Jumper extends Observable {
         this.acceleration = acceleration;
     }
 
+    public FallState getFallState(){ return fallState; }
+
+    public void setFallState(FallState fallState){ this.fallState = fallState; }
+
     public void setScreenClicked(boolean screenClicked){
         this.screenClicked = screenClicked;
         setChanged();
@@ -99,10 +103,6 @@ public class Jumper extends Observable {
 
     public boolean getScreenClicked(){
         return screenClicked;
-    }
-
-    public FallState getFallState() {
-        return fallState;
     }
 
     public String getFallStateDebugString() {
