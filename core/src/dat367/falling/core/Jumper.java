@@ -13,7 +13,7 @@ public class Jumper extends Observable {
     private Vector velocity = new Vector(0, 0, 0);
     private Vector acceleration = new Vector(0, 0, 0);
     private Rotation bodyRotation;
-    private Rotation headRotation;
+    private Rotation headRotation = new Rotation(new Vector(1, 0, 0), new Vector(0, 1, 0));
 //    private Vector lookDirection;
 //    private Vector upVector = new Vector(0, 1, 0);
     private boolean screenClicked = false;
@@ -52,26 +52,6 @@ public class Jumper extends Observable {
     }
 
     public void setPosition(float x, float y, float z){ position = new Vector(x,y,z);}
-
-    public void setLookDirection(Vector lookDirection) {
-        this.lookDirection = lookDirection;
-    }
-
-    public void setUpVector(Vector upVector) {
-        this.upVector = upVector;
-    }
-
-    public Vector getUpVector(){
-        return upVector;
-    }
-
-    public Vector getNeutralLookDirection() {
-        return neutralLookDirection;
-    }
-
-    public void setNeutralLookDirection(Vector neutralLookDirection) {
-        this.neutralLookDirection = neutralLookDirection;
-    }
 
     public Vector getPosition() {
         return position;
@@ -121,5 +101,13 @@ public class Jumper extends Observable {
 
     public Rotation getBodyRotation() {
         return bodyRotation;
+    }
+
+    public Rotation getHeadRotation() {
+        return headRotation;
+    }
+
+    public void setBodyRotation(Rotation bodyRotation) {
+        this.bodyRotation = bodyRotation;
     }
 }
