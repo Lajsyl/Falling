@@ -12,7 +12,7 @@ uniform vec3 u_cameraPosition;
 
 void main()
 {
-    vec4 textureColor = texture2D(u_texture, v_texCoords);
+    vec4 textureColor = texture2D(u_texture, fract(v_texCoords));
 
     float fragmentToCameraDistance = length(u_cameraPosition - v_fragWorldPosition);
     float alphaScale = smoothstep(u_maxOpacityDistance, u_maxDrawDistance, fragmentToCameraDistance);

@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 
 import java.util.Observable;
@@ -15,16 +16,21 @@ public class Jumper extends Observable {
     private Vector position;
     private Vector velocity = new Vector(0, 0, 0);
     private Vector acceleration = new Vector(0, 0, 0);
-    private Vector neutralDirection;
-    private Vector lookDirection;
-    private Vector upVector = new Vector(0, 1, 0);
+    private Rotation bodyRotation;
+    private Rotation headRotation = new Rotation(new Vector(1, 0, 0), new Vector(0, 1, 0));
+//    private Vector lookDirection;
+//    private Vector upVector = new Vector(0, 1, 0);
     private boolean screenClicked = false;
 
-    public Jumper(Vector position, Vector neutralDirection) {
+    public Jumper(Vector position, Rotation bodyRotation) {
         this.position = position;
 
-        this.neutralDirection = neutralDirection;
-        this.lookDirection = neutralDirection;
+        this.bodyRotation = bodyRotation;
+
+//        this.rotation = rotation;
+
+//        this.neutralLookDirection = neutralLookDirection;
+//        this.lookDirection = neutralLookDirection;
 
         fallState.setup(this);
     }
@@ -38,7 +44,7 @@ public class Jumper extends Observable {
     }
 
     public Vector getLookDirection() {
-        return lookDirection;
+        return headRotation.getDirection();
     }
 
     public void setAcceleration(float x, float y, float z){
@@ -50,26 +56,6 @@ public class Jumper extends Observable {
     }
 
     public void setPosition(float x, float y, float z){ position = new Vector(x,y,z);}
-
-    public void setLookDirection(Vector lookDirection) {
-        this.lookDirection = lookDirection;
-    }
-
-    public void setUpVector(Vector upVector) {
-        this.upVector = upVector;
-    }
-
-    public Vector getUpVector(){
-        return upVector;
-    }
-
-    public Vector getNeutralDirection() {
-        return neutralDirection;
-    }
-
-    public void setNeutralDirection(Vector neutralDirection) {
-        this.neutralDirection = neutralDirection;
-    }
 
     public Vector getPosition() {
         return position;
@@ -113,4 +99,19 @@ public class Jumper extends Observable {
         return fallState.toString();
     }
 
+    public void setHeadRotation(Rotation headRotation) {
+        this.headRotation = headRotation;
+    }
+
+    public Rotation getBodyRotation() {
+        return bodyRotation;
+    }
+
+    public Rotation getHeadRotation() {
+        return headRotation;
+    }
+
+    public void setBodyRotation(Rotation bodyRotation) {
+        this.bodyRotation = bodyRotation;
+    }
 }

@@ -1,6 +1,7 @@
 package dat367.falling.core.world;
 
 import dat367.falling.core.Jumper;
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -19,7 +20,7 @@ public class World {
 
     public World(ResourceRequirements resourceRequirements) {
         // Create jumper using the world start position etc.
-        jumper = new Jumper(getStartPosition(), getStartLookDirection());
+        jumper = new Jumper(getStartPosition(), getStartBodyRotation());
 
         ground = new Ground(resourceRequirements);
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
@@ -41,9 +42,9 @@ public class World {
         return new Vector(0f, 4000.5f, -1.8f);
     }
 
-    public Vector getStartLookDirection() {
+    public Rotation getStartBodyRotation() {
 //        return new Vector(0.975f, -0.206f, -0.070f);
-        return new Vector(0.975f, 0, -0.070f).normalized();
+        return new Rotation(new Vector(0.975f, 0, -0.070f).normalized(), new Vector(0, 1, 0));
     }
 
     public Jumper getJumper() {
