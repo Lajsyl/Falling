@@ -66,8 +66,8 @@ public class FreeFallingState implements FallState, Observer {
         float drag = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 0.70f;
         float newY = (World.GRAVITATION * 90 + drag) / 90;
 
-        // TODO: I don't really know what's happening here, I'm just adding delta time and some arbitrary multiplier
-        newY = newY * deltaTime * Y_ACCELERATION_MULTIPLIER;
+        // a multiplier to adjust the numbers to be more fitting for the game experience
+        newY = newY * Y_ACCELERATION_MULTIPLIER;
 
         return new Vector(0, newY, 0);
     }
@@ -86,7 +86,7 @@ public class FreeFallingState implements FallState, Observer {
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();
         Vector newAcceleration = targetVelocity.sub(currentVelocity);
-        return newAcceleration.scale(deltaTime * XZ_ACCELERATION_MULTIPLIER);
+        return newAcceleration.scale(XZ_ACCELERATION_MULTIPLIER);
     }
 
     
