@@ -1,6 +1,5 @@
-package dat367.falling.core.world;
+package dat367.falling.core;
 
-import dat367.falling.core.Jumper;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;

@@ -1,6 +1,5 @@
 package dat367.falling.core;
 
-import dat367.falling.core.world.World;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Jump {

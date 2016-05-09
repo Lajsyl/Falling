@@ -1,11 +1,9 @@
 package dat367.falling.core;
 
 
-import dat367.falling.core.world.World;
 import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
 
 
 // TODO MAKE FUNCTIONING ON PC

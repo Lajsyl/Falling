@@ -1,4 +1,4 @@
-package dat367.falling.core.world;
+package dat367.falling.core;
 
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.Quad;
