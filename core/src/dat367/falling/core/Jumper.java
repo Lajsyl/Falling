@@ -26,7 +26,7 @@ public class Jumper extends Observable implements Positioned {
 
     public Jumper(Vector position, Rotation bodyRotation) {
         this.position = position;
-        this.sphereCollider = new SphereCollider(this);
+        this.sphereCollider = new SphereCollider(this, 0.5f);
         this.bodyRotation = bodyRotation;
 
 //        this.rotation = rotation;
