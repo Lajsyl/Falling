@@ -8,6 +8,7 @@ public class Jumper extends Observable {
 
     public static final float MASS = 70.0f;
     public static final float AREA = 0.8f;
+    public static final float DRAG_COEFFICIENT = 1.1f;
 
     private FallState fallState = new PreJumpState();
 

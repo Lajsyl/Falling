@@ -31,7 +31,6 @@ public class LandedState implements FallState {
     }
 
     public Vector calculateVelocity(float deltaTime, Jumper jumper){
-
         Vector v = jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
         //Jumper has touched the ground, velocity in Y should always be 0
         v = v.projectOntoPlaneXZ();

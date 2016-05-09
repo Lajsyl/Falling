@@ -10,6 +10,8 @@ public class World {
     private CloudSimulator cloudSimulator;
     private Jumper jumper;
 
+    public static final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
+
     private Model airplane = new Model("airplane.g3db");
 
     //defined according to the coordinate system used

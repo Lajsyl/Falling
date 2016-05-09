@@ -10,8 +10,8 @@ public class FreeFallingState implements FallState, Observer {
 
     private boolean parachutePulled = false;
 
-    public static final float XZ_ACCELERATION_MULTIPLIER =  1200.0f;
-    public static final float Y_ACCELERATION_MULTIPLIER =  50.0f;
+    public static final float XZ_ACCELERATION_MULTIPLIER =  1.0f;
+    public static final float Y_ACCELERATION_MULTIPLIER =  1.0f;
 
     @Override
     public void setup(Jumper jumper) {
@@ -47,29 +47,12 @@ public class FreeFallingState implements FallState, Observer {
     }
 
     private Vector calculateAccelerationY(Jumper jumper, float deltaTime) {
-        final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
         float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
 
-/*
-        // Calculate drag
-        float dragForce = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 1.70f;
-
-        // Calculate gravitational force
-        float gravitationalForce = World.GRAVITATION * Jumper.MASS;
-
-        float combinedForce = gravitationalForce + dragForce;
-
-        float acceleration = combinedForce / Jumper.MASS * deltaTime;
-        return new Vector(0, acceleration, 0);
-*/
-
-        float drag = 0.5f * AIR_DENSITY * yVelocitySquared * Jumper.AREA * 0.70f;
+        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * Jumper.AREA * Jumper.DRAG_COEFFICIENT;
         float newY = (World.GRAVITATION * 90 + drag) / 90;
 
-        // TODO: I don't really know what's happening here, I'm just adding delta time and some arbitrary multiplier
-        newY = newY * deltaTime * Y_ACCELERATION_MULTIPLIER;
-
-        return new Vector(0, newY, 0);
+        return new Vector(0, newY, 0).scale(Y_ACCELERATION_MULTIPLIER);
     }
 
     private Vector calculateAccelerationXZ(Jumper jumper, float deltaTime) {
@@ -86,7 +69,7 @@ public class FreeFallingState implements FallState, Observer {
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();
         Vector newAcceleration = targetVelocity.sub(currentVelocity);
-        return newAcceleration.scale(deltaTime * XZ_ACCELERATION_MULTIPLIER);
+        return newAcceleration.scale(XZ_ACCELERATION_MULTIPLIER);
     }
 
     
