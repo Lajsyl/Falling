@@ -69,7 +69,7 @@ public class VectorTest {
     @Test
     public void testProjectedXZ() throws Exception {
         Vector v = new Vector(1,1,1);
-        Vector v2 = v.projectedXZ();
+        Vector v2 = v.projectOntoPlaneXZ();
 
         assertTrue(v2.getX()==v.getX());
         assertTrue(v2.getY()==0);
@@ -81,7 +81,7 @@ public class VectorTest {
     @Test
     public void testMirrorY() throws Exception {
         Vector v = new Vector(1,1,1);
-        Vector v2 = v.mirrorY();
+        Vector v2 = v.mirrorPlaneXZ();
 
         assertTrue(v2.getX() == -v.getX());
         assertTrue(v2.getY() == v.getY());
@@ -119,7 +119,7 @@ public class VectorTest {
         Matrix m = new Matrix(1,1,1,
                 2,2,2,
                 3,3,3);
-        Vector vm = v.multWithMatrix(m);
+        Vector vm = v.mul(m);
 
         assertTrue(vm.getX()==(2+2+2));
         assertTrue(vm.getY()==(4+4+4));

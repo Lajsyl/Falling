@@ -253,8 +253,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		{
 			String debugText =
 					getFallStateString() + "\n" +
-					"Camera pos: " + camera.position + "\n" +
-					"Look dir: " + new Vector(camera.direction.x, camera.direction.y, camera.direction.z) + "\n\n" +
+					"Camera pos: " + gameVector(camera.position) + "\n" +
+					"Look dir: " + gameVector(camera.direction) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
 					"Speed: " + game.getCurrentJump().getJumper().getVelocity();
 
@@ -281,10 +281,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void updateGame() {
 		if (game.getCurrentJump().getJumper().getFallState() instanceof ParachuteFallingState) {
 			RenderQueue.clear();
-			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
+			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectOntoPlaneXZ().normalized();
 			game.update(Gdx.graphics.getDeltaTime());
-			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectedXZ().normalized();
-			float deltaYaw = (float)Math.acos(FallingMath.clamp0_1(newXZDirection.dot(oldXZDirection)));
+			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectOntoPlaneXZ().normalized();
+			float deltaYaw = (float)Math.acos(FallingMath.clamp01(newXZDirection.dot(oldXZDirection)));
 			deltaYaw *= Math.signum(oldXZDirection.cross(newXZDirection).getY());
 			System.out.println("deltaYaw = " + (deltaYaw * 180 / Math.PI) + " degrees");
 			mainCamera.rotate((float)(deltaYaw * 180 / Math.PI), 0, 1, 0);

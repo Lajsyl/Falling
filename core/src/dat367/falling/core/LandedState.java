@@ -11,7 +11,7 @@ public class LandedState implements FallState {
     //Might create a change in postion as to mimic the shock when landing
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        Vector v0 = jumper.getVelocity().projectedXZ();
+        Vector v0 = jumper.getVelocity().projectOntoPlaneXZ();
 
         jumper.setAcceleration(calculateAcceleration(jumper));
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
@@ -32,7 +32,7 @@ public class LandedState implements FallState {
 
         Vector v = jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
 
-        v = v.projectedXZ();
+        v = v.projectOntoPlaneXZ();
 
         if(v.length() < 0.001){
             return new Vector(0,0,0);
