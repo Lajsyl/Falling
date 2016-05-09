@@ -23,9 +23,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
-import dat367.falling.core.ParachuteFallingState;
 import dat367.falling.core.world.Ground;
-import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -64,6 +62,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
 
+	private Rotation desktopSimulatedHeadTransform;
+
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
 	}
@@ -78,13 +78,17 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
-			setCameraPosAndOrientation();
+//			setDesktopCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+			// Instead of getting the head transform from a VR device,
+			// we simulate this on desktop with a rotation controlled with the mouse
+			desktopSimulatedHeadTransform = new Rotation(new Vector(0, 0, 1), new Vector(0, 1, 0));
+
 			if (USING_DEBUG_CAMERA) {
 				// Set position first frame
-				setCameraPosAndOrientation();
+				setDesktopCameraPosAndOrientation();
 			}
 		}
 		mainCamera.near = Z_NEAR;
@@ -280,21 +284,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void updateGame() {
-		/*if (game.getCurrentJump().getJumper().getFallState() instanceof ParachuteFallingState) {
-			RenderQueue.clear();
-			Vector oldXZDirection = game.getCurrentJump().getJumper().getVelocity().projectOntoPlaneXZ().normalized();
-			game.update(Gdx.graphics.getDeltaTime());
-			Vector newXZDirection = game.getCurrentJump().getJumper().getVelocity().projectOntoPlaneXZ().normalized();
-			float deltaYaw = (float)Math.acos(FallingMath.clamp01(newXZDirection.dot(oldXZDirection)));
-			deltaYaw *= Math.signum(oldXZDirection.cross(newXZDirection).getY());
-			System.out.println("deltaYaw = " + (deltaYaw * 180 / Math.PI) + " degrees");
-			mainCamera.rotate((float)(deltaYaw * 180 / Math.PI), 0, 1, 0);
-			System.out.println(game.getCurrentJump().getJumper().getPosition());
-		} else*/ {
-			RenderQueue.clear();
-			game.update(Gdx.graphics.getDeltaTime());
-		}
-
+		RenderQueue.clear();
+		game.update(Gdx.graphics.getDeltaTime());
 	}
 
 	private String getFallStateString() {
@@ -317,7 +308,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			// Update game logic
 			updateGame();
 
-			setCameraPosAndOrientation();
+			setDesktopCameraPosAndOrientation();
 		}
 
 	}
@@ -355,26 +346,61 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			dX /= MOUSE_SENSITIVITY;
 			dY /= MOUSE_SENSITIVITY;
 
-			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
-			mainCamera.normalizeUp();
-			Vector3 lookDirection = currentLookDirection
-					.rotateRad(mainCamera.up, -dX)
-					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
+//			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
+//			mainCamera.normalizeUp();
+//			Vector3 lookDirection = currentLookDirection
+//					.rotateRad(mainCamera.up, -dX)
+//					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
 
-			game.setJumperHeadRotation(new Rotation(gameVector(lookDirection), new Vector(0, 1, 0)));
+			// TODONE: Replace above with rotating simulatedHeadTransform instead, set headRotation to combination of bodyRotation and simulatedHeadTransform,
+			// TODONE: set camera to headTransform.
 
+			Vector direction = desktopSimulatedHeadTransform.getDirection();
+			Vector up = desktopSimulatedHeadTransform.getUp();
+			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, dX).rotate(up.cross(direction), dY);
+			direction = desktopSimulatedHeadTransform.getDirection();
+			up = desktopSimulatedHeadTransform.getUp();
+
+			Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
+			Vector simulatedHeadForward = desktopSimulatedHeadTransform.getDirection();
+			Vector simulatedHeadRight = simulatedHeadForward.cross(simulatedHeadUp);
+			final float mouseSensitivity = 0.002f;
+			final float rollSpeed = 15.0f;
+			float rotationZ = 0.0f;
+			if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
+			if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
+			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
+//			System.out.println(desktopSimulatedHeadTransform.getUp());
+
+			Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
+			Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
+
+
+			game.setJumperHeadRotation(newHeadRotation);
+
+//			Vector3 lookAtVector = libGdxVector(game.getCurrentJump().getJumper().getPosition()).add(libGdxVector(newHeadRotation.getDirection()));
+//			mainCamera.lookAt(lookAtVector);
+
+//			mainCamera.direction.set(libGdxVector(newHeadRotation.getDirection()));
+//			mainCamera.up.set(libGdxVector(newHeadRotation.getUp()));
 		}
+//		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
 
-	private void setCameraPosAndOrientation() {
+	private void setDesktopCameraPosAndOrientation() {
 		// Set camera position depending on jumper position
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
 
 		// Set camera orientation depending on jumper look direction
-		Vector jumperLookDirection = game.getCurrentJump().getJumper().getLookDirection();
-		Vector lookAtPoint = jumperHeadPosition.add(jumperLookDirection);
-		mainCamera.lookAt(libGdxVector(lookAtPoint));
+//		Vector jumperLookDirection = game.getCurrentJump().getJumper().getLookDirection();
+//		Vector lookAtPoint = jumperHeadPosition.add(jumperLookDirection);
+//		mainCamera.lookAt(libGdxVector(lookAtPoint));
+		Rotation bodyRotation = game.getJumperBodyRotation();
+		Rotation headRotation = game.getCurrentJump().getJumper().getHeadRotation();
+
+		mainCamera.direction.set(libGdxVector(headRotation.getDirection()));
+		mainCamera.up.set(libGdxVector(headRotation.getUp()));
 	}
 
 	@Override

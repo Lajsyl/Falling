@@ -2,6 +2,7 @@ package dat367.falling.core;
 
 
 import dat367.falling.core.world.World;
+import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 
@@ -14,7 +15,7 @@ public class ParachuteFallingState implements FallState {
     private float rotationalSpeed;
     private float rotationalAcceleration;
 
-    private float forwardSpeed = 5;
+    private float forwardSpeed = 30;
 
     @Override
     public void setup(Jumper jumper) {
@@ -88,7 +89,7 @@ public class ParachuteFallingState implements FallState {
 //    }
 
     private Vector calculateVelocity(float deltaTime, Jumper jumper){
-
+        System.out.println(jumper.getBodyRotation().getDirection());
         return new Vector(0, jumper.getVelocity().getY(), 0).add(jumper.getAcceleration().scale(deltaTime))
                 .add(jumper.getBodyRotation().getDirection().scale(forwardSpeed));
     }
@@ -103,9 +104,13 @@ public class ParachuteFallingState implements FallState {
         Float rollAmount = rightDirection.sub(projected).length() - 1;
         System.out.println("rollAmount = " + rollAmount);
 
-        float targetRotationalSpeed = rollAmount * 0.1f;
+        float maxRollAmount = 0.5f;
+        rollAmount = FallingMath.clamp(rollAmount, -maxRollAmount, maxRollAmount);
+        rollAmount = rollAmount / maxRollAmount;
 
-        return (targetRotationalSpeed - rotationalSpeed) * 5f;
+        float targetRotationalSpeed = rollAmount * 0.03f;
+
+        return (targetRotationalSpeed - rotationalSpeed) * 2f;
     }
 
     private float calculcateRotationalSpeed(float deltaTime){
@@ -114,6 +119,7 @@ public class ParachuteFallingState implements FallState {
 
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
 
+        System.out.println("position: " + jumper.getPosition());
         return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
     }
 
