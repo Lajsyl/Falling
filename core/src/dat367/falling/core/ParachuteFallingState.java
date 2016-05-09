@@ -5,6 +5,7 @@ import dat367.falling.core.world.World;
 import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.Model;
 
 
 // TODO MAKE FUNCTIONING ON PC
@@ -14,6 +15,8 @@ public class ParachuteFallingState implements FallState {
 
     private float rotationalSpeed;
     private float rotationalAcceleration;
+
+//    private Model parachute = new Model("parachute.g3db");
 
     private float forwardSpeed = 30;
 

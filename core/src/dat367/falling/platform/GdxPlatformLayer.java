@@ -150,9 +150,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			String textureFileName = quad.getTextureFileName();
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
 				FileHandle fileHandle = Gdx.files.internal(textureFileName);
-				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
+				Texture quadTexture = new Texture(fileHandle, false/*quad.shouldUseMipMaps()*/);
 				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-				quadTexture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+				quadTexture.setFilter(Texture.TextureFilter.Linear/*MipMapLinearLinear*/, Texture.TextureFilter.Linear);
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -361,22 +361,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			direction = desktopSimulatedHeadTransform.getDirection();
 			up = desktopSimulatedHeadTransform.getUp();
 
-			Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
-			Vector simulatedHeadForward = desktopSimulatedHeadTransform.getDirection();
-			Vector simulatedHeadRight = simulatedHeadForward.cross(simulatedHeadUp);
-			final float mouseSensitivity = 0.002f;
-			final float rollSpeed = 15.0f;
-			float rotationZ = 0.0f;
-			if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
-			if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
-			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
+
 //			System.out.println(desktopSimulatedHeadTransform.getUp());
-
-			Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
-			Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
-
-
-			game.setJumperHeadRotation(newHeadRotation);
 
 //			Vector3 lookAtVector = libGdxVector(game.getCurrentJump().getJumper().getPosition()).add(libGdxVector(newHeadRotation.getDirection()));
 //			mainCamera.lookAt(lookAtVector);
@@ -384,6 +370,21 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 //			mainCamera.direction.set(libGdxVector(newHeadRotation.getDirection()));
 //			mainCamera.up.set(libGdxVector(newHeadRotation.getUp()));
 		}
+
+		Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
+		Vector simulatedHeadForward = desktopSimulatedHeadTransform.getDirection();
+		Vector simulatedHeadRight = simulatedHeadForward.cross(simulatedHeadUp);
+		final float mouseSensitivity = 0.002f;
+		final float rollSpeed = 15.0f;
+		float rotationZ = 0.0f;
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
+		desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
+
+		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
+		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
+		game.setJumperHeadRotation(newHeadRotation);
+
 //		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
 
