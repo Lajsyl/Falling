@@ -41,7 +41,7 @@ public class World {
         RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Vector(0,0,0), new Vector(1,1,1));
         RenderQueue.addTask(airplaneTask);
 
-        //CollisionManager.update(deltaTime);
+        CollisionManager.update(deltaTime);
     }
 
     public Vector getStartPosition() {

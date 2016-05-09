@@ -17,6 +17,10 @@ public abstract class Collidable {
         return positioned.getPosition();
     }
 
+    public String getName(){
+        return name;
+    }
+
     public abstract boolean collidesWith(Collidable collidable);
 
     public static boolean areColliding(Collidable c1, Collidable c2){

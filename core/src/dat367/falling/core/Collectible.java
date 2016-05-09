@@ -17,7 +17,7 @@ public class Collectible implements Positioned {
     public Collectible(ResourceRequirements resourceRequirements){
         quad = new Quad("balloonfilled.jpg", true, true, 1000, 100, 1, 1, true);
         resourceRequirements.require(quad);
-        sphereCollider = new SphereCollider(this, "Collectible",.5f );
+        sphereCollider = new SphereCollider(this, "Collectible",10);
         CollisionManager.addCollider(sphereCollider);
     }
 
@@ -26,6 +26,6 @@ public class Collectible implements Positioned {
     }
 
     public void update(float deltaTime){
-        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Vector(0,0,0), new Vector(2,2,2)));
+        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Vector(0,0,0), new Vector(10,10,10)));
     }
 }
