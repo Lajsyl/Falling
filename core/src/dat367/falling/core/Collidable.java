@@ -5,9 +5,11 @@ import dat367.falling.math.Vector;
 public abstract class Collidable {
 
     private Positioned positioned;
+    private String name;
 
-    public Collidable(Positioned positioned){
+    public Collidable(Positioned positioned, String name){
         this.positioned = positioned;
+        this.name = name;
     }
 
 

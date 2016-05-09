@@ -23,10 +23,12 @@ public class Jumper extends Observable implements Positioned {
     private boolean screenClicked = false;
 
     private SphereCollider sphereCollider;
+    public static final String NAME = "Jumper";
 
     public Jumper(Vector position, Rotation bodyRotation) {
         this.position = position;
-        this.sphereCollider = new SphereCollider(this, 0.5f);
+        this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
+        CollisionManager.addCollider(sphereCollider);
         this.bodyRotation = bodyRotation;
 
 //        this.rotation = rotation;
