@@ -5,7 +5,7 @@ import dat367.falling.math.Vector;
 
 import java.util.Observable;
 
-public class Jumper extends Observable {
+public class Jumper extends Observable implements Positioned {
 
     public static final float MASS = 70.0f;
     public static final float AREA = 0.8f;
@@ -22,9 +22,11 @@ public class Jumper extends Observable {
 //    private Vector upVector = new Vector(0, 1, 0);
     private boolean screenClicked = false;
 
+    private SphereCollider sphereCollider;
+
     public Jumper(Vector position, Rotation bodyRotation) {
         this.position = position;
-
+        this.sphereCollider = new SphereCollider(this);
         this.bodyRotation = bodyRotation;
 
 //        this.rotation = rotation;
