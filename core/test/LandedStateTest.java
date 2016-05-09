@@ -33,7 +33,6 @@ public class LandedStateTest {
 
     }*/
 
-    //TODO: Add check for position change in Y
     @Test
     public void stopWhenLanded(){
         Jumper jumper = new Jumper(new Vector(0,1,0), new Vector(0,0,0));

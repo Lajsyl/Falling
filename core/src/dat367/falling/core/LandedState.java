@@ -8,32 +8,35 @@ public class LandedState implements FallState {
 
     }
 
-    //Might create a change in postion as to mimic the shock when landing
+    //Might create a change in position as to mimic the shock when landing
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        Vector v0 = jumper.getVelocity().projectOntoPlaneXZ();
+        // Save velocity for previous frame for later calculations
+        Vector previousFrameVelocity = jumper.getVelocity().projectOntoPlaneXZ();
 
         jumper.setAcceleration(calculateAcceleration(jumper));
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
-        jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
+        jumper.setPosition(calculatePosition(deltaTime, jumper, previousFrameVelocity));
 
         return null;
     }
 
     public Vector calculateAcceleration(Jumper jumper){
+        //Jumper should be stopping, therefore targetVelocity (0,0,0)
         Vector targetVelocity = new Vector(0,0,0);
         Vector currentVelocity = jumper.getVelocity();
 
         Vector newAcc = targetVelocity.sub(currentVelocity);
-        return newAcc.scale(1.1f);
+        return newAcc.scale(1.1f); //TODO: Check scaling
     }
 
     public Vector calculateVelocity(float deltaTime, Jumper jumper){
 
         Vector v = jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
-
+        //Jumper has touched the ground, velocity in Y should always be 0
         v = v.projectOntoPlaneXZ();
 
+        //If the speed is close enough to 0, set vector to (0,0,0)
         if(v.length() < 0.001){
             return new Vector(0,0,0);
         }else
