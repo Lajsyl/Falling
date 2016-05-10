@@ -44,11 +44,11 @@ import java.util.Map;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private boolean platformIsAndroid;
-	private final boolean USING_DEBUG_CAMERA = true;
+	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.1f;
+	private static final float Z_NEAR = 0.15f;//0.1f;
 	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
@@ -326,6 +326,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			Gdx.input.setCursorCatched(true);
 
 		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			Vector position = game.getCurrentJump().getJumper().getPosition();
+			game.getCurrentJump().getJumper().setPosition(position.getX(), position.getY()-20, position.getZ());
+		}//FOR DEBUGGING
+
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
 			game.screenClicked(true);
