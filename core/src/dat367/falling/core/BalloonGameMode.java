@@ -26,8 +26,10 @@ public class BalloonGameMode implements GameMode {
         });
 
         balloonList = new ArrayList<Collectible>();
-        for(int i = 3500; i > 1000 ; i-=50){
-            Collectible c = new Collectible(resourceRequirements, new Vector(0,i,0));
+        for(int i = 3500; i > 1000 ; i-=100){
+            float x = (float)Math.cos((i-1000)/2500f*10*Math.PI)*75;
+            float z = (float)Math.sin((i-1000)/2500f*10*Math.PI)*75;
+            Collectible c = new Collectible(resourceRequirements, new Vector(x,i,z));
             balloonList.add(c);
         }
     }

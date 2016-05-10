@@ -15,7 +15,7 @@ public class Collectible implements Positioned {
 
 
     public Collectible(ResourceRequirements resourceRequirements, Vector position){
-        quad = new Quad("balloonfilled.jpg", true, true, 1000, 100, 1, 1, true);
+        quad = new Quad("balloonfilled.png", true, true, 1000, 100, 1, 1, false);
         resourceRequirements.require(quad);
         sphereCollider = new SphereCollider(this, "Collectible",10);
         CollisionManager.addCollider(sphereCollider);
