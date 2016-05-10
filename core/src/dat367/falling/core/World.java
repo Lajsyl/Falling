@@ -15,6 +15,7 @@ public class World {
 
     private Model airplane = new Model("airplane.g3db");
 
+
     //defined according to the coordinate system used
     public static final float GRAVITATION = -9.82f;
 
