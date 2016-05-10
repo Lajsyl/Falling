@@ -13,7 +13,7 @@ public class Ground {
 
     public static final float SCALE = 70000.0f;
 
-    public static final String TEXTURE_NAME = "waterclear256.bmp";
+    public static final String TEXTURE_NAME = "repeating_water.jpg";
     public static final float ESTIMATED_TEXTURE_SIZE = 1200.0f; /* meters */
     public static final float UV_SCALE = SCALE / ESTIMATED_TEXTURE_SIZE;
 
