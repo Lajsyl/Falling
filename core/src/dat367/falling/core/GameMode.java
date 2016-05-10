@@ -1,11 +1,6 @@
 package dat367.falling.core;
 
-public class GameMode {
+public interface GameMode {
 
-    protected World world;
-
-    public GameMode(World world){
-        this.world = world;
-    }
-
+    public abstract void update(float deltaTime);
 }

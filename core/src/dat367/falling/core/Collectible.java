@@ -9,16 +9,17 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 public class Collectible implements Positioned {
 
     private SphereCollider sphereCollider;
-    private Vector position = new Vector(0,3500,0);
+    private Vector position;
 
     private Quad quad;
 
 
-    public Collectible(ResourceRequirements resourceRequirements){
+    public Collectible(ResourceRequirements resourceRequirements, Vector position){
         quad = new Quad("balloonfilled.jpg", true, true, 1000, 100, 1, 1, true);
         resourceRequirements.require(quad);
         sphereCollider = new SphereCollider(this, "Collectible",10);
         CollisionManager.addCollider(sphereCollider);
+        this.position = position;
     }
 
     public Vector getPosition(){
