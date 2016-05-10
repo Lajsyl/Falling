@@ -25,7 +25,7 @@ public class ParachuteFallingState implements FallState {
     public void setup(Jumper jumper) {
         jumper.setBodyRotation(new Rotation(jumper.getLookDirection().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0)));
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
-
+        jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
         jumper.setArea(jumper.PARACHUTE_AREA);
 
     }
@@ -71,7 +71,9 @@ public class ParachuteFallingState implements FallState {
     //Looks exactly like the one in FreeFalling, except different surface area...
     //TODO adjust for optimal speed
     private Vector calcAccY(Jumper jumper){
-        float drag = (float)(0.5*1.0*1.2041*17)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
+        float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
+
+        float drag = (float)(0.5 * jumper.getDragCoefficient() * World.AIR_DENSITY * jumper.getArea()) * yVelocitySquared;
 
         float newY = (World.GRAVITATION*90 + drag)/90;
 

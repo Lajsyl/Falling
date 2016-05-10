@@ -93,7 +93,7 @@ public class FreeFallingState implements FallState, Observer {
     private Vector calculateAccelerationY(Jumper jumper, float deltaTime) {
         float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
 
-        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * Jumper.BODY_AREA * Jumper.DRAG_COEFFICIENT;
+        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
         float newY = (World.GRAVITATION * 90 + drag) / 90;
 
         return new Vector(0, newY, 0).scale(Y_ACCELERATION_MULTIPLIER);
