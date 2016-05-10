@@ -9,6 +9,7 @@ public class World {
     private Ground ground;
     private CloudSimulator cloudSimulator;
     private Jumper jumper;
+    private Collectible collectible;
 
     public static final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
 
@@ -18,11 +19,14 @@ public class World {
     public static final float GRAVITATION = -9.82f;
 
     public World(ResourceRequirements resourceRequirements) {
+        CollisionManager.clear();
         // Create jumper using the world start position etc.
         jumper = new Jumper(getStartPosition(), getStartBodyRotation());
 
         ground = new Ground(resourceRequirements);
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
+
+        collectible = new Collectible(resourceRequirements);
 
         resourceRequirements.require(airplane);
     }
@@ -31,10 +35,13 @@ public class World {
         jumper.update(deltaTime);
         ground.update(deltaTime);
         cloudSimulator.update(deltaTime, jumper);
+        collectible.update(deltaTime);
 
         // In airplane.update()
         RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Vector(0,0,0), new Vector(1,1,1));
         RenderQueue.addTask(airplaneTask);
+
+        CollisionManager.update(deltaTime);
     }
 
     public Vector getStartPosition() {

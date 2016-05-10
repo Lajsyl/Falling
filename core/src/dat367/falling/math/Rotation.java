@@ -20,6 +20,10 @@ public class Rotation {
         return up;
     }
 
+    public Vector getRight() {
+        return direction.cross(up);
+    }
+
     public Rotation rotate(Vector axis, float radians) {
         Matrix rotationMatrix = FallingMath.rotationMatrix(axis, radians);
         return new Rotation(rotationMatrix.mult(direction).normalized(), rotationMatrix.mult(up).normalized());
