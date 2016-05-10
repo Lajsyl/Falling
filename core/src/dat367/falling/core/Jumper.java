@@ -2,6 +2,10 @@ package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.Model;
+import dat367.falling.platform_abstraction.ModelRenderTask;
+import dat367.falling.platform_abstraction.RenderTask;
+import dat367.falling.platform_abstraction.ResourceRequirements;
 
 import java.util.Observable;
 
@@ -18,6 +22,8 @@ public class Jumper extends Observable implements Positioned {
     private FallState fallState = new PreJumpState();
 
 
+    private Model parachute = new Model("parachute.g3db");
+
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;
     private Vector position;
@@ -33,7 +39,10 @@ public class Jumper extends Observable implements Positioned {
     private SphereCollider sphereCollider;
     public static final String NAME = "Jumper";
 
-    public Jumper(Vector position, Rotation bodyRotation) {
+    public Jumper(ResourceRequirements resourceRequirements, Vector position, Rotation bodyRotation) {
+
+
+
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
         CollisionManager.addCollider(sphereCollider);
@@ -53,6 +62,8 @@ public class Jumper extends Observable implements Positioned {
             this.fallState = newState;
             fallState.setup(this);
         }
+
+        parachuteUpdate();
     }
 
     public Vector getLookDirection() {
@@ -147,5 +158,9 @@ public class Jumper extends Observable implements Positioned {
 
     public void setBodyRotation(Rotation bodyRotation) {
         this.bodyRotation = bodyRotation;
+    }
+
+    private void parachuteUpdate(){
+        RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,5,0)), bodyRotation, new Vector(1,1,1));
     }
 }

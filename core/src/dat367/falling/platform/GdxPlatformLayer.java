@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
+import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -203,7 +204,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 						ModelInstance instance = models.get(modelFileName);
 
 						instance.transform = new Matrix4()
-								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
+								//.setFromEulerAngles(task.getRotation().getX(), task.getRotation().getY(), task.getRotation().getZ())
+								.mul(libGdxRotationMatrix(task.getRotation()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
 								.translate(libGdxVector(task.getPosition()));
 
@@ -595,6 +597,23 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
+	}
+
+	private Matrix4 libGdxRotationMatrix(Rotation rotation){
+
+		Matrix rotMatrix = rotation.getRotationMatrix();
+
+		Vector col1 = rotMatrix.getColumn1();
+		Vector col2 = rotMatrix.getColumn2();
+		Vector col3 = rotMatrix.getColumn3();
+
+		float[] values = { col1.getX(), col2.getX(), col3.getX(), 0,
+							col1.getY(), col2.getY(), col3.getY(), 0,
+							col1.getZ(), col2.getZ(), col3.getZ(), 0,
+							0, 0, 0, 1};
+
+		return new Matrix4(values);
+
 	}
 
 }

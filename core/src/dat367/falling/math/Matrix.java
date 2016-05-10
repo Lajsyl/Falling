@@ -14,6 +14,12 @@ public class Matrix {
         this.i3j1 = i3j1; this.i3j2 = i3j2; this.i3j3 = i3j3;
     }
 
+    public Matrix(Vector column1, Vector column2, Vector column3){
+        this(   column1.getX(), column2.getX(), column3.getX(),
+                column1.getY(), column2.getY(), column3.getY(),
+                column1.getZ(), column2.getZ(), column3.getZ());
+    }
+
     public Vector getColumn1(){
         return new Vector(this.i1j1, this.i1j2, this.i1j3);
     }

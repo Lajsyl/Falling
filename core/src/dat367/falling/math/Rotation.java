@@ -12,6 +12,11 @@ public class Rotation {
         this.up = up;
     }
 
+    public Rotation(){
+        this.direction = new Vector(0,0,1);
+        this.up = new Vector(0,1,0);
+    }
+
     public Vector getDirection() {
         return direction;
     }
@@ -44,4 +49,9 @@ public class Rotation {
         return new Rotation(direction.normalized(), up.normalized());
     }
 //
+
+    public Matrix getRotationMatrix(){
+        return new Matrix(getRight(), getUp(), getDirection());
+    }
+
 }
