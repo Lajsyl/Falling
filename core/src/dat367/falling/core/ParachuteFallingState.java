@@ -14,6 +14,9 @@ public class ParachuteFallingState implements FallState {
     private float rotationalSpeed;
     private float rotationalAcceleration;
 
+    public static final float MAX_ROTATIONAL_SPEED = 0.03f;
+
+
 //    private Model parachute = new Model("parachute.g3db");
 
     private float forwardSpeed = 30;
@@ -22,6 +25,8 @@ public class ParachuteFallingState implements FallState {
     public void setup(Jumper jumper) {
         jumper.setBodyRotation(new Rotation(jumper.getLookDirection().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0)));
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
+        jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
+        jumper.setArea(jumper.PARACHUTE_AREA);
 
     }
 
@@ -35,6 +40,10 @@ public class ParachuteFallingState implements FallState {
         rotationalAcceleration = calculateRotationalAcceleration(deltaTime, jumper);
         rotationalSpeed = calculcateRotationalSpeed(deltaTime);
         jumper.setBodyRotation(new Rotation(jumper.getBodyRotation().getDirection().rotateAroundY(rotationalSpeed), jumper.getBodyRotation().getUp()));
+
+
+        jumper.setArea(calculateArea());
+
 
         Vector velocity = calculateVelocity(deltaTime, jumper);//.rotateAroundY(rotationalSpeed);
 
@@ -62,7 +71,9 @@ public class ParachuteFallingState implements FallState {
     //Looks exactly like the one in FreeFalling, except different surface area...
     //TODO adjust for optimal speed
     private Vector calcAccY(Jumper jumper){
-        float drag = (float)(0.5*1.0*1.2041*17)*jumper.getVelocity().getY()*jumper.getVelocity().getY();
+        float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
+
+        float drag = (float)(0.5 * jumper.getDragCoefficient() * World.AIR_DENSITY * jumper.getArea()) * yVelocitySquared;
 
         float newY = (World.GRAVITATION*90 + drag)/90;
 
@@ -109,7 +120,7 @@ public class ParachuteFallingState implements FallState {
         rollAmount = FallingMath.clamp(rollAmount, -maxRollAmount, maxRollAmount);
         rollAmount = rollAmount / maxRollAmount;
 
-        float targetRotationalSpeed = rollAmount * 0.03f;
+        float targetRotationalSpeed = rollAmount * MAX_ROTATIONAL_SPEED;
 
         return (targetRotationalSpeed - rotationalSpeed) * 2f;
     }
@@ -122,6 +133,12 @@ public class ParachuteFallingState implements FallState {
 
         System.out.println("position: " + jumper.getPosition());
         return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
+    }
+
+    private float calculateArea(){
+        float turnAmount = Math.abs(rotationalSpeed)/MAX_ROTATIONAL_SPEED;
+        return Jumper.PARACHUTE_AREA - (Jumper.PARACHUTE_AREA-Jumper.PARACHUTE_AREA_AT_FULL_TURN) * turnAmount;
+
     }
 
     @Override

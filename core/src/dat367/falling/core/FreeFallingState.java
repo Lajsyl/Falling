@@ -93,7 +93,7 @@ public class FreeFallingState implements FallState, Observer {
     private Vector calculateAccelerationY(Jumper jumper, float deltaTime) {
         float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
 
-        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * Jumper.AREA * Jumper.DRAG_COEFFICIENT;
+        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
         float newY = (World.GRAVITATION * 90 + drag) / 90;
 
         return new Vector(0, newY, 0).scale(Y_ACCELERATION_MULTIPLIER);
@@ -110,6 +110,11 @@ public class FreeFallingState implements FallState, Observer {
             targetVelocity = targetVelocity.normalized().scale(maxSpeed);
         }
 
+
+        //TODO find a good-looking way to do this
+        float turnAmount = targetVelocity.length()/maxSpeed;
+        jumper.setArea(Jumper.BODY_AREA - (Jumper.BODY_AREA-Jumper.BODY_AREA_AT_FULL_TURN) * turnAmount);
+
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();
         Vector newAcceleration = targetVelocity.sub(currentVelocity);
@@ -124,6 +129,12 @@ public class FreeFallingState implements FallState, Observer {
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
         Vector averageFrameAcceleration = jumper.getAcceleration().add(v0).scale(1.0f / 2.0f);
         return jumper.getPosition().add(averageFrameAcceleration.scale(deltaTime));
+    }
+
+    private float calculateArea(){
+        float turnAmount = 0;
+        return Jumper.PARACHUTE_AREA - (Jumper.PARACHUTE_AREA-Jumper.PARACHUTE_AREA_AT_FULL_TURN) * turnAmount;
+
     }
 
     @Override

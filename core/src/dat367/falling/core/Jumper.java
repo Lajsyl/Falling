@@ -8,11 +8,18 @@ import java.util.Observable;
 public class Jumper extends Observable implements Positioned {
 
     public static final float MASS = 70.0f;
-    public static final float AREA = 0.8f;
+    public static final float BODY_AREA = 0.8f;
+    public static final float BODY_AREA_AT_FULL_TURN = 0.5f * BODY_AREA;
+    public static final float PARACHUTE_AREA = 17.0f;
+    public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.5f * PARACHUTE_AREA;
     public static final float DRAG_COEFFICIENT = 1.1f;
+    public static final float PARACHUTE_DRAG_COEFFICIENT = 1.4f;
 
     private FallState fallState = new PreJumpState();
 
+
+    private float area = BODY_AREA;
+    private float dragCoefficient = DRAG_COEFFICIENT;
     private Vector position;
     private Vector velocity = new Vector(0, 0, 0);
     private Vector acceleration = new Vector(0, 0, 0);
@@ -84,6 +91,28 @@ public class Jumper extends Observable implements Positioned {
 
     public void setAcceleration(Vector acceleration) {
         this.acceleration = acceleration;
+    }
+
+    public float getArea(){ return area; }
+
+    public void setArea(float area){
+        if (area < 0 ){
+            throw new IllegalArgumentException("Negative area");
+        } else {
+            this.area = area;
+        }
+    }
+
+    public float getDragCoefficient(){
+        return this.dragCoefficient;
+    }
+
+    public void setDragCoefficient(float coefficient){
+        if (coefficient < 0){
+            throw new IllegalArgumentException("Negative drag coefficent");
+        } else {
+            this.dragCoefficient = coefficient;
+        }
     }
 
     public FallState getFallState(){ return fallState; }
