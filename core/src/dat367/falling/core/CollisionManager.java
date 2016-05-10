@@ -8,6 +8,7 @@ public class CollisionManager {
 
     static List<Collidable> collidables = new ArrayList<Collidable>();
     public static Collidable jumper;
+    public static final String id = "CollisionEvent";
 
     public static void addCollider(Collidable collidable){
         if(collidable.getName().equals(Jumper.NAME)){
@@ -22,12 +23,29 @@ public class CollisionManager {
         jumper = null;
     }
 
-
     public static void update(float deltaTime){
         for(Collidable c : collidables){
             if(jumper.collidesWith(c)){
-                System.out.println("Collided! :D");
+                NotificationManager.registerEvent(id,new CollisionData(jumper, c));
             }
+        }
+    }
+
+    public static class CollisionData{
+        private final Collidable object1;
+        private final Collidable object2;
+
+        public CollisionData(Collidable object1, Collidable object2){
+            this.object1 = object1;
+            this.object2 = object2;
+        }
+
+        public Collidable getObject1() {
+            return object1;
+        }
+
+        public Collidable getObject2() {
+            return object2;
         }
     }
 }
