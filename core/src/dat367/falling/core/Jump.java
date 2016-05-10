@@ -5,16 +5,18 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 public class Jump {
 
     private World world;
+    private GameMode gameMode;
     private ResourceRequirements resourceRequirements = new ResourceRequirements();
 
     public Jump() {
-
         // Create world
         world = new World(resourceRequirements);
+        gameMode = new BalloonGameMode(resourceRequirements);
     }
 
     public void update(float deltaTime) {
         world.update(deltaTime);
+        gameMode.update(deltaTime);
     }
 
     public ResourceRequirements getResourceRequirements() {
@@ -25,7 +27,5 @@ public class Jump {
         return world;
     }
 
-    public Jumper getJumper() {
-        return world.getJumper();
-    }
+    public Jumper getJumper() { return world.getJumper(); }
 }
