@@ -7,20 +7,9 @@ import java.util.Map;
 
 public class NotificationManager {
 
-    public static final class Event<D>{
-        public Event(D data) {
-            this.data = data;
-        }
-        D data;
-    }
+    private static Map<String, List<EventHandler>> map = new HashMap<String, List<EventHandler>>();
 
-    public static interface EventHandler<T>{
-        public void handleEvent(Event<T> event);
-    }
-
-    public static Map<String, List<EventHandler>> map = new HashMap<String, List<EventHandler>>();
-
-    public static void addObserver(String id, EventHandler target) {
+    public static <D> void addObserver(String id, EventHandler<D> target) {
         if (!map.containsKey(id)) {
             map.put(id, new ArrayList<EventHandler>());
         }
@@ -28,16 +17,39 @@ public class NotificationManager {
         map.get(id).add(target);
     }
 
-    public static <D> void pushEvent(String id, D data) {
+    public static <D> void registerEvent(String id, D data) {
         Event<D> event = new Event<D>(data);
         List<EventHandler> handlerList = map.get(id);
         if (handlerList != null) {
-            for (EventHandler handler : handlerList) {
-                handler.handleEvent(event);
+            try {
+                for (EventHandler handler : handlerList) {
+                    @SuppressWarnings("unchecked")
+                    EventHandler<D> specificEventHandler = (EventHandler<D>) handler;
+                    specificEventHandler.handleEvent(event);
+                }
+            } catch (ClassCastException e) {
+                throw new NotificationException("Event handler of incorrect type called. This probably happened because " +
+                        "someone registered themselves as a listener for a specific event with an incorrect handler. " +
+                        "It is also possible that someone registered an event with the incorrect type of data.");
             }
         }
     }
 
+    private static final class NotificationException extends RuntimeException {
+        public NotificationException(String message) {
+            super(message);
+        }
+    }
 
+    public static final class Event<D>{
+        public Event(D data) {
+            this.data = data;
+        }
+        final D data;
+    }
+
+    public interface EventHandler<T>{
+        public void handleEvent(Event<T> event);
+    }
 
 }
