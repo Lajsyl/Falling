@@ -11,7 +11,7 @@ public class Ground {
     private Model island = new Model("island.g3db");
     private ModelRenderTask renderIsland;
 
-    public static final float SCALE = 70000.0f;
+    public static final float SCALE = 30000.0f;
 
     public static final String TEXTURE_NAME = "waterclear256blue.bmp";
     public static final float ESTIMATED_TEXTURE_SIZE = 1200.0f; /* meters */
@@ -20,10 +20,10 @@ public class Ground {
 
 
     public Ground(ResourceRequirements resourceRequirements) {
-        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 500, UV_SCALE, UV_SCALE, true);
+        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 15000, UV_SCALE, UV_SCALE, false);
         resourceRequirements.require(groundQuad);
 
-        renderIsland = new ModelRenderTask(island, new Vector(0,0,0), new Vector(0,0,0), new Vector(1,1,1));
+        renderIsland = new ModelRenderTask(island, new Vector(0,0,0), new Vector(0,0,0), new Vector(10,10,10));
         resourceRequirements.require(island);
 
         renderGround = new QuadRenderTask(
