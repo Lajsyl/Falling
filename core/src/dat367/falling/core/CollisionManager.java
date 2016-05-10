@@ -9,6 +9,7 @@ public class CollisionManager {
     static List<Collidable> collidables = new ArrayList<Collidable>();
     public static Collidable jumper;
     public static final String id = "CollisionEvent";
+    public static final String collectibleCollisionId = "collectibleCollisionEvent";
 
     public static void addCollider(Collidable collidable){
         if(collidable.getName().equals(Jumper.NAME)){
@@ -26,7 +27,11 @@ public class CollisionManager {
     public static void update(float deltaTime){
         for(Collidable c : collidables){
             if(jumper.collidesWith(c)){
-                NotificationManager.registerEvent(id,new CollisionData(jumper, c));
+                if (c.getName().equals("Collectible")) {
+                    NotificationManager.registerEvent(collectibleCollisionId, new CollisionData(jumper, c));
+                }else{
+                    NotificationManager.registerEvent(id, new CollisionData(jumper, c));
+                }
             }
         }
     }

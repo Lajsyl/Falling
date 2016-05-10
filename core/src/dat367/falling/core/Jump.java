@@ -5,12 +5,14 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 public class Jump {
 
     private World world;
+    private GameMode gameMode;
     private ResourceRequirements resourceRequirements = new ResourceRequirements();
 
     public Jump() {
 
         // Create world
         world = new World(resourceRequirements);
+        gameMode = new BalloonGameMode(world);
     }
 
     public void update(float deltaTime) {
