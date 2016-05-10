@@ -43,7 +43,7 @@ import java.util.Map;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private boolean platformIsAndroid;
-	private final boolean USING_DEBUG_CAMERA = false;
+	private final boolean USING_DEBUG_CAMERA = true;
 
 	private FallingGame game;
 	private Camera mainCamera;
