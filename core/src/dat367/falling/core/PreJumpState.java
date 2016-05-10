@@ -20,6 +20,8 @@ public class PreJumpState implements FallState {
     // How far you have to lean out to initiate a jump (given as a fraction of maximum lean-out)
     final double JUMP_THRESHOLD = 0.88;
 
+    final boolean THROW_OUT_JUMPER = false;
+
     Vector hipPosition;
 
     @Override
@@ -65,6 +67,19 @@ public class PreJumpState implements FallState {
 
         // When the player leans out far enough, jump!
         if (interpolation > JUMP_THRESHOLD) {
+            if (THROW_OUT_JUMPER) {
+                jumper.setVelocity(20, 0, 0);
+            }
+            return new FreeFallingState();
+        }
+
+        // OR if the player makes a fast enough motion outwards, throw them out of the plane!
+//        Vector headwards = jumper.getHeadRotation().getUp();
+//        headwards.getX() =
+        if (jumper.getScreenClicked()) {
+            if (THROW_OUT_JUMPER) {
+                jumper.setVelocity(20, 0, 0);
+            }
             return new FreeFallingState();
         }
 

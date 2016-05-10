@@ -1,5 +1,7 @@
 package dat367.falling.core;
 
+import dat367.falling.math.FallingMath;
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 
 import java.util.Observable;
@@ -12,9 +14,28 @@ public class FreeFallingState implements FallState, Observer {
     public static final float XZ_ACCELERATION_MULTIPLIER =  1.0f;
     public static final float Y_ACCELERATION_MULTIPLIER =  1.0f;
 
+    private float bodyTiltAmount = 0.0f; // 0 = upright mode, 1 = ground mode
+    private Rotation uprightRotation;
+    public static final float GROUND_MODE_TILT_RADIANS = (float)Math.PI*0.4f;// / 2;
+    public static final float VIEW_MODE_TRANSITION_DURATION = 3.000f; // sec
+
+    public final boolean CHAOTIC_JUMP = false;
+    private float rotationZ = 0;
+    private float rotationY = 0;
+    private float rotationSpeedZ = 4;
+    private float rotationSpeedY = -0.3f;//-2.0f;
+
     @Override
     public void setup(Jumper jumper) {
         jumper.addObserver(this);
+        uprightRotation = jumper.getBodyRotation();
+//        tiltBodyIntoGroundMode(jumper);
+    }
+
+    private void tiltBodyIntoGroundMode(Jumper jumper) {
+//        jumper
+//        Rotation bodyRotation = jumper.getBodyRotation();
+//        jumper.setBodyRotation(bodyRotation.rotate(new Vector(0, 0, 1), (float)-Math.PI / 2));
     }
 
     @Override // from Observer
@@ -34,11 +55,35 @@ public class FreeFallingState implements FallState, Observer {
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
         jumper.setPosition(calculatePosition(deltaTime, jumper, previousFrameVelocity));
 
+        if (CHAOTIC_JUMP) {
+            // Handle tilting between view modes
+            handleBodyTilting(deltaTime, jumper);
+        }
+
+
         if (parachutePulled){
             return new ParachuteFallingState();
         }
 
         return null;
+    }
+
+    private void handleBodyTilting(float deltaTime, Jumper jumper) {
+        if (bodyTiltAmount < 1.0) {
+            bodyTiltAmount += deltaTime / VIEW_MODE_TRANSITION_DURATION;
+            bodyTiltAmount = FallingMath.clamp01(bodyTiltAmount);
+        }
+
+        rotationY += rotationSpeedY * deltaTime;
+        rotationZ += rotationSpeedZ * deltaTime;
+
+        rotationSpeedY -= rotationSpeedY * 0.3 * deltaTime;
+        rotationSpeedZ -= rotationSpeedZ * 0.65 * deltaTime;
+
+        float tilt_radians = GROUND_MODE_TILT_RADIANS*(float)FallingMath.interpolateSmooth(bodyTiltAmount);
+        jumper.setBodyRotation(uprightRotation.rotate(uprightRotation.getRight(), -tilt_radians)
+                                .rotate(new Vector(0,0,1), -rotationZ)
+                                .rotate(new Vector(0,1,0), -rotationY));
     }
 
     private Vector calculateAcceleration(Jumper jumper, float deltaTime) {

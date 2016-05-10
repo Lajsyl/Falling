@@ -18,6 +18,7 @@ public class Jumper extends Observable {
     private Vector acceleration = new Vector(0, 0, 0);
     private Rotation bodyRotation;
     private Rotation headRotation = new Rotation(new Vector(1, 0, 0), new Vector(0, 1, 0));
+
 //    private Vector lookDirection;
 //    private Vector upVector = new Vector(0, 1, 0);
     private boolean screenClicked = false;
