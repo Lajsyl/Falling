@@ -2,10 +2,7 @@ package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
-import dat367.falling.platform_abstraction.ModelRenderTask;
-import dat367.falling.platform_abstraction.RenderTask;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 import java.util.Observable;
 
@@ -162,5 +159,6 @@ public class Jumper extends Observable implements Positioned {
 
     private void parachuteUpdate(){
         RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,5,0)), bodyRotation, new Vector(1,1,1));
+        RenderQueue.addTask(parachuteRender);
     }
 }
