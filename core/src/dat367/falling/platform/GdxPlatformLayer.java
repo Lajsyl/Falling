@@ -203,10 +203,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					if (models.containsKey(modelFileName)) {
 						ModelInstance instance = models.get(modelFileName);
 						instance.transform = new Matrix4()
+								.translate(libGdxVector(task.getPosition()))
 								//.setFromEulerAngles(task.getRotation().getX(), task.getRotation().getY(), task.getRotation().getZ())
 								.mul(libGdxRotationMatrix(task.getRotation()))
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
-								.translate(libGdxVector(task.getPosition()));
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
+
 
 						modelBatch.render(instance, environment);
 					}
