@@ -60,8 +60,10 @@ public class Jumper extends Observable implements Positioned {
             this.fallState = newState;
             fallState.setup(this);
         }
-
-
+        if (fallState instanceof ParachuteFallingState){
+            parachuteUpdate();
+        }
+        
     }
 
     public Vector getLookDirection() {
