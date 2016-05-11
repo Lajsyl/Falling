@@ -54,7 +54,6 @@ public class Jumper extends Observable implements Positioned {
     }
 
     public void update(float deltaTime) {
-        parachuteUpdate();
         FallState newState = fallState.handleFalling(deltaTime, this);
         if (newState != null) {
             this.fallState = newState;
