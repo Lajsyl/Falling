@@ -38,7 +38,7 @@ public class Jumper extends Observable implements Positioned {
 
     public Jumper(ResourceRequirements resourceRequirements, Vector position, Rotation bodyRotation) {
 
-
+        resourceRequirements.require(parachute);
 
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
@@ -54,13 +54,14 @@ public class Jumper extends Observable implements Positioned {
     }
 
     public void update(float deltaTime) {
+        parachuteUpdate();
         FallState newState = fallState.handleFalling(deltaTime, this);
         if (newState != null) {
             this.fallState = newState;
             fallState.setup(this);
         }
 
-        parachuteUpdate();
+
     }
 
     public Vector getLookDirection() {
