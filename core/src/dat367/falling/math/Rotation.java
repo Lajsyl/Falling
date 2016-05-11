@@ -51,7 +51,7 @@ public class Rotation {
 //
 
     public Matrix getRotationMatrix(){
-        return new Matrix(getRight(), getUp(), getDirection());
+        return new Matrix(getRight().scale(-1), getUp(), getDirection());
     }
 
 }

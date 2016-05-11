@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -23,13 +24,13 @@ public class Ground {
         this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 15000, UV_SCALE, UV_SCALE, false);
         resourceRequirements.require(groundQuad);
 
-        renderIsland = new ModelRenderTask(island, new Vector(0,0,0), new Vector(0,0,0), new Vector(10,10,10));
+        renderIsland = new ModelRenderTask(island, new Vector(0,0,0), new Rotation(), new Vector(10,10,10));
         resourceRequirements.require(island);
 
         renderGround = new QuadRenderTask(
                 this.groundQuad,
                 new Vector(0, 0, 0),
-                new Vector(0, 0, 0),
+                new Rotation(),
                 new Vector(SCALE, 1, SCALE)
         );
     }
