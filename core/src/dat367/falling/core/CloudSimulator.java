@@ -20,8 +20,9 @@ public class CloudSimulator {
 
     public static final float CLOUD_SPAWN_AREA_HEIGHT = 1000.0f;
     public static final float CLOUD_SPAWN_AREA_RADIUS = CLOUD_SPAWN_AREA_HEIGHT / 2;
+    public static final float CLOUD_DESPAWN_BOUNDS_EXTENSION = 500.0f;
 
-    public static final int MAX_NUMBER_OF_CLOUDS = 25;
+    public static final int MAX_NUMBER_OF_CLOUDS = 40;
     public static final float WIND_DIRECTION_DEVIATION_SCALE = 0.25f;
 
     private LinkedList<Cloud> activeClouds = new LinkedList<Cloud>();
@@ -72,11 +73,7 @@ public class CloudSimulator {
         // Is cloud outside radius?
         final float distanceToCloudCenter = cloud.getPosition().sub(basePosition).length();
         final float distanceToCloudEdge = distanceToCloudCenter - cloud.getScale() / 2;
-        if (distanceToCloudEdge > CLOUD_SPAWN_AREA_RADIUS) {
-            return true;
-        }
-
-        return false;
+        return distanceToCloudEdge > CLOUD_SPAWN_AREA_RADIUS + CLOUD_DESPAWN_BOUNDS_EXTENSION;
     }
 
     public void update(float deltaTime, Jumper jumper) {
@@ -86,11 +83,11 @@ public class CloudSimulator {
         // Get additional velocity from the airplane
         // TODO: Implement properly!
         if (airplaneVelocity == null) {
-            final float airplaneSpeed = 85.0f;
+            final float airplaneSpeed = 95.0f;
             airplaneVelocity = new Vector(0, 0, 1).normalized().scale(airplaneSpeed);
         }
         else if (!(jumper.getFallState() instanceof PreJumpState)) {
-            airplaneVelocity = airplaneVelocity.scale(0.999f);
+            airplaneVelocity = airplaneVelocity.scale(0.997f);
         }
         Vector cloudAirplaneVelocity = airplaneVelocity.scale(-1);
 

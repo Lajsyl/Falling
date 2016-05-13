@@ -14,22 +14,17 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.*;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import sun.font.StandardGlyphVector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,7 +93,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.far = Z_FAR;
 
 		// Create a new model batch that uses our custom shader provider
-		modelBatch = new ModelBatch(new FallingShaderProvider());
+		// TODO: Note that the default shader is used!!!
+		//modelBatch = new ModelBatch(new FallingShaderProvider());
+		modelBatch = new ModelBatch();
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
@@ -138,7 +135,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Material
 					new Material(
 							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
-							// This is actually not currently used, since the QuadShader does its own thing
 							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
 							IntAttribute.createCullFace(GL20.GL_NONE)
 					),
@@ -153,9 +149,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			String textureFileName = quad.getTextureFileName();
 			if (!quadTextureAttributes.containsKey(textureFileName)) {
 				FileHandle fileHandle = Gdx.files.internal(textureFileName);
-				Texture quadTexture = new Texture(fileHandle, false/*quad.shouldUseMipMaps()*/);
+				Texture quadTexture = new Texture(fileHandle, quad.shouldUseMipMaps());
+
 				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-				quadTexture.setFilter(Texture.TextureFilter.Linear/*MipMapLinearLinear*/, Texture.TextureFilter.Linear);
+
+				Texture.TextureFilter minFilter = quad.shouldUseMipMaps()
+						? Texture.TextureFilter.MipMapLinearLinear
+						: Texture.TextureFilter.Linear;
+				quadTexture.setFilter(minFilter, Texture.TextureFilter.Linear);
+
 				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
 				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
 
@@ -222,32 +224,32 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					if (quadTextureAttributes.containsKey(textureFileName)) {
 						TextureAttribute currentTextureAttribute = quadTextureAttributes.get(textureFileName);
 
-						// Render using the shared quadModel
+						// Make copy, since stuff like transform and materials would be shared if not
 						ModelInstance sharedInstance = this.quadModel;
+						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
+
+						// Set quad as user data so that the shader can use its properties
+						modelInstanceCopy.userData = quadTask.getQuad();
 
 						// NOTE: Will overwrite previous attribute of the same type!
-						sharedInstance.materials.get(0).set(currentTextureAttribute);
+						modelInstanceCopy.materials.get(0).set(currentTextureAttribute);
+						modelInstanceCopy.materials.first().set(new DepthTestAttribute(quadTask.getQuad().isOpaque()));
 
-						sharedInstance.transform = new Matrix4();
+						modelInstanceCopy.transform = new Matrix4();
 
 						// Scale for aspect ratio
 						if (quadTask.getQuad().shouldAspectRatioAdjust()) {
 							Float aspectRatio = quadTask.getQuad().getAspectRatio();
 							if (aspectRatio != null && aspectRatio != 0.0f) {
-								sharedInstance.transform.scl(aspectRatio, 1, 1);
+								modelInstanceCopy.transform.scl(aspectRatio, 1, 1);
 							}
 						}
 
 						// NOTE: No rotation (for now?)!
-						sharedInstance.transform = sharedInstance.transform
+						modelInstanceCopy.transform = modelInstanceCopy.transform
 								.translate(libGdxVector(task.getPosition()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-						// Make copy, since stuff like transform and materials would be shared if not
-						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
-
-						// Set quad as user data so that the shader can use its properties
-						modelInstanceCopy.userData = quadTask.getQuad();
 						modelBatch.render(modelInstanceCopy, environment);
 					}
 				}
