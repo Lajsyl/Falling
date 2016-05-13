@@ -19,7 +19,7 @@ public class Jumper extends Observable implements Positioned {
     private FallState fallState = new PreJumpState();
 
 
-    private Model parachute = new Model("parachute.g3db");
+    private Model parachute = new Model("parachute.g3db", false);
 
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;

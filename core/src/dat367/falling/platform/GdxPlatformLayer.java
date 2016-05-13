@@ -208,6 +208,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 								.mul(libGdxRotationMatrix(task.getRotation()))
 								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
+						instance.materials.first().set(IntAttribute.createCullFace(modelTask.getModel().getShouldCullFaces() ? GL20.GL_CW : GL20.GL_NONE));
 
 						modelBatch.render(instance, environment);
 					}
