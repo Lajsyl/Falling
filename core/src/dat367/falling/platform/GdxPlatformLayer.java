@@ -10,12 +10,10 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.*;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -25,6 +23,7 @@ import dat367.falling.core.Ground;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
+import dat367.falling.platform_abstraction.Model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,10 +91,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
 
-		// Create a new model batch that uses our custom shader provider
-		// TODO: Note that the default shader is used!!!
-		//modelBatch = new ModelBatch(new FallingShaderProvider());
-		modelBatch = new ModelBatch();
+		// Create a new model batch that uses a custom shader provider
+		modelBatch = new ModelBatch(new DefaultShaderProvider() {
+			@Override
+			protected Shader createShader(Renderable renderable) {
+				return new FallingShader(renderable, config);
+			}
+		});
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
