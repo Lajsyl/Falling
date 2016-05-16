@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
+import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
 import dat367.falling.math.Rotation;
@@ -64,8 +65,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private Rotation desktopSimulatedHeadTransform;
 
+	private CardboardAudioEngine cardboardAudioEngine;
+
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
+	}
+
+	public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
+		this.cardboardAudioEngine = cardboardAudioEngine;
 	}
 
 	@Override
