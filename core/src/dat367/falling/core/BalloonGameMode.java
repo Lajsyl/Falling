@@ -56,4 +56,12 @@ public class BalloonGameMode implements GameMode {
             RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
         }
     }
+
+    @Override
+    public String toString() {
+        return "BalloonGameMode{" +
+                "collectibleCount=" + collectibleCount +
+                ", numberOfBalloons=" + numberOfBalloons +
+                '}';
+    }
 }
