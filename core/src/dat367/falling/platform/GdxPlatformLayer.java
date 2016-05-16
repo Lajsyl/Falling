@@ -285,9 +285,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					"Camera pos: " + gameVector(camera.position) + "\n" +
 					"Look dir: " + gameVector(camera.direction) + "\n\n" +
 					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
-					"Speed: " + game.getCurrentJump().getJumper().getVelocity();
+					"Speed: " + game.getCurrentJump().getJumper().getVelocity() + "\n\n" +
+					"Frame time: " + Gdx.graphics.getDeltaTime() * 1000.0f + "ms";
 
-							font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+			font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+
 			// Draw crosshair etc. for desktop control
 			if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
 				Color color = font.getColor().cpy();

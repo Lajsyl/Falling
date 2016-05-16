@@ -72,7 +72,7 @@ public class FallingShader extends DefaultShader {
         set(Uniforms.uvScale, uvScale);
 
         // Quad distance fading
-        if (quad != null && !quad.isOpaque()) {
+        if (quad != null) {
             float maxOpacityDistance = quad.getMaxDrawDistance() - quad.getFadeOutDistance();
             set(Uniforms.maxOpacityDistance, maxOpacityDistance);
             set(Uniforms.maxDrawDistance, quad.getMaxDrawDistance());

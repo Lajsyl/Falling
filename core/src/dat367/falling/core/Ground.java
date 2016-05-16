@@ -18,7 +18,7 @@ public class Ground {
     public static final float UV_SCALE = SCALE / ESTIMATED_TEXTURE_SIZE;
 
     public Ground(ResourceRequirements resourceRequirements) {
-        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 500, UV_SCALE, UV_SCALE, true);
+        this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 10000, UV_SCALE, UV_SCALE, true);
         resourceRequirements.require(groundQuad);
 
         renderGround = new QuadRenderTask(

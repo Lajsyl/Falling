@@ -16,6 +16,10 @@ precision mediump float;
 //
 //
 
+FALLING uniform float u_maxDrawDistance;
+FALLING uniform float u_maxOpacityDistance;
+FALLING varying vec4 v_fragWorldPos;
+
 #if defined(specularTextureFlag) || defined(specularColorFlag)
 #define specularFlag
 #endif
@@ -30,7 +34,6 @@ varying vec4 v_color;
 
 #ifdef blendedFlag
 varying float v_opacity;
-FALLING varying float v_fadeOutOpacity;
 
 #ifdef alphaTestFlag
 varying float v_alphaTest;
@@ -80,6 +83,10 @@ varying vec3 v_lightDiffuse;
 #ifdef specularFlag
 varying vec3 v_lightSpecular;
 #endif //specularFlag
+
+#ifdef cameraPositionFlag
+uniform vec4 u_cameraPosition;
+#endif // cameraPositionFlag
 
 #ifdef shadowMapFlag
 uniform sampler2D u_shadowTexture;
@@ -188,8 +195,12 @@ void main() {
 		gl_FragColor.rgb = mix(gl_FragColor.rgb, u_fogColor.rgb, v_fog);
 	#endif // end fogFlag
 
-	#ifdef blendedFlag
-		gl_FragColor.a = diffuse.a * v_opacity * FALLING v_fadeOutOpacity;
+	#if defined(blendedFlag) && defined(cameraPositionFlag)
+
+        FALLING float fragmentToCameraDistance = length(u_cameraPosition.xyz - v_fragWorldPos.xyz);
+        FALLING float fadeOutOpacity = 1.0 - smoothstep(u_maxOpacityDistance, u_maxDrawDistance, fragmentToCameraDistance);
+
+		gl_FragColor.a = diffuse.a * v_opacity * fadeOutOpacity;
 		#ifdef alphaTestFlag
 			if (gl_FragColor.a <= v_alphaTest)
 				discard;
