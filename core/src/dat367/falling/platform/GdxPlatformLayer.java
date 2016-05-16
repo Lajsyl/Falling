@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
@@ -28,6 +30,7 @@ import dat367.falling.core.Ground;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
+import sun.font.StandardGlyphVector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -263,6 +266,23 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Render 2D
 		spriteBatch.begin();
 		{
+			Iterable<GUITask> tasks = RenderQueue.getGUITasks();
+			for(GUITask guiTask : tasks){
+				if(guiTask instanceof GUITextTask){
+					GUITextTask textTask = (GUITextTask)guiTask;
+					float posX = textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
+					float posZ = textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
+					if(textTask.shouldCenterHorizontal()){
+						final GlyphLayout layout = new GlyphLayout(font, textTask.getText());
+						posX -= layout.width/2f;
+					}
+
+					font.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
+					font.draw(spriteBatch, textTask.getText(), posX, posZ);//, Gdx.graphics.getWidth(), Align.center, true );
+				}
+			}
+
+			font.setColor(Color.CHARTREUSE);
 			String debugText =
 					getFallStateString() + "\n" +
 					"Camera pos: " + gameVector(camera.position) + "\n" +

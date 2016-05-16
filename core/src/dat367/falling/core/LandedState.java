@@ -3,6 +3,9 @@ package dat367.falling.core;
 import dat367.falling.math.Vector;
 
 public class LandedState implements FallState {
+
+    public static final String playerHasStopped = "playerHasStopped";
+
     @Override
     public void setup(Jumper jumper) {
 
@@ -17,6 +20,10 @@ public class LandedState implements FallState {
         jumper.setAcceleration(calculateAcceleration(jumper));
         jumper.setVelocity(calculateVelocity(deltaTime, jumper));
         jumper.setPosition(calculatePosition(deltaTime, jumper, previousFrameVelocity));
+
+        if(jumper.getVelocity().lengthSquared() == 0){
+            NotificationManager.registerEvent(playerHasStopped, null);
+        }
 
         return null;
     }
