@@ -1,3 +1,10 @@
+//
+// To find all code in this file that is specific to "Falling", search for this term.
+//
+#define FALLING
+//
+//
+
 #if defined(diffuseTextureFlag) || defined(specularTextureFlag)
 #define textureFlag
 #endif
@@ -115,6 +122,10 @@ const float u_shininess = 20.0;
 #ifdef blendedFlag
 uniform float u_opacity;
 varying float v_opacity;
+
+FALLING uniform float u_maxDrawDistance;
+FALLING uniform float u_maxOpacityDistance;
+FALLING varying float v_fadeOutOpacity;
 
 #ifdef alphaTestFlag
 uniform float u_alphaTest;
@@ -239,6 +250,12 @@ void main() {
 	#endif
 
 	gl_Position = u_projViewTrans * pos;
+
+    #ifdef blendedFlag
+        FALLING
+        float fragmentToCameraDistance = length(u_cameraPosition.xyz - pos.xyz);
+        v_fadeOutOpacity = 1.0 - smoothstep(u_maxOpacityDistance, u_maxDrawDistance, fragmentToCameraDistance);
+    #endif
 
 	#ifdef shadowMapFlag
 		vec4 spos = u_shadowMapProjViewTrans * pos;

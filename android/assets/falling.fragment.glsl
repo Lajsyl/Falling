@@ -9,6 +9,13 @@ precision mediump float;
 #define HIGH
 #endif
 
+//
+// To find all code in this file that is specific to "Falling", search for this term.
+//
+#define FALLING
+//
+//
+
 #if defined(specularTextureFlag) || defined(specularColorFlag)
 #define specularFlag
 #endif
@@ -23,6 +30,8 @@ varying vec4 v_color;
 
 #ifdef blendedFlag
 varying float v_opacity;
+FALLING varying float v_fadeOutOpacity;
+
 #ifdef alphaTestFlag
 varying float v_alphaTest;
 #endif //alphaTestFlag
@@ -34,6 +43,7 @@ varying float v_alphaTest;
 
 #ifdef diffuseTextureFlag
 varying MED vec2 v_diffuseUV;
+FALLING uniform vec2 u_uvScale;
 #endif
 
 #ifdef specularTextureFlag
@@ -105,18 +115,21 @@ varying float v_fog;
 #endif // fogFlag
 
 void main() {
+
+    FALLING vec2 scaledDiffusedUV = v_diffuseUV * u_uvScale;
+
 	#if defined(normalFlag)
 		vec3 normal = v_normal;
 	#endif // normalFlag
 
 	#if defined(diffuseTextureFlag) && defined(diffuseColorFlag) && defined(colorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * u_diffuseColor * v_color;
+		vec4 diffuse = texture2D(u_diffuseTexture, scaledDiffusedUV) * u_diffuseColor * v_color;
 	#elif defined(diffuseTextureFlag) && defined(diffuseColorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * u_diffuseColor;
+		vec4 diffuse = texture2D(u_diffuseTexture, scaledDiffusedUV) * u_diffuseColor;
 	#elif defined(diffuseTextureFlag) && defined(colorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * v_color;
+		vec4 diffuse = texture2D(u_diffuseTexture, scaledDiffusedUV) * v_color;
 	#elif defined(diffuseTextureFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV);
+		vec4 diffuse = texture2D(u_diffuseTexture, scaledDiffusedUV);
 	#elif defined(diffuseColorFlag) && defined(colorFlag)
 		vec4 diffuse = u_diffuseColor * v_color;
 	#elif defined(diffuseColorFlag)
@@ -176,7 +189,7 @@ void main() {
 	#endif // end fogFlag
 
 	#ifdef blendedFlag
-		gl_FragColor.a = diffuse.a * v_opacity;
+		gl_FragColor.a = diffuse.a * v_opacity * FALLING v_fadeOutOpacity;
 		#ifdef alphaTestFlag
 			if (gl_FragColor.a <= v_alphaTest)
 				discard;
