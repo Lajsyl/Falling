@@ -26,21 +26,30 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 	}
 
 	public void testCardboardSound() {
-		// TEST CARDBOARD SOUND
-		new Thread(
-				new Runnable() {
-					@Override
-					public void run() {
-						cardboardAudioEngine.preloadSoundFile("wind01.wav");
-						int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
-						cardboardAudioEngine.setSoundObjectPosition(soundID, 0, 0, 0);
+
+		cardboardAudioEngine.preloadSoundFile("wind01.wav");
+		int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
+		cardboardAudioEngine.setSoundObjectPosition(soundID, 0, 0, 5);
 //                    cardboardAudioEngine.
-						cardboardAudioEngine.playSound(soundID, true);
-						System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
-						System.out.println("isSoundPlaying: soundID = " + soundID);
-					}
-				})
-				.start();
+		cardboardAudioEngine.playSound(soundID, true);
+		System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
+		System.out.println("isSoundPlaying: soundID = " + soundID);
+
+		// TEST CARDBOARD SOUND
+//		new Thread(
+//				new Runnable() {
+//					@Override
+//					public void run() {
+//						cardboardAudioEngine.preloadSoundFile("wind01.wav");
+//						int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
+//						cardboardAudioEngine.setSoundObjectPosition(soundID, 5, 0, 0);
+////                    cardboardAudioEngine.
+//						cardboardAudioEngine.playSound(soundID, true);
+//						System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
+//						System.out.println("isSoundPlaying: soundID = " + soundID);
+//					}
+//				})
+//				.start();
 		// --------------------
 	}
 }

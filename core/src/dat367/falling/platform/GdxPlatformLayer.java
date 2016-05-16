@@ -24,9 +24,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
+import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
+import dat367.falling.core.NotificationManager;
+import dat367.falling.core.PositionalSound;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -44,7 +47,7 @@ import java.util.Map;
  * sound, etc
  */
 
-public class GdxPlatformLayer implements CardBoardApplicationListener {
+public class GdxPlatformLayer implements CardBoardApplicationListener, NotificationManager.EventHandler<PositionalSound> {
 
 	private boolean platformIsAndroid;
 	private final boolean USING_DEBUG_CAMERA = false;
@@ -88,6 +91,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
+			NotificationManager.addObserver(PositionalSound.eventId, this);
 //			setDesktopCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -489,7 +493,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	//---- ANDROID-VR-SPECIFIC ----//
 
 	@Override
-	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
+	public void onNewFrame(HeadTransform paramHeadTransform) {
 
 //		game.getCurrentJump().getJumper().setBodyRotation(new Rotation(game.getJumperBodyRotation().getDirection().rotateAroundY(0.1f), new Vector(0,1,0)));
 
@@ -522,6 +526,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Also set camera orientation depending on jumper neutral direction
 		mainCamera.direction.set(libGdxVector(bodyRotation.getDirection()));
 		mainCamera.up.set(libGdxVector(bodyRotation.getUp()));
+
+		float[] headRotationQuaternion = new float[4];
+		paramHeadTransform.getQuaternion(headRotationQuaternion, 0);
+		cardboardAudioEngine.setHeadRotation(
+				headRotationQuaternion[0], headRotationQuaternion[1], headRotationQuaternion[2], headRotationQuaternion[3]);
+
 	}
 
 	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
@@ -614,6 +624,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game.screenClicked(true);
 	}
 
+	// Play specified sound at sound events
+	@Override
+	public void handleEvent(NotificationManager.Event<PositionalSound> event) {
+
+	}
+
 	//---- UTILITIES ----//
 
 	private Vector3 libGdxVector(Vector vector) {
@@ -623,5 +639,4 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
 	}
-
 }

@@ -52,7 +52,7 @@ public class BalloonGameMode implements GameMode {
         }
 
         if(renderText) {
-            String text = "You cought " + collectibleCount + " of " + numberOfBalloons;
+            String text = "You caught " + collectibleCount + " of " + numberOfBalloons;
             RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
         }
     }
