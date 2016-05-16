@@ -13,6 +13,8 @@ public class World {
     public static final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
 
     private Model airplane = new Model("airplane.g3db");
+    private Sound airplaneWindSound = new Sound("wind01.wav");
+    private PositionedSound airplaneWind = new PositionedSound(airplaneWindSound, new Vector(0, 5, 0));
 
     //defined according to the coordinate system used
     public static final float GRAVITATION = -9.82f;
@@ -26,6 +28,8 @@ public class World {
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
 
         resourceRequirements.require(airplane);
+        resourceRequirements.require(airplaneWindSound);
+        airplaneWind.loop();
     }
 
     public void update(float deltaTime) {

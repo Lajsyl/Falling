@@ -22,21 +22,21 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
 import dat367.falling.core.NotificationManager;
-import dat367.falling.core.PositionalSound;
+import dat367.falling.core.PositionedSound;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import sun.font.StandardGlyphVector;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsibilities
@@ -47,7 +47,7 @@ import java.util.Map;
  * sound, etc
  */
 
-public class GdxPlatformLayer implements CardBoardApplicationListener, NotificationManager.EventHandler<PositionalSound> {
+public class GdxPlatformLayer implements CardBoardApplicationListener {//, NotificationManager.EventHandler<PositionedSound> {
 
 	private boolean platformIsAndroid;
 	private final boolean USING_DEBUG_CAMERA = false;
@@ -63,6 +63,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 	private ModelBatch modelBatch;
 	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
 	private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
+	private Set<String> preloadedSounds = new HashSet<String>();
 	private ModelInstance quadModel;
 	private Environment environment;
 
@@ -86,12 +87,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
+		setupSoundEventHandling();
+
 		game = new FallingGame();
 		loadResources(game.getCurrentJump().getResourceRequirements());
 
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
-			NotificationManager.addObserver(PositionalSound.eventId, this);
+			setupSoundEventHandling();
 //			setDesktopCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -119,6 +122,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 	}
 
 	private void loadResources(ResourceRequirements resourceRequirements) {
+		loadModels(resourceRequirements);
+		loadQuads(resourceRequirements);
+		loadSounds(resourceRequirements);
+	}
+
+	private void loadModels(ResourceRequirements resourceRequirements) {
 		for (Model model : resourceRequirements.getModels()) {
 			String fileName = model.getModelFileName();
 			if (!models.containsKey(fileName)) {
@@ -127,7 +136,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 				models.put(fileName, gdxModelInstance);
 			}
 		}
+	}
 
+	private void loadQuads(ResourceRequirements resourceRequirements) {
 		// Create the quad model if quads are required
 		if (resourceRequirements.getQuads().size() > 0) {
 
@@ -176,6 +187,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 		}
 	}
 
+	private void loadSounds(ResourceRequirements resourceRequirements) {
+		for (Sound sound : resourceRequirements.getSounds()) {
+			String fileName = sound.getSoundFileName();
+			if (!preloadedSounds.contains(sound.getSoundFileName())) {
+				cardboardAudioEngine.preloadSoundFile(sound.getSoundFileName());
+				preloadedSounds.add(sound.getSoundFileName());
+			}
+		}
+	}
+
 	@Override
 	public void resize(int width, int height) {
 
@@ -195,6 +216,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 	public void dispose() {
 		modelBatch.dispose();
 		spriteBatch.dispose();
+		for (String sound : preloadedSounds) {
+			cardboardAudioEngine.unloadSoundFile(sound);
+		}
+		preloadedSounds.clear();
 		// TODO: Dispose of all resources!
 	}
 
@@ -489,8 +514,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 		mainCamera.translate(translation);
 	}
 
-
 	//---- ANDROID-VR-SPECIFIC ----//
+
 
 	@Override
 	public void onNewFrame(HeadTransform paramHeadTransform) {
@@ -588,7 +613,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 				.add(bodyRotation.getDirection().cross(bodyRotation.getUp()).scale(z));
 	}
 
-
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {
 
@@ -608,6 +632,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 		}
 	}
 
+
 	@Override
 	public void onFinishFrame(com.google.vrtoolkit.cardboard.Viewport paramViewport) {
 
@@ -624,10 +649,63 @@ public class GdxPlatformLayer implements CardBoardApplicationListener, Notificat
 		game.screenClicked(true);
 	}
 
-	// Play specified sound at sound events
-	@Override
-	public void handleEvent(NotificationManager.Event<PositionalSound> event) {
+	private void setupSoundEventHandling() {
+		NotificationManager.addObserver(PositionedSound.playSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
+				makeSoundAvailable(event.data);
+				cardboardAudioEngine.playSound(event.data.getSoundObjectID(), false);
+			}
+		});
+		NotificationManager.addObserver(PositionedSound.loopSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
+				makeSoundAvailable(event.data);
+				cardboardAudioEngine.playSound(event.data.getSoundObjectID(), true);
+			}
+		});
+		NotificationManager.addObserver(PositionedSound.stopSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
+				if (event.data.getSoundObjectID() != -1) {
+					cardboardAudioEngine.stopSound(event.data.getSoundObjectID());
+				}
+			}
+		});
+		NotificationManager.addObserver(PositionedSound.changePositionSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
+				if (event.data.getSoundObjectID() != -1) {
+					Vector pos = event.data.getPosition();
+					cardboardAudioEngine.setSoundObjectPosition(event.data.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
+				}
+			}
+		});
+		NotificationManager.addObserver(PositionedSound.changeVolumeSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
+				if (event.data.getSoundObjectID() != -1) {
+					cardboardAudioEngine.setSoundVolume(event.data.getSoundObjectID(), event.data.getVolume());
+				}
+			}
+		});
+	}
 
+	private void makeSoundAvailable(PositionedSound sound) {
+		if (sound.getSoundObjectID() == -1) { // If cardboard sound object does not exist, create it
+            if (!preloadedSounds.contains(sound.getSoundFileName())) { // If sound is not preloaded, load it
+				cardboardAudioEngine.preloadSoundFile(sound.getSoundFileName());
+                preloadedSounds.add(sound.getSoundFileName());
+			}
+            createCardboardSoundObject(sound);
+        }
+	}
+
+	private void createCardboardSoundObject(PositionedSound positionedSound) {
+		positionedSound.setSoundObjectID(cardboardAudioEngine.createSoundObject(positionedSound.getSoundFileName()));
+		Vector pos = positionedSound.getPosition();
+		cardboardAudioEngine.setSoundObjectPosition(positionedSound.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
+		cardboardAudioEngine.setSoundVolume(positionedSound.getSoundObjectID(), positionedSound.getVolume());
 	}
 
 	//---- UTILITIES ----//

@@ -17,7 +17,7 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
 		cardboardAudioEngine = new CardboardAudioEngine(this, CardboardAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
-		testCardboardSound();
+//		testCardboardSound();
 		GdxPlatformLayer gdxPlatformLayer = new GdxPlatformLayer(true);
 		gdxPlatformLayer.setCardboardAudioEngine(cardboardAudioEngine);
 
@@ -27,13 +27,12 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 
 	public void testCardboardSound() {
 
-		cardboardAudioEngine.preloadSoundFile("wind01.wav");
-		int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
-		cardboardAudioEngine.setSoundObjectPosition(soundID, 0, 0, 5);
-//                    cardboardAudioEngine.
-		cardboardAudioEngine.playSound(soundID, true);
-		System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
-		System.out.println("isSoundPlaying: soundID = " + soundID);
+//		cardboardAudioEngine.preloadSoundFile("wind01.wav");
+//		int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
+//		cardboardAudioEngine.setSoundObjectPosition(soundID, 0, 0, 5);
+//		cardboardAudioEngine.playSound(soundID, true);
+//		System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
+//		System.out.println("isSoundPlaying: soundID = " + soundID);
 
 		// TEST CARDBOARD SOUND
 //		new Thread(
