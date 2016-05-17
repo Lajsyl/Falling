@@ -1,9 +1,11 @@
 package dat367.falling.platform;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.math.Vector2;
 import dat367.falling.platform_abstraction.Quad;
 
@@ -52,7 +54,16 @@ public class FallingShader extends DefaultShader {
     }
 
     @Override
+    public void begin(Camera camera, RenderContext context) {
+        set(u_cameraPosition, camera.position.x, camera.position.y, camera.position.z, 1.0f);
+        super.begin(camera, context);
+    }
+
+    @Override
     public void render(Renderable renderable, Attributes combinedAttributes) {
+
+
+
         Quad quad = null;
         if (renderable != null && renderable.userData != null && renderable.userData instanceof Quad) {
             quad = (Quad) renderable.userData;
