@@ -18,7 +18,7 @@ precision mediump float;
 
 FALLING uniform float u_maxDrawDistance;
 FALLING uniform float u_maxOpacityDistance;
-FALLING varying MED vec4 v_fragWorldPos;
+FALLING varying MED vec3 v_fragWorldPos;
 
 #if defined(specularTextureFlag) || defined(specularColorFlag)
 #define specularFlag
@@ -197,7 +197,7 @@ void main() {
 
 	#if defined(blendedFlag) && defined(cameraPositionFlag)
 
-        FALLING float fragmentToCameraDistance = length(u_cameraPosition.xyz - v_fragWorldPos.xyz);
+        FALLING float fragmentToCameraDistance = length(u_cameraPosition.xyz - v_fragWorldPos);
         FALLING float fadeOutOpacity = 1.0 - smoothstep(u_maxOpacityDistance, u_maxDrawDistance, fragmentToCameraDistance);
 
 		gl_FragColor.a = diffuse.a * v_opacity * fadeOutOpacity;

@@ -5,7 +5,7 @@
 //
 //
 
-FALLING varying vec4 v_fragWorldPos;
+FALLING varying vec3 v_fragWorldPos;
 
 #if defined(diffuseTextureFlag) || defined(specularTextureFlag)
 #define textureFlag
@@ -248,7 +248,7 @@ void main() {
 	#endif
 
 	gl_Position = u_projViewTrans * pos;
-	FALLING v_fragWorldPos = pos;
+	FALLING v_fragWorldPos = pos.xyz;
 
 	#ifdef shadowMapFlag
 		vec4 spos = u_shadowMapProjViewTrans * pos;
