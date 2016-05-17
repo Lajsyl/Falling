@@ -88,7 +88,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 			// Instead of getting the head transform from a VR device,
 			// we simulate this on desktop with a rotation controlled with the mouse
-			desktopSimulatedHeadTransform = new Rotation(new Vector(0, 0, 1), new Vector(0, 1, 0));
+			desktopSimulatedHeadTransform = new Rotation();
 
 			if (USING_DEBUG_CAMERA) {
 				// Set position first frame
@@ -386,7 +386,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
-			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, dX).rotate(up.cross(direction), dY);
+			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, -dX).rotate(direction.cross(up), -dY);
 			direction = desktopSimulatedHeadTransform.getDirection();
 			up = desktopSimulatedHeadTransform.getUp();
 
@@ -406,8 +406,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		final float mouseSensitivity = 0.002f;
 		final float rollSpeed = 15.0f;
 		float rotationZ = 0.0f;
-		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
-		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
 		desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
 
 		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();

@@ -97,4 +97,8 @@ public class Rotation {
     public String toString() {
         return transformation.toString();
     }
+
+    public Matrix getRotationMatrix() {
+        return transformation;
+    }
 }
