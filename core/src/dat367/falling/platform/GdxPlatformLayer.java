@@ -560,11 +560,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void updateHeadPlacementForPositionalSound(HeadTransform paramHeadTransform) {
-		cardboardAudioEngine.setHeadPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+		Vector position = convertToCardboardCoordinateSystem(new Vector(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z));
+		cardboardAudioEngine.setHeadPosition(position.getX(), position.getY(), position.getZ());
+//		cardboardAudioEngine.setHeadPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
 		Rotation head = getCurrentHeadRotation(paramHeadTransform);
 		Vector xAxis = head.getDirection();
 		Vector yAxis = head.getUp();
 		Vector zAxis = head.getRight();
+//		Vector xAxis = head.getRight().scale(-1);
+//		Vector yAxis = head.getUp();
+//		Vector zAxis = head.getDirection();
 		Quaternion headQuaternion = new Quaternion().setFromAxes(xAxis.getX(), xAxis.getY(), xAxis.getZ(),
 				yAxis.getX(), yAxis.getY(), yAxis.getZ(),
 				zAxis.getX(), zAxis.getY(), zAxis.getZ());
@@ -702,7 +707,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<PositionedSound> event) {
 				if (event.data.getSoundObjectID() != -1) {
-					Vector pos = event.data.getPosition();
+					Vector pos = convertToCardboardCoordinateSystem(event.data.getPosition());
 					cardboardAudioEngine.setSoundObjectPosition(event.data.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
 				}
 			}
@@ -729,9 +734,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private void createCardboardSoundObject(PositionedSound positionedSound) {
 		positionedSound.setSoundObjectID(cardboardAudioEngine.createSoundObject(positionedSound.getSoundFileName()));
-		Vector pos = positionedSound.getPosition();
+		Vector pos = convertToCardboardCoordinateSystem(positionedSound.getPosition());
 		cardboardAudioEngine.setSoundObjectPosition(positionedSound.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
 		cardboardAudioEngine.setSoundVolume(positionedSound.getSoundObjectID(), positionedSound.getVolume());
+	}
+
+	// It seems that the cardboard coordinate system swaps x and z???
+	private Vector convertToCardboardCoordinateSystem(Vector position) {
+		return new Vector(position.getZ(), position.getY(), position.getX());
 	}
 
 	//---- UTILITIES ----//
