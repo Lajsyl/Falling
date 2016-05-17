@@ -5,24 +5,24 @@ import dat367.falling.math.Vector;
 
 public class PreJumpState implements FallState {
 
-    final double BACK_ROTATION_MAX = Math.toRadians(45.0);
-    final float HIP_TO_HEAD_DISTANCE = 1.3f;
+    private final double BACK_ROTATION_MAX = Math.toRadians(45.0);
+    private final float HIP_TO_HEAD_DISTANCE = 1.7f; // not very realistic but it looks good.
 
     // How far you have to tilt your head down before the lean-out begins
-    final double BEGIN_LEANOUT_AT_PITCH = Math.toRadians(35.0);
+    private final double BEGIN_LEANOUT_AT_PITCH = Math.toRadians(35.0);
 
     // How far you have to tilt your head down before the lean-out reaches its maximum value
-    final double END_LEANOUT_AT_PITCH = Math.toRadians(90.0);
+    private final double END_LEANOUT_AT_PITCH = Math.toRadians(90.0);
 
     // How directly your head must be turned towards the door for the lean-out to begin.
-    final double BEGIN_LEANOUT_AT_YAW = Math.toRadians(70.0);
+    private final double BEGIN_LEANOUT_AT_YAW = Math.toRadians(70.0);
 
     // How far you have to lean out to initiate a jump (given as a fraction of maximum lean-out)
-    final double JUMP_THRESHOLD = 0.88;
+    private final double JUMP_THRESHOLD = 0.70;
 
-    final boolean THROW_OUT_JUMPER = false;
+    private final boolean THROW_OUT_JUMPER = false;
 
-    Vector hipPosition;
+    private Vector hipPosition;
 
     @Override
     public void setup(Jumper jumper) {
@@ -31,7 +31,7 @@ public class PreJumpState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        final Vector lookDirection = jumper.getLookDirection().normalized();
+        final Vector lookDirection = jumper.getHeadRotation().getDirection().normalized();
         final Vector horizontalLookDirection = (new Vector(lookDirection.getX(), 0, lookDirection.getZ())).normalized(); // Look direction projected at the horizontal plane
         final Vector outwards = jumper.getBodyRotation().getDirection().normalized();
         final Vector up = new Vector(0, 1, 0);

@@ -40,7 +40,7 @@ public class World {
     }
 
     public Vector getStartPosition() {
-        return new Vector(0f, 4000.5f, -1.8f);
+        return new Vector(0.2f, 4000.5f, -1.95f);
     }
 
     public Rotation getStartBodyRotation() {
