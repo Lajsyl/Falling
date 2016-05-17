@@ -31,7 +31,7 @@ public class World {
     public void update(float deltaTime) {
         jumper.update(deltaTime);
         ground.update(deltaTime);
-        cloudSimulator.update(deltaTime, jumper);
+        cloudSimulator.update(deltaTime, jumper, airplane);
         airplane.update(deltaTime);
 
         CollisionManager.update(deltaTime);
