@@ -535,30 +535,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void onNewFrame(HeadTransform paramHeadTransform) {
 
-//		game.getCurrentJump().getJumper().setBodyRotation(new Rotation(game.getJumperBodyRotation().getDirection().rotateAroundY(0.1f), new Vector(0,1,0)));
-
-		Rotation bodyRotation = game.getJumperBodyRotation();
-		Rotation headRotation = new Rotation(getVRLookDirection(bodyRotation, paramHeadTransform),
-											 getVRUpVector(bodyRotation, paramHeadTransform));
-
-		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
-		Rotation adjustedHeadRotation = new Rotation(getVRLookDirection(adjustedBodyRotation, paramHeadTransform),
-				getVRUpVector(adjustedBodyRotation, paramHeadTransform));
-
-				//headRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
-//		System.out.println("headRotation = " + headRotation.getDirection());
-//		System.out.println("adjustedHeadRotation = " + adjustedHeadRotation.getDirection());
-
-//		System.out.println("headRotation.getDirection() = " + headRotation.getDirection());
-//		System.out.println("headRo dir.dot(up) = " + headRotation.getDirection().dot(headRotation.getUp()));
-//		System.out.println("headRo up = " + headRotation.getUp());
-//		System.out.println("headRo dir = " + headRotation.getDirection());
-
-//		game.setLookDirection(getVRLookDirection(paramHeadTransform));
-//		game.setUpVector(getVRUpVector(paramHeadTransform));
-
-		game.setJumperHeadRotation(adjustedHeadRotation);
-
+		// Update things that affect game logic
+		game.setJumperHeadRotation(getCurrentHeadRotation(paramHeadTransform));
 		if (Gdx.input.justTouched()) {
 			game.screenClicked(true);
 		}
@@ -566,15 +544,28 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Update game logic
 		updateGame();
 
-		bodyRotation = game.getJumperBodyRotation();
+		// Update things that are affected by game logic
+		updateCameraPlacement();
+	}
 
+	private void updateCameraPlacement() {
 		// Set camera position depending on jumper position
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
-		// Also set camera orientation depending on jumper neutral direction
-//		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		// Set camera orientation depending on jumper body rotation and adjustment rotation
+		Rotation bodyRotation = game.getJumperBodyRotation();
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
 		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
 		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
+	}
+
+	private Rotation getCurrentHeadRotation(HeadTransform paramHeadTransform) {
+		Rotation bodyRotation = game.getJumperBodyRotation();
+
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		Rotation adjustedHeadRotation = new Rotation(getVRLookDirection(adjustedBodyRotation, paramHeadTransform),
+				getVRUpVector(adjustedBodyRotation, paramHeadTransform));
+		return adjustedHeadRotation;
 	}
 
 	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
