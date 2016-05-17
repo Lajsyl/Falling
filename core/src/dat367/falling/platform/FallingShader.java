@@ -11,6 +11,8 @@ import dat367.falling.platform_abstraction.Quad;
 
 public class FallingShader extends DefaultShader {
 
+    private Camera currentCamera = null;
+
     private final static class Uniforms {
         private static int uvScale;
         private static int maxDrawDistance;
@@ -55,15 +57,12 @@ public class FallingShader extends DefaultShader {
 
     @Override
     public void begin(Camera camera, RenderContext context) {
-        set(u_cameraPosition, camera.position.x, camera.position.y, camera.position.z, 1.0f);
         super.begin(camera, context);
+        currentCamera = camera;
     }
 
     @Override
     public void render(Renderable renderable, Attributes combinedAttributes) {
-
-
-
         Quad quad = null;
         if (renderable != null && renderable.userData != null && renderable.userData instanceof Quad) {
             quad = (Quad) renderable.userData;
@@ -83,12 +82,17 @@ public class FallingShader extends DefaultShader {
         set(Uniforms.uvScale, uvScale);
 
         // Quad distance fading
+
+        final Camera c = currentCamera;
+        set(u_cameraPosition, c.position.x, c.position.y, c.position.z, 1.1881f / (c.far * c.far));
+
         if (quad != null) {
             float maxOpacityDistance = quad.getMaxDrawDistance() - quad.getFadeOutDistance();
             set(Uniforms.maxOpacityDistance, maxOpacityDistance);
             set(Uniforms.maxDrawDistance, quad.getMaxDrawDistance());
         } else {
-            final float drawDistance = 10000000; /* 10 million meters. Some arbitrary big number, so objects that shouldn't fade wont */
+            // Some arbitrary big number, so objects that shouldn't fade wont.
+            final float drawDistance = 10000000; /* 10 million meters. */
             set(Uniforms.maxOpacityDistance, drawDistance);
             set(Uniforms.maxDrawDistance, drawDistance);
         }
