@@ -52,9 +52,9 @@ public class Vector {
 
     public Vector mul(Matrix matrix) {
         return new Vector(
-                matrix.getColumn1().dot(this),
-                matrix.getColumn2().dot(this),
-                matrix.getColumn3().dot(this)
+                matrix.getRow1().dot(this),
+                matrix.getRow2().dot(this),
+                matrix.getRow3().dot(this)
         );
     }
 
@@ -72,6 +72,9 @@ public class Vector {
 
     public Vector normalized() {
         float length = length();
+        if (length == 0) {
+            throw new IllegalArgumentException("Cannot normalize zero vector");
+        }
         return scale(1.0f / length);
     }
 

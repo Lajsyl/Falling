@@ -2,13 +2,13 @@ package dat367.falling.core;
 
 import dat367.falling.math.Vector;
 
-public abstract class Collidable {
+public abstract class Collider {
 
     private Positioned positioned;
     private String name;
     private boolean enabled = true;
 
-    public Collidable(Positioned positioned, String name){
+    public Collider(Positioned positioned, String name){
         this.positioned = positioned;
         this.name = name;
     }
@@ -30,9 +30,9 @@ public abstract class Collidable {
         this.enabled = b;
     }
 
-    public abstract boolean collidesWith(Collidable collidable);
+    public abstract boolean collidesWith(Collider collider);
 
-    public static boolean areColliding(Collidable c1, Collidable c2){
+    public static boolean areColliding(Collider c1, Collider c2){
         if (c1.getEnabled() && c2.getEnabled()) {
             if (c1 instanceof SphereCollider && c2 instanceof SphereCollider) {
                 float r1 = ((SphereCollider) c1).getRadius();

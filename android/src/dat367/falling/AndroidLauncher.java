@@ -15,40 +15,13 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		config.depth = 32;
 
 		cardboardAudioEngine = new CardboardAudioEngine(this, CardboardAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
-//		testCardboardSound();
 		GdxPlatformLayer gdxPlatformLayer = new GdxPlatformLayer(true);
 		gdxPlatformLayer.setCardboardAudioEngine(cardboardAudioEngine);
 
 		initialize(gdxPlatformLayer, config);
-		// Om testCardboardSound() (eller specifikt preloadSoundFile) ligger ha¨r sa' kraschar det
 	}
 
-	public void testCardboardSound() {
-
-//		cardboardAudioEngine.preloadSoundFile("wind01.wav");
-//		int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
-//		cardboardAudioEngine.setSoundObjectPosition(soundID, 0, 0, 5);
-//		cardboardAudioEngine.playSound(soundID, true);
-//		System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
-//		System.out.println("isSoundPlaying: soundID = " + soundID);
-
-		// TEST CARDBOARD SOUND
-//		new Thread(
-//				new Runnable() {
-//					@Override
-//					public void run() {
-//						cardboardAudioEngine.preloadSoundFile("wind01.wav");
-//						int soundID = cardboardAudioEngine.createSoundObject("wind01.wav");
-//						cardboardAudioEngine.setSoundObjectPosition(soundID, 5, 0, 0);
-////                    cardboardAudioEngine.
-//						cardboardAudioEngine.playSound(soundID, true);
-//						System.out.println("isSoundPlaying: "+cardboardAudioEngine.isSoundPlaying(soundID));
-//						System.out.println("isSoundPlaying: soundID = " + soundID);
-//					}
-//				})
-//				.start();
-		// --------------------
-	}
 }

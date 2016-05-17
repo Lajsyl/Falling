@@ -29,6 +29,7 @@ import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
 import dat367.falling.core.NotificationManager;
 import dat367.falling.core.PositionedSound;
+import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -47,14 +48,14 @@ import java.util.Set;
  * sound, etc
  */
 
-public class GdxPlatformLayer implements CardBoardApplicationListener {//, NotificationManager.EventHandler<PositionedSound> {
+public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private boolean platformIsAndroid;
 	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.1f;
+	private static final float Z_NEAR = 0.15f;//0.1f;
 	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
@@ -94,7 +95,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 
 			// Instead of getting the head transform from a VR device,
 			// we simulate this on desktop with a rotation controlled with the mouse
-			desktopSimulatedHeadTransform = new Rotation(new Vector(0, 0, 1), new Vector(0, 1, 0));
+			desktopSimulatedHeadTransform = new Rotation();
 
 			if (USING_DEBUG_CAMERA) {
 				// Set position first frame
@@ -242,11 +243,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 					// Fetch model instance
 					if (models.containsKey(modelFileName)) {
 						ModelInstance instance = models.get(modelFileName);
-
 						instance.transform = new Matrix4()
-								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
-								.translate(libGdxVector(task.getPosition()));
+								.translate(libGdxVector(task.getPosition()))
+								//.setFromEulerAngles(task.getRotation().getX(), task.getRotation().getY(), task.getRotation().getZ())
+								.mul(libGdxRotationMatrix(task.getRotation().relativeTo(new Rotation())))
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
+
+						instance.materials.first().set(IntAttribute.createCullFace(modelTask.getModel().getShouldCullFaces() ? GL20.GL_CW : GL20.GL_NONE));
 
 						modelBatch.render(instance, environment);
 					}
@@ -383,6 +386,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 
 		}
 
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			Vector position = game.getCurrentJump().getJumper().getPosition();
+			game.getCurrentJump().getJumper().setPosition(position.getX(), position.getY()-20, position.getZ());
+		}//FOR DEBUGGING
+
+
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
 			game.screenClicked(true);
 		}
@@ -415,7 +424,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
-			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, dX).rotate(up.cross(direction), dY);
+			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, -dX).rotate(direction.cross(up), -dY);
 			direction = desktopSimulatedHeadTransform.getDirection();
 			up = desktopSimulatedHeadTransform.getUp();
 
@@ -435,13 +444,17 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 		final float mouseSensitivity = 0.002f;
 		final float rollSpeed = 15.0f;
 		float rotationZ = 0.0f;
-		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
-		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
 		desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
 
 		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
+
+//		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
+//		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation()));
+//		game.setJumperHeadRotation(newHeadRotation);
 
 //		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
@@ -528,15 +541,23 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 		Rotation headRotation = new Rotation(getVRLookDirection(bodyRotation, paramHeadTransform),
 											 getVRUpVector(bodyRotation, paramHeadTransform));
 
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		Rotation adjustedHeadRotation = new Rotation(getVRLookDirection(adjustedBodyRotation, paramHeadTransform),
+				getVRUpVector(adjustedBodyRotation, paramHeadTransform));
+
+				//headRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+//		System.out.println("headRotation = " + headRotation.getDirection());
+//		System.out.println("adjustedHeadRotation = " + adjustedHeadRotation.getDirection());
+
 //		System.out.println("headRotation.getDirection() = " + headRotation.getDirection());
-		System.out.println("headRo dir.dot(up) = " + headRotation.getDirection().dot(headRotation.getUp()));
-		System.out.println("headRo up = " + headRotation.getUp());
-		System.out.println("headRo dir = " + headRotation.getDirection());
+//		System.out.println("headRo dir.dot(up) = " + headRotation.getDirection().dot(headRotation.getUp()));
+//		System.out.println("headRo up = " + headRotation.getUp());
+//		System.out.println("headRo dir = " + headRotation.getDirection());
 
 //		game.setLookDirection(getVRLookDirection(paramHeadTransform));
 //		game.setUpVector(getVRUpVector(paramHeadTransform));
 
-		game.setJumperHeadRotation(headRotation);
+		game.setJumperHeadRotation(adjustedHeadRotation);
 
 		if (Gdx.input.justTouched()) {
 			game.screenClicked(true);
@@ -551,14 +572,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
 		// Also set camera orientation depending on jumper neutral direction
-		mainCamera.direction.set(libGdxVector(bodyRotation.getDirection()));
-		mainCamera.up.set(libGdxVector(bodyRotation.getUp()));
-
-		float[] headRotationQuaternion = new float[4];
-		paramHeadTransform.getQuaternion(headRotationQuaternion, 0);
-		cardboardAudioEngine.setHeadRotation(
-				headRotationQuaternion[0], headRotationQuaternion[1], headRotationQuaternion[2], headRotationQuaternion[3]);
-
+//		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
+		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
 	}
 
 	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
@@ -585,9 +601,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 		float y = (float)(Math.sin(pitch));
 		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
 //		return new Vector(x, y, z);
+
 		return bodyRotation.getDirection().scale(x)
 				.add(bodyRotation.getUp().scale(y))
 				.add(bodyRotation.getDirection().cross(bodyRotation.getUp()).scale(z));
+//		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+//		return adjustedBodyRotation.getDirection().scale(x)
+//				.add(adjustedBodyRotation.getUp().scale(y))
+//				.add(adjustedBodyRotation.getDirection().cross(adjustedBodyRotation.getUp()).scale(z));
 	}
 
 	private Vector getVRUpVector(Rotation bodyRotation, com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
@@ -719,4 +740,22 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
 	}
+
+	private Matrix4 libGdxRotationMatrix(Rotation rotation){
+
+		Matrix rotMatrix = rotation.getRotationMatrix();
+
+		Vector col1 = rotMatrix.getColumn1();
+		Vector col2 = rotMatrix.getColumn2();
+		Vector col3 = rotMatrix.getColumn3();
+
+		float[] values = { col1.getX(), col2.getX(), col3.getX(), 0,
+							col1.getY(), col2.getY(), col3.getY(), 0,
+							col1.getZ(), col2.getZ(), col3.getZ(), 0,
+							0, 0, 0, 1};
+
+		return new Matrix4(values);
+
+	}
+
 }
