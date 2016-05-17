@@ -14,15 +14,15 @@ public class Matrix {
         this.i3j1 = i3j1; this.i3j2 = i3j2; this.i3j3 = i3j3;
     }
 
-    public Vector getColumn1(){
+    public Vector getRow1(){
         return new Vector(this.i1j1, this.i1j2, this.i1j3);
     }
 
-    public Vector getColumn2(){
+    public Vector getRow2(){
         return new Vector(this.i2j1, this.i2j2, this.i2j3);
     }
 
-    public Vector getColumn3(){
+    public Vector getRow3(){
         return new Vector(this.i3j1, this.i3j2, this.i3j3);
     }
 
