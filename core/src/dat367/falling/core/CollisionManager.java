@@ -5,11 +5,12 @@ import java.util.List;
 
 public class CollisionManager {
 
-    static List<Collidable> collidables = new ArrayList<Collidable>();
-    public static Collidable jumper;
+    private static List<Collidable> collidables = new ArrayList<Collidable>();
+    private static Collidable jumper;
 
     public static final String COLLISION_EVENT_ID = "CollisionEvent";
     public static final String COLLECTIBLE_COLLISION_EVENT_ID = "CollectibleCollisionEvent";
+    public static final String OBSTACLE_COLLISION_EVENT_ID = "ObstacleCollisionEvent";
 
     public static void addCollider(Collidable collidable) {
         if(collidable.getName().equals(Jumper.NAME)) {
@@ -30,13 +31,18 @@ public class CollisionManager {
             if(jumper.collidesWith(collidable)) {
                 CollisionData collisionData = new CollisionData(jumper, collidable);
 
-                String eventId = (collidable.getName().equals(Collectible.ID))
-                        ? COLLECTIBLE_COLLISION_EVENT_ID
-                        : COLLISION_EVENT_ID;
-
+                String eventId = getEventID(collidable);
                 NotificationManager.registerEvent(eventId, collisionData);
             }
         }
+    }
+
+    private static String getEventID(Collidable collidable) {
+        if (collidable.getName().equals(Collectible.ID)) return COLLECTIBLE_COLLISION_EVENT_ID;
+        if (collidable.getName().equals(Obstacle.ID)) return OBSTACLE_COLLISION_EVENT_ID;
+
+        // Generic collision event
+        return COLLISION_EVENT_ID;
     }
 
     public static class CollisionData {

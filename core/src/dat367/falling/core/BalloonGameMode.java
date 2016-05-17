@@ -18,11 +18,20 @@ public class BalloonGameMode implements GameMode {
     private boolean gameIsFinished = false;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements) {
+
+        // Listen for all relevant collision events
+
         NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
-                event.data.getOtherObject().setEnabled(false);
-                collectedBalloonsCount += 1;
+                balloonCollision(event.data);
+            }
+        });
+
+        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
+                obstacleCollision(event.data);
             }
         });
 
@@ -46,6 +55,15 @@ public class BalloonGameMode implements GameMode {
             Collectible c = new Collectible(resourceRequirements, new Vector(x, y, z));
             balloonList.add(c);
         }
+    }
+
+    private void balloonCollision(CollisionManager.CollisionData collisionData) {
+        collisionData.getOtherObject().setEnabled(false);
+        collectedBalloonsCount += 1;
+    }
+
+    private void obstacleCollision(CollisionManager.CollisionData collisionData) {
+        // TODO: Implement this some way!
     }
 
     public void update(float deltaTime) {
