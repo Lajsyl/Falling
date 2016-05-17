@@ -43,7 +43,7 @@ public class RotationTest {
         Rotation r = new Rotation(new Vector(1,0,0), new Vector(0,1,0));
         r.rotate(new Rotation(new Vector(0,1,0), new Vector(0,0,1)));
 
-        //TODO is this even how it is supposed to work?
+        //TODO how is this even supposed to work?
         assertTrue(r.equals(new Rotation(new Vector(0,1,0), new Vector(0,0,1))));
 
     }
