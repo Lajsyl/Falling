@@ -18,7 +18,7 @@ precision mediump float;
 
 FALLING uniform float u_maxDrawDistance;
 FALLING uniform float u_maxOpacityDistance;
-FALLING varying vec4 v_fragWorldPos;
+FALLING varying MED vec4 v_fragWorldPos;
 
 #if defined(specularTextureFlag) || defined(specularColorFlag)
 #define specularFlag
@@ -46,7 +46,7 @@ varying float v_alphaTest;
 
 #ifdef diffuseTextureFlag
 varying MED vec2 v_diffuseUV;
-FALLING uniform vec2 u_uvScale;
+FALLING uniform MED vec2 u_uvScale;
 #endif
 
 #ifdef specularTextureFlag
@@ -123,7 +123,7 @@ varying float v_fog;
 
 void main() {
 
-    FALLING vec2 scaledDiffusedUV = v_diffuseUV * u_uvScale;
+    FALLING MED vec2 scaledDiffusedUV = v_diffuseUV * u_uvScale;
 
 	#if defined(normalFlag)
 		vec3 normal = v_normal;
