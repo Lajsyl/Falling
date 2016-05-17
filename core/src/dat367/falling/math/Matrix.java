@@ -14,14 +14,14 @@ public class Matrix {
         this.i3j1 = i3j1; this.i3j2 = i3j2; this.i3j3 = i3j3;
     }
 
-    public Matrix(Vector col1, Vector col2, Vector col3) {
-        i1j1 = col1.getX(); i1j2 = col2.getX(); i1j3 = col3.getX();
-        i2j1 = col1.getY(); i2j2 = col2.getY(); i2j3 = col3.getY();
-        i3j1 = col1.getZ(); i3j2 = col2.getZ(); i3j3 = col3.getZ();
+    public Matrix(Vector column1, Vector column2, Vector column3){
+        this(   column1.getX(), column2.getX(), column3.getX(),
+                column1.getY(), column2.getY(), column3.getY(),
+                column1.getZ(), column2.getZ(), column3.getZ());
     }
 
-    public Vector getColumn1() {
-        return new Vector(i1j1, i2j1, i3j1);
+    public Vector getColumn1(){
+        return new Vector(this.i1j1, this.i2j1, this.i3j1);
     }
 
     public Vector getColumn2() {

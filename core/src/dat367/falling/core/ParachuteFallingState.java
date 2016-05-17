@@ -41,7 +41,7 @@ public class ParachuteFallingState implements FallState {
         Vector v0 = jumper.getVelocity();
 
         rotationalAcceleration = calculateRotationalAcceleration(deltaTime, jumper);
-        rotationalSpeed = calculcateRotationalSpeed(deltaTime);
+        rotationalSpeed = calculateRotationalSpeed(deltaTime);
         jumper.setBodyRotation(new Rotation(jumper.getBodyRotation().getDirection().rotateAroundY(rotationalSpeed), jumper.getBodyRotation().getUp()));
 
 
@@ -86,7 +86,7 @@ public class ParachuteFallingState implements FallState {
     //TODO steering
 //    private Vector rotateParachute(float deltaTime, Jumper jumper){
 //
-//        float rotationalSpeed = calculcateRotationalSpeed(deltaTime);
+//        float rotationalSpeed = calculateRotationalSpeed(deltaTime);
 //
 //        Vector targetVelocity = jumper.getVelocity().projectOntoPlaneXZ().rotateAroundY(rotationalSpeed);
 //
@@ -134,7 +134,7 @@ public class ParachuteFallingState implements FallState {
         return (targetRotationalSpeed - rotationalSpeed) * 2f;
     }
 
-    private float calculcateRotationalSpeed(float deltaTime){
+    private float calculateRotationalSpeed(float deltaTime){
         return rotationalSpeed += rotationalAcceleration * deltaTime;
     }
 

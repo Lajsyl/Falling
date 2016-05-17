@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
+import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
@@ -50,7 +51,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.1f;
+	private static final float Z_NEAR = 0.15f;//0.1f;
 	private static final float Z_FAR = Ground.SCALE;
 
 	private UBJsonReader jsonReader = new UBJsonReader();
@@ -204,11 +205,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 					// Fetch model instance
 					if (models.containsKey(modelFileName)) {
 						ModelInstance instance = models.get(modelFileName);
-
 						instance.transform = new Matrix4()
-								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
-								.translate(libGdxVector(task.getPosition()));
+								.translate(libGdxVector(task.getPosition()))
+								//.setFromEulerAngles(task.getRotation().getX(), task.getRotation().getY(), task.getRotation().getZ())
+								.mul(libGdxRotationMatrix(task.getRotation()))
+								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
+
+						instance.materials.first().set(IntAttribute.createCullFace(modelTask.getModel().getShouldCullFaces() ? GL20.GL_CW : GL20.GL_NONE));
 
 						modelBatch.render(instance, environment);
 					}
@@ -344,6 +347,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			Gdx.input.setCursorCatched(true);
 
 		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			Vector position = game.getCurrentJump().getJumper().getPosition();
+			game.getCurrentJump().getJumper().setPosition(position.getX(), position.getY()-20, position.getZ());
+		}//FOR DEBUGGING
+
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
 			game.screenClicked(true);
@@ -629,6 +638,23 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
+	}
+
+	private Matrix4 libGdxRotationMatrix(Rotation rotation){
+
+		Matrix rotMatrix = rotation.getRotationMatrix();
+
+		Vector col1 = rotMatrix.getColumn1();
+		Vector col2 = rotMatrix.getColumn2();
+		Vector col3 = rotMatrix.getColumn3();
+
+		float[] values = { col1.getX(), col2.getX(), col3.getX(), 0,
+							col1.getY(), col2.getY(), col3.getY(), 0,
+							col1.getZ(), col2.getZ(), col3.getZ(), 0,
+							0, 0, 0, 1};
+
+		return new Matrix4(values);
+
 	}
 
 }

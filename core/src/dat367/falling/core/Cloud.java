@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
@@ -26,7 +27,7 @@ public class Cloud {
         Vector additional = additionalVelocity.scale(deltaTime);
         this.position = position.add(velocity.scale(deltaTime)).add(additional);
 
-        RenderTask cloudTask = new QuadRenderTask(quad, position, new Vector(0,0,0), new Vector(scale,1,scale));
+        RenderTask cloudTask = new QuadRenderTask(quad, position, new Rotation(), new Vector(scale,1,scale));
         RenderQueue.addTask(cloudTask);
     }
 

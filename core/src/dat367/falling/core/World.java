@@ -14,13 +14,14 @@ public class World {
 
     private Model airplane = new Model("airplane.g3db");
 
+
     //defined according to the coordinate system used
     public static final float GRAVITATION = -9.82f;
 
     public World(ResourceRequirements resourceRequirements) {
         CollisionManager.clear();
         // Create jumper using the world start position etc.
-        jumper = new Jumper(getStartPosition(), getStartBodyRotation());
+        jumper = new Jumper(resourceRequirements, getStartPosition(), getStartBodyRotation());
 
         ground = new Ground(resourceRequirements);
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
@@ -33,7 +34,7 @@ public class World {
         ground.update(deltaTime);
         cloudSimulator.update(deltaTime, jumper);
         // In airplane.update()
-        RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Vector(0,0,0), new Vector(1,1,1));
+        RenderTask airplaneTask = new ModelRenderTask(airplane, new Vector(0,4000,0), new Rotation(), new Vector(1,1,1));
         RenderQueue.addTask(airplaneTask);
 
         CollisionManager.update(deltaTime);

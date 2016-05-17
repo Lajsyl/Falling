@@ -11,6 +11,7 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		config.depth = 32;
 		initialize(new GdxPlatformLayer(true), config);
 	}
 }
