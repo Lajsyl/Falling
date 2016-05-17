@@ -38,7 +38,8 @@ public class Rotation {
 
     public Rotation rotate(Vector axis, float radians) {
         Matrix rotationMatrix = FallingMath.rotationMatrix(axis, radians);
-        return new Rotation(rotationMatrix.mult(direction).normalized(), rotationMatrix.mult(up).normalized());
+//        return new Rotation(rotationMatrix.mult(get).normalized(), rotationMatrix.mult(up).normalized());
+        return rotationMatrix.mult(this.transformation);
     }
 
     // Rotate this rotation by the given rotation relative to [direction = positive X axis, up = positive Y axis]
