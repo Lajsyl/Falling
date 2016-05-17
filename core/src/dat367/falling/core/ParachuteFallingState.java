@@ -16,6 +16,8 @@ public class ParachuteFallingState implements FallState {
 
     public static final float MAX_ROTATIONAL_SPEED = 0.03f;
 
+    public static final boolean USE_ABSOLUTE_STEERING = false;
+
 
 //    private Model parachute = new Model("parachute.g3db");
 
@@ -24,7 +26,7 @@ public class ParachuteFallingState implements FallState {
     @Override
     public void setup(Jumper jumper) {
         Rotation uprightHeadRotation = new Rotation(jumper.getHeadRotation().getUp().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0));
-        jumper.setAdjustmentRotation(jumper.getBodyRotation().relativeTo(uprightHeadRotation));
+        jumper.setAdjustmentRotation(uprightHeadRotation.relativeTo(jumper.getBodyRotation()));
         jumper.setBodyRotation(uprightHeadRotation);//new Rotation(jumper.getHeadRotation().getUp().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0)));
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
         jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
@@ -109,7 +111,14 @@ public class ParachuteFallingState implements FallState {
     private float calculateRotationalAcceleration(float deltaTime, Jumper jumper) {
         Vector up = new Vector(0, 1, 0);
 
-        Vector rightDirection = jumper.getBodyRotation().getDirection().projectOntoPlaneXZ().normalized().cross(up);
+        Vector rightDirection;
+        if (USE_ABSOLUTE_STEERING) {
+            // ABSOLUTE STEERING
+            rightDirection = jumper.getBodyRotation().getDirection().projectOntoPlaneXZ().normalized().cross(up);
+        } else {
+            // RELATIVE-TO-HEAD STEERING
+            rightDirection = jumper.getHeadRotation().getRight().projectOntoPlaneXZ().normalized();
+        }
 
         Vector projected = jumper.getHeadRotation().getUp().projectOntoLine(rightDirection);
 
