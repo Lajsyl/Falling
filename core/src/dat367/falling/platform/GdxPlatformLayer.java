@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
@@ -30,7 +29,6 @@ import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import sun.font.StandardGlyphVector;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -22,7 +22,7 @@ public class World {
         ground = new Ground(resourceRequirements);
 
         // Create jumper using the airplane metrics
-        jumper = new Jumper(airplane.getHeadStartPosition(), airplane.getLookOutDirection());
+        jumper = new Jumper(resourceRequirements, airplane.getHeadStartPosition(), airplane.getLookOutDirection());
 
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
 
