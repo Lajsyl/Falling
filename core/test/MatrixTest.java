@@ -8,34 +8,34 @@ import static org.junit.Assert.*;
 public class MatrixTest {
 
     @Test
-    public void testGetColumn1() throws Exception {
+    public void testGetRow1() throws Exception {
         Matrix a = new Matrix(1,2,3,
                              4,5,6,
                              7,8,9);
 
-        Vector v = new Vector(1,4,7);
-        assertTrue(a.getColumn1().equals(v));
+        Vector v = new Vector(1,2,3);
+        assertTrue(a.getRow1().equals(v));
 
     }
 
     @Test
-    public void testGetColumn2() throws Exception {
+    public void testGetRow2() throws Exception {
         Matrix a = new Matrix(1,2,3,
                 4,5,6,
                 7,8,9);
 
-        Vector v = new Vector(2,5,8);
-        assertTrue(a.getColumn2().equals(v));
+        Vector v = new Vector(4,5,6);
+        assertTrue(a.getRow2().equals(v));
     }
 
     @Test
-    public void testGetColumn3() throws Exception {
+    public void testGetRow3() throws Exception {
         Matrix a = new Matrix(1,2,3,
                 4,5,6,
                 7,8,9);
 
-        Vector v = new Vector(3,6,9);
-        assertTrue(a.getColumn3().equals(v));
+        Vector v = new Vector(7,8,9);
+        assertTrue(a.getRow3().equals(v));
     }
 
     @Test
@@ -46,13 +46,13 @@ public class MatrixTest {
 
         m = m.scale(2);
 
-        Vector c1 = m.getColumn1();
-        Vector c2 = m.getColumn2();
-        Vector c3 = m.getColumn3();
+        Vector c1 = m.getRow1();
+        Vector c2 = m.getRow2();
+        Vector c3 = m.getRow3();
 
-        assertTrue(c1.equals(new Vector(2,8,4)));
-        assertTrue(c2.equals(new Vector(6,12,10)));
-        assertTrue(c3.equals(new Vector(14,16,18)));
+        assertTrue(c1.equals(new Vector(2,6,14)));
+        assertTrue(c2.equals(new Vector(8,12,16)));
+        assertTrue(c3.equals(new Vector(4,10,18)));
 
     }
 
@@ -67,9 +67,9 @@ public class MatrixTest {
 
         m = m.add(a);
 
-        assertTrue(m.getColumn1().equals(new Vector(3,9,15)));
-        assertTrue(m.getColumn2().equals(new Vector(5,11,17)));
-        assertTrue(m.getColumn3().equals(new Vector(7,13,19)));
+        assertTrue(m.getRow1().equals(new Vector(3,5,7)));
+        assertTrue(m.getRow2().equals(new Vector(9,11,13)));
+        assertTrue(m.getRow3().equals(new Vector(15,17,19)));
 
     }
 
