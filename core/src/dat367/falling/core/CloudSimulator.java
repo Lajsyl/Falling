@@ -86,8 +86,7 @@ public class CloudSimulator {
         // Get additional velocity from the airplane
         // TODO: Implement properly!
         if (airplaneVelocity == null) {
-            final float airplaneSpeed = 85.0f;
-            airplaneVelocity = new Vector(0, 0, 1).normalized().scale(airplaneSpeed);
+            airplaneVelocity = Airplane.VELOCITY;
         }
         else if (!(jumper.getFallState() instanceof PreJumpState)) {
             airplaneVelocity = airplaneVelocity.scale(0.999f);

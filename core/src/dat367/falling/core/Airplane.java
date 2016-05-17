@@ -6,6 +6,8 @@ import dat367.falling.platform_abstraction.*;
 
 public class Airplane {
 
+    public static final Vector VELOCITY = new Vector(0, 0, 85f);
+
     public static final Rotation LOOK_OUT_DIRECTION = new Rotation(new Vector(0.975f, 0, -0.070f).normalized(), new Vector(0, 1, 0));
     public static final Vector HEAD_START_POSITION_OFFSET = new Vector(0.2f, 0.5f, -1.95f);
 
