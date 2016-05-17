@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
@@ -545,18 +546,29 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		updateGame();
 
 		// Update things that are affected by game logic
-		updateCameraPlacement();
+		updateCamera();
+		updateHeadPlacementForPositionalSound(paramHeadTransform);
 	}
 
-	private void updateCameraPlacement() {
-		// Set camera position depending on jumper position
+	private void updateCamera() {
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
-		// Set camera orientation depending on jumper body rotation and adjustment rotation
 		Rotation bodyRotation = game.getJumperBodyRotation();
 		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
 		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
 		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
+	}
+
+	private void updateHeadPlacementForPositionalSound(HeadTransform paramHeadTransform) {
+		cardboardAudioEngine.setHeadPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+		Rotation head = getCurrentHeadRotation(paramHeadTransform);
+		Vector xAxis = head.getDirection();
+		Vector yAxis = head.getUp();
+		Vector zAxis = head.getRight();
+		Quaternion headQuaternion = new Quaternion().setFromAxes(xAxis.getX(), xAxis.getY(), xAxis.getZ(),
+				yAxis.getX(), yAxis.getY(), yAxis.getZ(),
+				zAxis.getX(), zAxis.getY(), zAxis.getZ());
+		cardboardAudioEngine.setHeadRotation(headQuaternion.x, headQuaternion.y, headQuaternion.z, headQuaternion.w);
 	}
 
 	private Rotation getCurrentHeadRotation(HeadTransform paramHeadTransform) {
