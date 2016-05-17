@@ -62,10 +62,61 @@ public class Matrix {
                           i3j1*vector.getX() + i3j2*vector.getY() + i3j3*vector.getZ());
     }
 
+    public Matrix mult(Matrix other) {
+        return new Matrix(this.mult(other.getColumn1()), this.mult(other.getColumn2()), this.mult(other.getColumn3()));
+    }
+
     public Matrix transpose() {
         return new Matrix(i1j1, i2j1, i3j1,
                           i1j2, i2j2, i3j2,
                           i1j3, i2j3, i3j3);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Matrix matrix = (Matrix) o;
+
+        if (matrix.i1j1 != i1j1) return false;
+        if (matrix.i1j2 != i1j2) return false;
+        if (matrix.i1j3 != i1j3) return false;
+        if (matrix.i2j1 != i2j1) return false;
+        if (matrix.i2j2 != i2j2) return false;
+        if (matrix.i2j3 != i2j3) return false;
+        if (matrix.i3j1 != i3j1) return false;
+        if (matrix.i3j2 != i3j2) return false;
+        return (matrix.i3j3 == i3j3);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (i1j1 != +0.0f ? Float.floatToIntBits(i1j1) : 0);
+        result = 31 * result + (i1j2 != +0.0f ? Float.floatToIntBits(i1j2) : 0);
+        result = 31 * result + (i1j3 != +0.0f ? Float.floatToIntBits(i1j3) : 0);
+        result = 31 * result + (i2j1 != +0.0f ? Float.floatToIntBits(i2j1) : 0);
+        result = 31 * result + (i2j2 != +0.0f ? Float.floatToIntBits(i2j2) : 0);
+        result = 31 * result + (i2j3 != +0.0f ? Float.floatToIntBits(i2j3) : 0);
+        result = 31 * result + (i3j1 != +0.0f ? Float.floatToIntBits(i3j1) : 0);
+        result = 31 * result + (i3j2 != +0.0f ? Float.floatToIntBits(i3j2) : 0);
+        result = 31 * result + (i3j3 != +0.0f ? Float.floatToIntBits(i3j3) : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Matrix{" +
+                "i1j1=" + i1j1 +
+                ", i1j2=" + i1j2 +
+                ", i1j3=" + i1j3 +
+                ", i2j1=" + i2j1 +
+                ", i2j2=" + i2j2 +
+                ", i2j3=" + i2j3 +
+                ", i3j1=" + i3j1 +
+                ", i3j2=" + i3j2 +
+                ", i3j3=" + i3j3 +
+                '}';
+    }
 }

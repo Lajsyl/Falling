@@ -24,6 +24,10 @@ public class Rotation {
 //        this.up = new Vector(0,1,0);
     }
 
+    public Rotation(Matrix transformation) {
+        this.transformation = transformation;
+    }
+
     public Vector getDirection() {
         return transformation.getColumn1();
     }
@@ -39,11 +43,12 @@ public class Rotation {
     public Rotation rotate(Vector axis, float radians) {
         Matrix rotationMatrix = FallingMath.rotationMatrix(axis, radians);
 //        return new Rotation(rotationMatrix.mult(get).normalized(), rotationMatrix.mult(up).normalized());
-        return rotationMatrix.mult(this.transformation);
+        return new Rotation(rotationMatrix.mult(this.transformation));
     }
 
     // Rotate this rotation by the given rotation relative to [direction = positive X axis, up = positive Y axis]
     public Rotation rotate(Rotation rotation) {
+        return new Rotation(this.transformation.mult(rotation.transformation));
 
 //        Vector right = direction.cross(up);
 //        return new Rotation(direction.scale(rotation.getDirection().getZ())
@@ -54,19 +59,42 @@ public class Rotation {
 //                .add(right.scale(rotation.getUp().getX()))).normalized();
     }
 
-    private Rotation normalized() {
-        return new Rotation(direction.normalized(), up.normalized());
-    }
+//    private Rotation normalized() {
+//        return
+//        return new Rotation(direction.normalized(), up.normalized());
+//    }
 
     public Rotation relativeTo(Rotation other){
-        Vector up = new Vector(-other.getUp().projectOntoLine(this.getRight()).length(), other.getUp().projectOntoLine(this.getUp()).length(), other.getUp().projectOntoLine(this.getDirection()).length());
-        Vector forward = new Vector(-other.getDirection().projectOntoLine(this.getRight()).length(), other.getDirection().projectOntoLine(this.getUp()).length(), other.getDirection().projectOntoLine(this.getDirection()).length());
-        Vector right = new Vector(-other.getRight().projectOntoLine(this.getRight()).length(), other.getRight().projectOntoLine(this.getUp()).length(), other.getRight().projectOntoLine(this.getDirection()).length());
-
-        System.out.println(forward);
-        System.out.println(up);
-        System.out.println(right);
-        return new Rotation(forward,up);
+        Matrix relative = this.transformation.transpose().mult(other.transformation);
+        return new Rotation(relative);
+//        Vector up = new Vector(-other.getUp().projectOntoLine(this.getRight()).length(), other.getUp().projectOntoLine(this.getUp()).length(), other.getUp().projectOntoLine(this.getDirection()).length());
+//        Vector forward = new Vector(-other.getDirection().projectOntoLine(this.getRight()).length(), other.getDirection().projectOntoLine(this.getUp()).length(), other.getDirection().projectOntoLine(this.getDirection()).length());
+//        Vector right = new Vector(-other.getRight().projectOntoLine(this.getRight()).length(), other.getRight().projectOntoLine(this.getUp()).length(), other.getRight().projectOntoLine(this.getDirection()).length());
+//
+//        System.out.println(forward);
+//        System.out.println(up);
+//        System.out.println(right);
+//        return new Rotation(forward,up);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Rotation rotation = (Rotation) o;
+
+        return transformation != null ? transformation.equals(rotation.transformation) : rotation.transformation == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return transformation != null ? transformation.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return transformation.toString();
+    }
 }
