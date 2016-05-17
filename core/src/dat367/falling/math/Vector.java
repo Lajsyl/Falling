@@ -72,6 +72,9 @@ public class Vector {
 
     public Vector normalized() {
         float length = length();
+        if (length == 0) {
+            throw new IllegalArgumentException("Cannot normalize zero vector");
+        }
         return scale(1.0f / length);
     }
 

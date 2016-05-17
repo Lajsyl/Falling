@@ -414,6 +414,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
 
+//		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
+//		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation()));
+//		game.setJumperHeadRotation(newHeadRotation);
+
 //		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
 
