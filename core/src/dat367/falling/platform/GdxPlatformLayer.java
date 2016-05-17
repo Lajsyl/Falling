@@ -85,13 +85,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 	@Override
 	public void create() {
 
-		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-
-		setupSoundEventHandling();
-
-		game = new FallingGame();
-		loadResources(game.getCurrentJump().getResourceRequirements());
-
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			setupSoundEventHandling();
@@ -108,8 +101,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 				setDesktopCameraPosAndOrientation();
 			}
 		}
+
+		game = new FallingGame();
+		loadResources(game.getCurrentJump().getResourceRequirements());
+
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
+
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
 
 		// Create a new model batch that uses our custom shader provider
 		modelBatch = new ModelBatch(new FallingShaderProvider());
@@ -124,7 +124,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {//, Notif
 	private void loadResources(ResourceRequirements resourceRequirements) {
 		loadModels(resourceRequirements);
 		loadQuads(resourceRequirements);
-		loadSounds(resourceRequirements);
+		if (platformIsAndroid) {
+			loadSounds(resourceRequirements);
+		}
 	}
 
 	private void loadModels(ResourceRequirements resourceRequirements) {
