@@ -513,8 +513,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
 		// Also set camera orientation depending on jumper neutral direction
-		mainCamera.direction.set(libGdxVector(bodyRotation.getDirection()));
-		mainCamera.up.set(libGdxVector(bodyRotation.getUp()));
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
+		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
 	}
 
 	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {

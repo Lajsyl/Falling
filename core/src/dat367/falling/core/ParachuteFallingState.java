@@ -23,7 +23,8 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public void setup(Jumper jumper) {
-        jumper.setBodyRotation(new Rotation(jumper.getLookDirection().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0)));
+        jumper.setAdjustmentRotation(jumper.getBodyRotation().relativeTo(jumper.getHeadRotation()));
+        jumper.setBodyRotation(new Rotation(jumper.getHeadRotation().getUp().projectOntoPlaneXZ().normalized(), new Vector(0, 1, 0)));
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
         jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
         jumper.setArea(jumper.PARACHUTE_AREA);
@@ -32,7 +33,6 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        System.out.println("handle Falling");
         jumper.setAcceleration(calculateAcceleration(jumper));
 
         Vector v0 = jumper.getVelocity();
@@ -64,7 +64,6 @@ public class ParachuteFallingState implements FallState {
 
 
     private Vector calculateAcceleration(Jumper jumper){
-        System.out.println("calculateAcceleration");
         return calcAccY(jumper).add(calcAccXZ(jumper));
     }
 

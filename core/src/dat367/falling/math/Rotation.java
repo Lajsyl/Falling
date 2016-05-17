@@ -12,6 +12,11 @@ public class Rotation {
         this.up = up;
     }
 
+    public Rotation(){
+        this.direction = new Vector(0,0,1);
+        this.up = new Vector(0,1,0);
+    }
+
     public Vector getDirection() {
         return direction;
     }
@@ -43,5 +48,12 @@ public class Rotation {
     private Rotation normalized() {
         return new Rotation(direction.normalized(), up.normalized());
     }
-//
+
+    public Rotation relativeTo(Rotation other){
+        Vector up = new Vector(-this.getUp().projectOntoLine(other.getRight()).length(), this.getUp().projectOntoLine(other.getUp()).length(), this.getUp().projectOntoLine(other.getDirection()).length());
+        Vector forward = new Vector(-this.getDirection().projectOntoLine(other.getRight()).length(), this.getDirection().projectOntoLine(other.getUp()).length(), this.getDirection().projectOntoLine(other.getDirection()).length());
+
+        return new Rotation(forward,up);
+    }
+
 }
