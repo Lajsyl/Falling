@@ -4,29 +4,36 @@ package dat367.falling.math;
  * Defines an object's rotation in space using two vectors
  */
 public class Rotation {
-    private Vector direction;
-    private Vector up;
+    private Matrix transformation;
+
+//    private Vector direction;
+//    private Vector up;
 
     public Rotation(Vector direction, Vector up) {
-        this.direction = direction;
-        this.up = up;
+        transformation = new Matrix(direction, up, direction.cross(up));
+//        this.direction = direction;
+//        this.up = up;
     }
 
     public Rotation(){
-        this.direction = new Vector(0,0,1);
-        this.up = new Vector(0,1,0);
+        transformation = new Matrix(1, 0, 0,
+                                    0, 1, 0,
+                                    0, 0, 1);
+
+//        this.direction = new Vector(0,0,1);
+//        this.up = new Vector(0,1,0);
     }
 
     public Vector getDirection() {
-        return direction;
+        return transformation.getColumn1();
     }
 
     public Vector getUp() {
-        return up;
+        return transformation.getColumn2();
     }
 
     public Vector getRight() {
-        return direction.cross(up);
+        return transformation.getColumn3();
     }
 
     public Rotation rotate(Vector axis, float radians) {
@@ -34,15 +41,16 @@ public class Rotation {
         return new Rotation(rotationMatrix.mult(direction).normalized(), rotationMatrix.mult(up).normalized());
     }
 
-    // Rotate this rotation by the given rotation relative to [direction = positive Z axis, up = positive Y axis]
+    // Rotate this rotation by the given rotation relative to [direction = positive X axis, up = positive Y axis]
     public Rotation rotate(Rotation rotation) {
-        Vector right = direction.cross(up);
-        return new Rotation(direction.scale(rotation.getDirection().getZ())
-                .add(up.scale(rotation.getDirection().getY()))
-                .add(right.scale(rotation.getDirection().getX())),
-                            direction.scale(rotation.getUp().getZ())
-                .add(up.scale(rotation.getUp().getY()))
-                .add(right.scale(rotation.getUp().getX()))).normalized();
+
+//        Vector right = direction.cross(up);
+//        return new Rotation(direction.scale(rotation.getDirection().getZ())
+//                .add(up.scale(rotation.getDirection().getY()))
+//                .add(right.scale(rotation.getDirection().getX())),
+//                            direction.scale(rotation.getUp().getZ())
+//                .add(up.scale(rotation.getUp().getY()))
+//                .add(right.scale(rotation.getUp().getX()))).normalized();
     }
 
     private Rotation normalized() {
@@ -50,9 +58,13 @@ public class Rotation {
     }
 
     public Rotation relativeTo(Rotation other){
-        Vector up = new Vector(-this.getUp().projectOntoLine(other.getRight()).length(), this.getUp().projectOntoLine(other.getUp()).length(), this.getUp().projectOntoLine(other.getDirection()).length());
-        Vector forward = new Vector(-this.getDirection().projectOntoLine(other.getRight()).length(), this.getDirection().projectOntoLine(other.getUp()).length(), this.getDirection().projectOntoLine(other.getDirection()).length());
+        Vector up = new Vector(-other.getUp().projectOntoLine(this.getRight()).length(), other.getUp().projectOntoLine(this.getUp()).length(), other.getUp().projectOntoLine(this.getDirection()).length());
+        Vector forward = new Vector(-other.getDirection().projectOntoLine(this.getRight()).length(), other.getDirection().projectOntoLine(this.getUp()).length(), other.getDirection().projectOntoLine(this.getDirection()).length());
+        Vector right = new Vector(-other.getRight().projectOntoLine(this.getRight()).length(), other.getRight().projectOntoLine(this.getUp()).length(), other.getRight().projectOntoLine(this.getDirection()).length());
 
+        System.out.println(forward);
+        System.out.println(up);
+        System.out.println(right);
         return new Rotation(forward,up);
     }
 

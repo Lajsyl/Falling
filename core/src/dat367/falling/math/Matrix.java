@@ -14,6 +14,12 @@ public class Matrix {
         this.i3j1 = i3j1; this.i3j2 = i3j2; this.i3j3 = i3j3;
     }
 
+    public Matrix(Vector col1, Vector col2, Vector col3) {
+        i1j1 = col1.getX(); i1j2 = col2.getX(); i1j3 = col3.getX();
+        i2j1 = col1.getY(); i2j2 = col2.getY(); i2j3 = col3.getY();
+        i3j1 = col1.getZ(); i3j2 = col2.getZ(); i3j3 = col3.getZ();
+    }
+
     public Vector getColumn1(){
         return new Vector(this.i1j1, this.i1j2, this.i1j3);
     }
@@ -42,6 +48,12 @@ public class Matrix {
         return new Vector(i1j1*vector.getX() + i1j2*vector.getY() + i1j3*vector.getZ(),
                           i2j1*vector.getX() + i2j2*vector.getY() + i2j3*vector.getZ(),
                           i3j1*vector.getX() + i3j2*vector.getY() + i3j3*vector.getZ());
+    }
+
+    public Matrix transpose() {
+        return new Matrix(i1j1, i2j1, i3j1,
+                          i1j2, i2j2, i3j2,
+                          i1j3, i2j3, i3j3);
     }
 
 }
