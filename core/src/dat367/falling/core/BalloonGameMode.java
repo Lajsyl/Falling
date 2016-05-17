@@ -1,7 +1,6 @@
 package dat367.falling.core;
 
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.GUITask;
 import dat367.falling.platform_abstraction.GUITextTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
@@ -11,57 +10,81 @@ import java.util.List;
 
 public class BalloonGameMode implements GameMode {
 
-    protected int collectibleCount = 0;
-    protected int numberOfBalloons = 0;
-    protected List<Collectible> balloonList;
-    private boolean renderText = false;
+    private final int totalBalloonCount = 25;
+    private List<Collectible> balloonList = new ArrayList<Collectible>(totalBalloonCount);
 
-    public BalloonGameMode(ResourceRequirements resourceRequirements){
-        NotificationManager.addObserver(CollisionManager.collectibleCollisionId, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+    private int collectedBalloonsCount = 0;
+
+    private boolean gameIsFinished = false;
+
+    public BalloonGameMode(ResourceRequirements resourceRequirements) {
+
+        // Listen for all relevant collision events
+
+        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
-                collectibleCount++;
-                if(event.data.getObject1().getName().equals(CollisionManager.collectibleCollisionId)){
-                    event.data.getObject1().setEnabled(false);
-                }else{
-                    event.data.getObject2().setEnabled(false);
-                }
+                balloonCollision(event.data);
             }
         });
+
+        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
+                obstacleCollision(event.data);
+            }
+        });
+
+        // When the player has landed and stopped moving the game is finished
         NotificationManager.addObserver(LandedState.playerHasStopped, new NotificationManager.EventHandler<Object>() {
 
             @Override
             public void handleEvent(NotificationManager.Event<Object> event) {
-                renderText = true;
+                gameIsFinished = true;
             }
         });
 
-        balloonList = new ArrayList<Collectible>();
-        for(int i = 3500; i > 1000 ; i-=100){
-            float x = (float)Math.cos((i-1000)/2500f*10*Math.PI)*75;
-            float z = (float)Math.sin((i-1000)/2500f*10*Math.PI)*75;
-            Collectible c = new Collectible(resourceRequirements, new Vector(x,i,z));
+        for (int i = 0; i < totalBalloonCount; i++) {
+            float step = (float) i;
+            float x = (float)Math.cos(step) * 60;
+            float z = (float)Math.sin(step) * 60;
+
+            // Every 100 meters from 1000m and up.
+            float y = ((float) i) * 100.0f + 1000.0f;
+
+            Collectible c = new Collectible(resourceRequirements, new Vector(x, y, z));
             balloonList.add(c);
-            numberOfBalloons++;
         }
     }
 
-    public void update(float deltaTime){
-        for (Collectible c : balloonList){
+    private void balloonCollision(CollisionManager.CollisionData collisionData) {
+        collisionData.getOtherObject().setEnabled(false);
+        collectedBalloonsCount += 1;
+    }
+
+    private void obstacleCollision(CollisionManager.CollisionData collisionData) {
+        // TODO: Implement this some way!
+    }
+
+    public void update(float deltaTime) {
+        for (Collectible c : balloonList) {
             c.update(deltaTime);
         }
 
-        if(renderText) {
-            String text = "You cought " + collectibleCount + " of " + numberOfBalloons;
-            RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
+        if(gameIsFinished) {
+            String endText = "You caught " + collectedBalloonsCount + " out of " + totalBalloonCount + " possible!";
+            String playAgainText = "Tap the screen to play again";
+
+            RenderQueue.addGUITask(new GUITextTask(endText, new Vector(1, 0, 0), new Vector(0.5f, 0, .6f), true));
+            RenderQueue.addGUITask(new GUITextTask(playAgainText, new Vector(1, 0, 0), new Vector(0.5f, 0, .4f), true));
         }
     }
 
     @Override
     public String toString() {
         return "BalloonGameMode{" +
-                "collectibleCount=" + collectibleCount +
-                ", numberOfBalloons=" + numberOfBalloons +
+                "collectedBalloonsCount=" + collectedBalloonsCount +
+                ", totalBalloonCount=" + totalBalloonCount +
                 '}';
     }
 }

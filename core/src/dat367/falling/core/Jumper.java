@@ -59,6 +59,7 @@ public class Jumper extends Observable implements Positioned {
         if (newState != null) {
             this.fallState = newState;
             fallState.setup(this);
+            NotificationManager.registerEvent(FallState.STATE_CHANGED_EVENT_ID, newState);
         }
         if (fallState instanceof ParachuteFallingState){
             parachuteUpdate();

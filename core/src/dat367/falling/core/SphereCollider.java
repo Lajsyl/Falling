@@ -1,6 +1,6 @@
 package dat367.falling.core;
 
-public class SphereCollider extends Collidable {
+public class SphereCollider extends Collider {
 
     private float radius;
 
@@ -10,9 +10,9 @@ public class SphereCollider extends Collidable {
     }
 
     @Override
-    public boolean collidesWith(Collidable collidable) {
+    public boolean collidesWith(Collider collider) {
 
-        return Collidable.areColliding(this, collidable);
+        return Collider.areColliding(this, collider);
     }
 
     public float getRadius(){
