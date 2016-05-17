@@ -5,60 +5,60 @@ import java.util.List;
 
 public class CollisionManager {
 
-    private static List<Collidable> collidables = new ArrayList<Collidable>();
-    private static Collidable jumper;
+    private static List<Collider> colliders = new ArrayList<Collider>();
+    private static Collider jumperCollider;
 
     public static final String COLLISION_EVENT_ID = "CollisionEvent";
     public static final String COLLECTIBLE_COLLISION_EVENT_ID = "CollectibleCollisionEvent";
     public static final String OBSTACLE_COLLISION_EVENT_ID = "ObstacleCollisionEvent";
 
-    public static void addCollider(Collidable collidable) {
-        if(collidable.getName().equals(Jumper.NAME)) {
-            assert jumper == null;
-            jumper = collidable;
+    public static void addCollider(Collider collider) {
+        if(collider.getName().equals(Jumper.NAME)) {
+            assert jumperCollider == null;
+            jumperCollider = collider;
         }else {
-            collidables.add(collidable);
+            colliders.add(collider);
         }
     }
 
     public static void clear() {
-        collidables.clear();
-        jumper = null;
+        colliders.clear();
+        jumperCollider = null;
     }
 
     public static void update(float deltaTime) {
-        for(Collidable collidable : collidables) {
-            if(jumper.collidesWith(collidable)) {
-                CollisionData collisionData = new CollisionData(jumper, collidable);
+        for(Collider collider : colliders) {
+            if(jumperCollider.collidesWith(collider)) {
+                CollisionData collisionData = new CollisionData(jumperCollider, collider);
 
-                String eventId = getEventID(collidable);
+                String eventId = getEventID(collider);
                 NotificationManager.registerEvent(eventId, collisionData);
             }
         }
     }
 
-    private static String getEventID(Collidable collidable) {
-        if (collidable.getName().equals(Collectible.ID)) return COLLECTIBLE_COLLISION_EVENT_ID;
-        if (collidable.getName().equals(Obstacle.ID)) return OBSTACLE_COLLISION_EVENT_ID;
+    private static String getEventID(Collider collider) {
+        if (collider.getName().equals(Collectible.ID)) return COLLECTIBLE_COLLISION_EVENT_ID;
+        if (collider.getName().equals(Obstacle.ID)) return OBSTACLE_COLLISION_EVENT_ID;
 
         // Generic collision event
         return COLLISION_EVENT_ID;
     }
 
     public static class CollisionData {
-        private final Collidable jumperObject;
-        private final Collidable otherObject;
+        private final Collider jumperObject;
+        private final Collider otherObject;
 
-        public CollisionData(Collidable jumperObject, Collidable otherObject) {
+        public CollisionData(Collider jumperObject, Collider otherObject) {
             this.jumperObject = jumperObject;
             this.otherObject = otherObject;
         }
 
-        public Collidable getJumperObject() {
+        public Collider getJumperObject() {
             return jumperObject;
         }
 
-        public Collidable getOtherObject() {
+        public Collider getOtherObject() {
             return otherObject;
         }
     }
