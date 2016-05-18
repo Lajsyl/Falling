@@ -35,9 +35,9 @@ public class FreeFallingState implements FallState, Observer {
         jumper.addObserver(this);
         uprightRotation = jumper.getBodyRotation();
 //        tiltBodyIntoGroundMode(jumper);
-        fallingWind = new PositionedSound(jumper.airplaneLeanoutWindSound, jumper.getPosition().add(jumper.getPosition().add(new Vector(0, -1, 0))));
+        fallingWind = new PositionedSound(jumper.fallingWindSound, jumper.getPosition().add(jumper.getPosition().add(new Vector(0, -3, 0))));
         fallingWind.loop();
-        tiltingWind = new PositionedSound(jumper.tiltingWindSound, jumper.getPosition().add(new Vector(0, -1, 0)), 0.0f);
+        tiltingWind = new PositionedSound(jumper.tiltingWindSound, jumper.getPosition().add(new Vector(0, -3, 0)), 0.0f);
         tiltingWind.loop();
     }
 
@@ -130,12 +130,12 @@ public class FreeFallingState implements FallState, Observer {
         jumper.setArea(Jumper.BODY_AREA - (Jumper.BODY_AREA-Jumper.BODY_AREA_AT_FULL_TURN) * turnAmount);
 
         // The more you turn, the more distorted the wind sound is
-        tiltingWind.setVolume(turnAmount);
-        fallingWind.setVolume((1.0f - turnAmount) * 0.5f);
+        tiltingWind.setVolume(turnAmount * 0.5f);
+        fallingWind.setVolume((1.0f - turnAmount * 0.8f) * 0.9f);
 
         // Set sound positions
-        tiltingWind.setPosition(jumper.getPosition().add(new Vector(0, -1, 0).add(targetVelocityNonScaled)));
-        fallingWind.setPosition(jumper.getPosition().add(new Vector(0, -1, 0)));
+        tiltingWind.setPosition(jumper.getPosition().add(new Vector(0, -3, 0)));//.add(targetVelocityNonScaled.normalized().scale(0.1f))));
+        fallingWind.setPosition(jumper.getPosition().add(new Vector(0, -3, 0)));
 
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();

@@ -23,6 +23,7 @@ public class Jumper extends Observable implements Positioned {
 
     public final Sound airplaneWindSound = new Sound("wind05.wav");
     public final Sound airplaneLeanoutWindSound = new Sound("wind07.wav");
+    public final Sound fallingWindSound = new Sound("wind03.wav");
     public final Sound tiltingWindSound = new Sound("wind08.wav");
 
     private float area = BODY_AREA;
@@ -46,6 +47,8 @@ public class Jumper extends Observable implements Positioned {
         resourceRequirements.require(parachute);
         resourceRequirements.require(airplaneWindSound);
         resourceRequirements.require(airplaneLeanoutWindSound);
+        resourceRequirements.require(fallingWindSound);
+        resourceRequirements.require(tiltingWindSound);
 
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
