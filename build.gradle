@@ -28,6 +28,12 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         jcenter() /*Cardboard*/
+
+        /*Cardboard sound*/
+//        flatDir{
+//            dirs 'libs'
+//        }
+
     }
 }
 
@@ -75,6 +81,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile fileTree(dir: 'libs', include: '*.jar') /*Cardboard*/
         testCompile "junit:junit:4.11"
+//        compile(name:'audio', ext:'aar') /*Cardboard sound*/
     }
 }
 

@@ -49,7 +49,7 @@ public class Airplane {
         RenderQueue.addTask(new ModelRenderTask(
                 airplaneModel,
                 position,
-                new Vector(0, 0, 0),
+                new Rotation(),
                 new Vector(1, 1, 1)
         ));
     }

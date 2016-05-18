@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.Quad;
 import dat367.falling.platform_abstraction.QuadRenderTask;
@@ -29,6 +30,6 @@ public class Obstacle implements Positioned {
     }
 
     public void update(float deltaTime){
-        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Vector(0, 0, 0), new Vector(10, 1, 10)));
+        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Rotation(), new Vector(10, 1, 10)));
     }
 }
