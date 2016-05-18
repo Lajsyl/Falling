@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.backends.android.ShakeListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -36,10 +38,7 @@ import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Responsibilities
@@ -67,6 +66,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
 	private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
 	private Set<String> preloadedSounds = new HashSet<String>();
+	private List<AnimationController> animationControllers = new ArrayList<AnimationController>();
 	private ModelInstance quadModel;
 	private Environment environment;
 
@@ -142,6 +142,18 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 				com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
 				ModelInstance gdxModelInstance = new ModelInstance(gdxModel);
 				models.put(fileName, gdxModelInstance);
+
+				// If model has animation, loop it automatically
+				if (gdxModelInstance.animations.size > 0) {
+					AnimationController animationController = new AnimationController(gdxModelInstance);
+					animationController.setAnimation(gdxModelInstance.animations.get(gdxModelInstance.animations.size - 1).id, -1, 1.2f, new AnimationController.AnimationListener() {
+						@Override
+						public void onEnd(AnimationController.AnimationDesc animation) {}
+						@Override
+						public void onLoop(AnimationController.AnimationDesc animation) {}
+					});
+					animationControllers.add(animationController);
+				}
 			}
 		}
 	}
@@ -352,6 +364,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void updateGame() {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
+		for (AnimationController animationController : animationControllers) {
+			animationController.update(Gdx.graphics.getDeltaTime());
+		}
 	}
 
 	private String getFallStateString() {
