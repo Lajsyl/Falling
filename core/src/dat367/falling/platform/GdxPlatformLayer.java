@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
+import com.badlogic.gdx.backends.android.ShakeListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -75,6 +76,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Rotation desktopSimulatedHeadTransform;
 
 	private CardboardAudioEngine cardboardAudioEngine;
+	private ShakeListener shakeListener;
 
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
@@ -90,6 +92,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			setupSoundEventHandling();
+			setupShakeEventHandling();
 //			setDesktopCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -122,6 +125,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		spriteBatch = new SpriteBatch();
 		font = new BitmapFont();
 	}
+
 
 	private void loadResources(ResourceRequirements resourceRequirements) {
 		loadModels(resourceRequirements);
@@ -771,4 +775,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
+	public void setShakeListener(ShakeListener shakeListener) {
+		this.shakeListener = shakeListener;
+	}
+
+	private void setupShakeEventHandling() {
+		this.shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
+			@Override
+			public void onShake() {
+				game.screenClicked(true);
+			}
+		});
+	}
 }
