@@ -27,11 +27,18 @@ public class FreeFallingState implements FallState, Observer {
     private float rotationSpeedZ = 4;
     private float rotationSpeedY = -0.3f;//-2.0f;
 
+    private PositionedSound fallingWind; // Has max volume when tilting straight towards ground
+    private PositionedSound tiltingWind; // Has max volume when tilting fully towards a side, is positioned on that side
+
     @Override
     public void setup(Jumper jumper) {
         jumper.addObserver(this);
         uprightRotation = jumper.getBodyRotation();
 //        tiltBodyIntoGroundMode(jumper);
+        fallingWind = new PositionedSound(jumper.airplaneLeanoutWindSound, jumper.getPosition().add(jumper.getPosition().add(new Vector(0, -1, 0))));
+        fallingWind.loop();
+        tiltingWind = new PositionedSound(jumper.tiltingWindSound, jumper.getPosition().add(new Vector(0, -1, 0)), 0.0f);
+        tiltingWind.loop();
     }
 
     private void tiltBodyIntoGroundMode(Jumper jumper) {
@@ -108,8 +115,8 @@ public class FreeFallingState implements FallState, Observer {
 
     private Vector calculateAccelerationXZ(Jumper jumper, float deltaTime) {
         // Calculate target velocity
-        Vector targetVelocity = jumper.getLookDirection().normalized();
-        targetVelocity = targetVelocity.projectOntoPlaneXZ().scale(80);
+        Vector targetVelocityNonScaled = jumper.getLookDirection().normalized().projectOntoPlaneXZ();
+        Vector targetVelocity = targetVelocityNonScaled.scale(80);
 
         // Clamp speed
         float maxSpeed = 35f;
@@ -121,6 +128,14 @@ public class FreeFallingState implements FallState, Observer {
         //TODO find a good-looking way to do this
         float turnAmount = targetVelocity.length()/maxSpeed;
         jumper.setArea(Jumper.BODY_AREA - (Jumper.BODY_AREA-Jumper.BODY_AREA_AT_FULL_TURN) * turnAmount);
+
+        // The more you turn, the more distorted the wind sound is
+        tiltingWind.setVolume(turnAmount);
+        fallingWind.setVolume((1.0f - turnAmount) * 0.5f);
+
+        // Set sound positions
+        tiltingWind.setPosition(jumper.getPosition().add(new Vector(0, -1, 0).add(targetVelocityNonScaled)));
+        fallingWind.setPosition(jumper.getPosition().add(new Vector(0, -1, 0)));
 
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();

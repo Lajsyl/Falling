@@ -21,8 +21,9 @@ public class Jumper extends Observable implements Positioned {
 
     private Model parachute = new Model("parachute.g3db", false);
 
-    public final Sound airplaneWindSound = new Sound("wind03.wav");
-    public final Sound airplaneLeanoutWindSound = new Sound("wind02.wav");
+    public final Sound airplaneWindSound = new Sound("wind05.wav");
+    public final Sound airplaneLeanoutWindSound = new Sound("wind07.wav");
+    public final Sound tiltingWindSound = new Sound("wind08.wav");
 
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;

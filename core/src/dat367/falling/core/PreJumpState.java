@@ -37,7 +37,7 @@ public class PreJumpState implements FallState {
 
         // The more you lean out of the plane, the louder the outside wind noise will be
         airplaneLeanoutWind.setVolume((float)interpolation);
-        airplaneWind.setVolume((1.0f - (float)interpolation) * 0.7f);
+        airplaneWind.setVolume((1.0f - (float)interpolation) * 0.5f);
 
         // Lean out of the plane by tilting the player's back
         double backRotation = interpolation * BACK_ROTATION_MAX;
