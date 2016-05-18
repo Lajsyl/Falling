@@ -3,6 +3,8 @@ package dat367.falling.core;
 import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.GUITextTask;
+import dat367.falling.platform_abstraction.RenderQueue;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -58,6 +60,11 @@ public class FreeFallingState implements FallState, Observer {
         if (CHAOTIC_JUMP) {
             // Handle tilting between view modes
             handleBodyTilting(deltaTime, jumper);
+        }
+
+        if (jumper.getPosition().getY() < 850){
+            String text = "Pull the parachute by tapping the screen";
+            RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
         }
 
 

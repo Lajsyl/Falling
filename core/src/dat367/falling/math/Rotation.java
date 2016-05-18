@@ -4,44 +4,75 @@ package dat367.falling.math;
  * Defines an object's rotation in space using two vectors
  */
 public class Rotation {
-    private Vector direction;
-    private Vector up;
+    private Matrix transformation;
 
     public Rotation(Vector direction, Vector up) {
-        this.direction = direction;
-        this.up = up;
+        transformation = new Matrix(direction, up, direction.cross(up));
+    }
+
+    public Rotation(){
+        transformation = new Matrix(1, 0, 0,
+                                    0, 1, 0,
+                                    0, 0, 1);
+    }
+
+    public Rotation(Matrix transformation) {
+        this.transformation = transformation;
     }
 
     public Vector getDirection() {
-        return direction;
+        return transformation.getColumn1();
     }
 
     public Vector getUp() {
-        return up;
+        return transformation.getColumn2();
     }
 
     public Vector getRight() {
-        return direction.cross(up);
+        return transformation.getColumn3();
     }
 
     public Rotation rotate(Vector axis, float radians) {
         Matrix rotationMatrix = FallingMath.rotationMatrix(axis, radians);
-        return new Rotation(rotationMatrix.mult(direction).normalized(), rotationMatrix.mult(up).normalized());
+        return new Rotation(rotationMatrix.mult(this.transformation)).normalized();
     }
 
-    // Rotate this rotation by the given rotation relative to [direction = positive Z axis, up = positive Y axis]
+    // Rotate by the given rotation relative to [direction = positive X axis, up = positive Y axis]
     public Rotation rotate(Rotation rotation) {
-        Vector right = direction.cross(up);
-        return new Rotation(direction.scale(rotation.getDirection().getZ())
-                .add(up.scale(rotation.getDirection().getY()))
-                .add(right.scale(rotation.getDirection().getX())),
-                            direction.scale(rotation.getUp().getZ())
-                .add(up.scale(rotation.getUp().getY()))
-                .add(right.scale(rotation.getUp().getX()))).normalized();
+        return new Rotation(this.transformation.mult(rotation.transformation)).normalized();
     }
 
-    private Rotation normalized() {
-        return new Rotation(direction.normalized(), up.normalized());
+    public Rotation relativeTo(Rotation other){
+        Matrix relative = this.transformation.transpose().mult(other.transformation);
+        return new Rotation(relative);
     }
-//
+
+    public Rotation normalized() {
+        return new Rotation(transformation.getColumn1().normalized(), transformation.getColumn2().normalized());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Rotation rotation = (Rotation) o;
+
+        return transformation != null ? transformation.equals(rotation.transformation) : rotation.transformation == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return transformation != null ? transformation.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return transformation.toString();
+    }
+
+    public Matrix getRotationMatrix() {
+        return transformation;
+    }
 }

@@ -76,20 +76,12 @@ public class CloudSimulator {
         return distanceToCloudEdge > CLOUD_SPAWN_AREA_RADIUS + CLOUD_DESPAWN_BOUNDS_EXTENSION;
     }
 
-    public void update(float deltaTime, Jumper jumper) {
+    public void update(float deltaTime, Jumper jumper, Airplane airplane) {
         this.basePosition = jumper.getPosition();
         int recommendedCloudCount = simulationConfig.getCloudAmountForHeight(getJumperHeight(), MAX_NUMBER_OF_CLOUDS);
 
         // Get additional velocity from the airplane
-        // TODO: Implement properly!
-        if (airplaneVelocity == null) {
-            final float airplaneSpeed = 95.0f;
-            airplaneVelocity = new Vector(0, 0, 1).normalized().scale(airplaneSpeed);
-        }
-        else if (!(jumper.getFallState() instanceof PreJumpState)) {
-            airplaneVelocity = airplaneVelocity.scale(0.997f);
-        }
-        Vector cloudAirplaneVelocity = airplaneVelocity.scale(-1);
+        Vector additionalCloudVelocity = Airplane.VELOCITY.sub(airplane.getActualVelocity()).scale(-1.0f);
 
         // Update and "distribute" available clouds
         for (Iterator<Cloud> cloudIterator = activeClouds.iterator(); cloudIterator.hasNext(); /*_*/) {
@@ -113,7 +105,7 @@ public class CloudSimulator {
                 }
             }
 
-            cloud.update(deltaTime, cloudAirplaneVelocity);
+            cloud.update(deltaTime, additionalCloudVelocity);
         }
 
         // Spawn extra clouds if needed
