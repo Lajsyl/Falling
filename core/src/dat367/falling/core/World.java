@@ -15,10 +15,7 @@ public class World {
     private CloudSimulator cloudSimulator;
     private Jumper jumper;
     private Airplane airplane;
-    private Sound airplaneWindSound = new Sound("wind01.wav");
-    private Sound airplaneDoorWindSound = new Sound("wind02.wav");
-    private PositionedSound airplaneWind;
-    private PositionedSound airplaneDoorWind;
+
 
     public World(ResourceRequirements resourceRequirements) {
         CollisionManager.clear();
@@ -31,18 +28,6 @@ public class World {
 
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
 
-        resourceRequirements.require(airplaneWindSound);
-//        airplaneWind = new PositionedSound(airplaneWindSound, airplane.getPosition().add(new Vector(0, 0, -2)));
-        airplaneWind = new PositionedSound(airplaneWindSound, airplane.getHeadStartPosition().add(new Vector(2, 0, 0)));
-
-        // (1, 0, 0) = positiv z-axel
-        // (0, 1, 0) = positiv y-axel
-        // (0, 0, 1) = positiv x-axel
-
-        airplaneWind.loop();
-//        resourceRequirements.require(airplaneDoorWindSound);
-//        airplaneDoorWind = new PositionedSound(airplaneDoorWindSound, airplane.getPosition().add(new Vector(0, 0, -2)));
-//        airplaneDoorWind.loop();
     }
 
     public void update(float deltaTime) {

@@ -12,11 +12,19 @@ public class PreJumpState implements FallState {
 
     private final boolean THROW_OUT_JUMPER = false;
 
+    private PositionedSound airplaneWind;
+    private PositionedSound airplaneLeanoutWind;
+
     private Vector hipPosition;
 
     @Override
     public void setup(Jumper jumper) {
         this.hipPosition = jumper.getPosition().sub(new Vector(0, LEANOUT_ARC_HEIGHT, 0));
+
+        airplaneWind = new PositionedSound(jumper.airplaneWindSound, jumper.getPosition().add(new Vector(2, 0, 0)));
+        airplaneWind.loop();
+        airplaneLeanoutWind = new PositionedSound(jumper.airplaneLeanoutWindSound, jumper.getPosition().add(new Vector(2, 0, 0.4f)), 0.0f);
+        airplaneLeanoutWind.loop();
     }
 
     @Override
@@ -26,6 +34,10 @@ public class PreJumpState implements FallState {
         final Vector up = new Vector(0, 1, 0);
 
         double interpolation = FallingMath.clamp01(outwards.dot(jumper.getHeadRotation().getUp()));
+
+        // The more you lean out of the plane, the louder the outside wind noise will be
+        airplaneLeanoutWind.setVolume((float)interpolation);
+        airplaneWind.setVolume((1.0f - (float)interpolation) * 0.7f);
 
         // Lean out of the plane by tilting the player's back
         double backRotation = interpolation * BACK_ROTATION_MAX;

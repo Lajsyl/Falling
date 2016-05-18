@@ -21,6 +21,9 @@ public class Jumper extends Observable implements Positioned {
 
     private Model parachute = new Model("parachute.g3db", false);
 
+    public final Sound airplaneWindSound = new Sound("wind03.wav");
+    public final Sound airplaneLeanoutWindSound = new Sound("wind02.wav");
+
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;
     private Vector position;
@@ -40,6 +43,8 @@ public class Jumper extends Observable implements Positioned {
     public Jumper(ResourceRequirements resourceRequirements, Vector position, Rotation bodyRotation) {
 
         resourceRequirements.require(parachute);
+        resourceRequirements.require(airplaneWindSound);
+        resourceRequirements.require(airplaneLeanoutWindSound);
 
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
