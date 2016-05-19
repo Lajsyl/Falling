@@ -208,4 +208,7 @@ public class ResourceHandler {
         return new ModelInstance(quadModel);
     }
 
+    public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
+        this.cardboardAudioEngine = cardboardAudioEngine;
+    }
 }
