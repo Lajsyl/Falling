@@ -2,10 +2,7 @@ package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Quad;
-import dat367.falling.platform_abstraction.QuadRenderTask;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 public class Collectible implements Positioned {
 
@@ -14,12 +11,12 @@ public class Collectible implements Positioned {
     private SphereCollider sphereCollider;
     private Vector position;
 
-    private Quad quad;
+    private Model model;
 
 
     public Collectible(ResourceRequirements resourceRequirements, Vector position){
-        quad = new Quad("balloonfilled.png", true, true, 1000, 100, 1, 1, false);
-        resourceRequirements.require(quad);
+        model = new Model("balloon.g3db");
+        resourceRequirements.require(model);
         sphereCollider = new SphereCollider(this, ID, 10);
         CollisionManager.addCollider(sphereCollider);
         this.position = position;
@@ -30,6 +27,6 @@ public class Collectible implements Positioned {
     }
 
     public void update(float deltaTime) {
-        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Rotation(), new Vector(10,1,10)));
+        RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(10,10,10)));
     }
 }
