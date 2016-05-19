@@ -29,8 +29,8 @@ public abstract class Collider {
         return enabled;
     }
 
-    void setEnabled(boolean b){
-        this.enabled = b;
+    void setEnabled(boolean enabled){
+        this.enabled = enabled;
     }
 
     public abstract boolean collidesWith(Collider collider);
