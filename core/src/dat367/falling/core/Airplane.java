@@ -17,7 +17,7 @@ public class Airplane {
     private Vector position;
     private Vector actualVelocity = new Vector(0, 0, 0);
     private boolean playerHasJumpedOffAirplane = false;
-    private final float ACCELERATION_SCALE = 0.4f;
+    private final float ACCELERATION_SCALE = 0.3f;
 
     private Model airplaneModel;
 

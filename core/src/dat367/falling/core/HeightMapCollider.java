@@ -36,7 +36,7 @@ public class HeightMapCollider extends Collider {
     }
 
     public float getHeight(float x, float z) {
-        return image.getData()
+        return 0;//image.getData();
     }
 
     @Override
