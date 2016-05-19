@@ -4,6 +4,7 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.GUITextTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ public class BalloonGameMode implements GameMode {
 
     private boolean gameIsFinished = false;
 
+    private Sound balloonSound = new Sound("balloon1.wav");
+
     public BalloonGameMode(ResourceRequirements resourceRequirements) {
 
         // Listen for all relevant collision events
@@ -28,7 +31,7 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
-        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.addObserver(CollisionManager.OBSTACLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 obstacleCollision(event.data);
@@ -59,7 +62,10 @@ public class BalloonGameMode implements GameMode {
 
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
         collisionData.getOtherObject().setEnabled(false);
+        collisionData.getOtherObject().setParentEnabled(false);
         collectedBalloonsCount += 1;
+        PositionedSound balloonPositionedSound = new PositionedSound(balloonSound, collisionData.getJumperObject().getPosition());
+        balloonPositionedSound.play();
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
