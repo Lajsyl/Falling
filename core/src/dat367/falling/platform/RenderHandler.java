@@ -34,7 +34,10 @@ public class RenderHandler {
     private FallingGame game;
 
     private SpriteBatch spriteBatch;
-    private BitmapFont font;
+
+    private BitmapFont debugFont;
+    private BitmapFont smallFont;
+    private BitmapFont bigFont;
 
 
     public RenderHandler(ResourceHandler resourceHandler, FallingGame game, boolean platformIsAndroid){
@@ -54,7 +57,10 @@ public class RenderHandler {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
 
         spriteBatch = new SpriteBatch();
-        font = new BitmapFont();
+
+        debugFont = new BitmapFont();
+        smallFont = new BitmapFont(Gdx.files.internal("yuppy_tc_32pt.fnt"));
+        bigFont = new BitmapFont(Gdx.files.internal("yuppy_tc_53pt.fnt"));
     }
 
     public void renderScene(Camera camera) {
@@ -145,16 +151,16 @@ public class RenderHandler {
                     float posX = textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
                     float posZ = textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
                     if(textTask.shouldCenterHorizontal()){
-                        final GlyphLayout layout = new GlyphLayout(font, textTask.getText());
+                        final GlyphLayout layout = new GlyphLayout(smallFont, textTask.getText());
                         posX -= layout.width/2f;
                     }
 
-                    font.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
-                    font.draw(spriteBatch, textTask.getText(), posX, posZ);//, Gdx.graphics.getWidth(), Align.center, true );
+                    smallFont.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
+                    smallFont.draw(spriteBatch, textTask.getText(), posX, posZ);//, Gdx.graphics.getWidth(), Align.center, true );
                 }
             }
 
-            font.setColor(Color.CHARTREUSE);
+            debugFont.setColor(Color.CHARTREUSE);
 
             //TODO this should be removed at finish
             String debugText =
@@ -164,23 +170,23 @@ public class RenderHandler {
                             "Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
                             "Speed: " + game.getCurrentJump().getJumper().getVelocity();
 
-            font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+            debugFont.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
 
 
             // Draw crosshair etc. for desktop control
             if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
-                Color color = font.getColor().cpy();
+                Color color = debugFont.getColor().cpy();
                 {
-                    font.setColor(Color.RED);
-                    font.draw(spriteBatch, "o",
+                    debugFont.setColor(Color.RED);
+                    debugFont.draw(spriteBatch, "o",
                             Gdx.graphics.getBackBufferWidth() / 2.0f - 5,
                             Gdx.graphics.getBackBufferHeight() / 2.0f + 8);
 
-                    font.draw(spriteBatch, "*",
+                    debugFont.draw(spriteBatch, "*",
                             Gdx.input.getX() - 4,
                             Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4);
                 }
-                font.setColor(color);
+                debugFont.setColor(color);
             }
         }
         spriteBatch.end();
