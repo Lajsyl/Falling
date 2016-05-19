@@ -19,7 +19,6 @@ public class BalloonGameMode implements GameMode {
     private boolean gameIsFinished = false;
 
     private Sound balloonSound = new Sound("balloon1.wav");
-    private PositionedSound ballonPositionedSound = new PositionedSound(balloonSound, new Vector(0, 0, 0));
 
     public BalloonGameMode(ResourceRequirements resourceRequirements) {
 
@@ -65,8 +64,8 @@ public class BalloonGameMode implements GameMode {
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
         collectedBalloonsCount += 1;
-        ballonPositionedSound.setPosition(collisionData.getOtherObject().getPosition());
-        ballonPositionedSound.play();
+        PositionedSound balloonPositionedSound = new PositionedSound(balloonSound, collisionData.getJumperObject().getPosition());
+        balloonPositionedSound.play();
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
