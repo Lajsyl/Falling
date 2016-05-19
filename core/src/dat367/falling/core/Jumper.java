@@ -94,6 +94,10 @@ public class Jumper extends Observable implements Positioned {
         return position;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+    }
+
     public void setPosition(Vector position) {
         this.position = position;
     }
