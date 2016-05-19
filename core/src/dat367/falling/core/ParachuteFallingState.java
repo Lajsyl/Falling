@@ -64,7 +64,7 @@ public class ParachuteFallingState implements FallState {
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
 
-        if (jumper.getPosition().getY() < 1){
+        if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             return new LandedState();
         }
 

@@ -8,50 +8,26 @@ public class LandedState implements FallState {
 
     @Override
     public void setup(Jumper jumper) {
+        jumper.setAcceleration(new Vector(0, 0, 0));
 
+        jumper.setVelocity(jumper.getVelocity().projectOntoPlaneXZ());
+
+        Vector position = jumper.getPosition();
+        jumper.setPosition(position.getX(), Jumper.BODY_HEIGHT, position.getZ());
     }
 
-    //Might create a change in position as to mimic the shock when landing
+    // TODO: Might create a change in position as to mimic the shock when landing
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-        // Save velocity for previous frame for later calculations
-        Vector previousFrameVelocity = jumper.getVelocity().projectOntoPlaneXZ();
+        jumper.setVelocity(jumper.getVelocity().scale(0.98f));
+        jumper.setPosition(jumper.getPosition().add(jumper.getVelocity().scale(deltaTime)));
 
-        jumper.setAcceleration(calculateAcceleration(jumper));
-        jumper.setVelocity(calculateVelocity(deltaTime, jumper));
-        jumper.setPosition(calculatePosition(deltaTime, jumper, previousFrameVelocity));
-
-        if(jumper.getVelocity().lengthSquared() == 0){
+        if(jumper.getVelocity().lengthSquared() < 0.05f){
+            jumper.setVelocity(0, 0 , 0);
             NotificationManager.registerEvent(playerHasStopped, null);
         }
 
         return null;
-    }
-
-    public Vector calculateAcceleration(Jumper jumper){
-        //Jumper should be stopping, therefore targetVelocity (0,0,0)
-        Vector targetVelocity = new Vector(0,0,0);
-        Vector currentVelocity = jumper.getVelocity();
-
-        Vector newAcc = targetVelocity.sub(currentVelocity);
-        return newAcc.scale(1.5f); //TODO: Check scaling
-    }
-
-    public Vector calculateVelocity(float deltaTime, Jumper jumper){
-        Vector v = jumper.getVelocity().add(jumper.getAcceleration().scale(deltaTime));
-        //Jumper has touched the ground, velocity in Y should always be 0
-        v = v.projectOntoPlaneXZ();
-
-        //If the speed is close enough to 0, set vector to (0,0,0)
-        if(v.length() < 0.001){
-            return new Vector(0,0,0);
-        }else
-            return v;
-    }
-
-    public Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
-        Vector v = v0.add(jumper.getVelocity().scale(deltaTime/2));
-        return v.add(jumper.getPosition());
     }
 
     @Override

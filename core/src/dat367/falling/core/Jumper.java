@@ -10,6 +10,7 @@ public class Jumper extends Observable implements Positioned {
 
     public static final float MASS = 70.0f;
     public static final float BODY_AREA = 0.8f;
+    public static final float BODY_HEIGHT = 1.7f;
     public static final float BODY_AREA_AT_FULL_TURN = 0.5f * BODY_AREA;
     public static final float PARACHUTE_AREA = 17.0f;
     public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.5f * PARACHUTE_AREA;
