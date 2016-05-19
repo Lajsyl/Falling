@@ -116,10 +116,10 @@ public class FreeFallingState implements FallState, Observer {
     private Vector calculateAccelerationXZ(Jumper jumper, float deltaTime) {
         // Calculate target velocity
         Vector targetVelocityNonScaled = jumper.getLookDirection().normalized().projectOntoPlaneXZ();
-        Vector targetVelocity = targetVelocityNonScaled.scale(80);
+        Vector targetVelocity = targetVelocityNonScaled.scale(100);
 
         // Clamp speed
-        float maxSpeed = 35f;
+        float maxSpeed = 50f;
         if (targetVelocity.length() > maxSpeed) {
             targetVelocity = targetVelocity.normalized().scale(maxSpeed);
         }

@@ -35,6 +35,7 @@ import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**

@@ -43,7 +43,18 @@ public abstract class Collider {
                 float distance = c1.getPosition().sub(c2.getPosition()).lengthSquared();
                 return distance < (r1 + r2) * (r1 + r2);
             }
+            if (c1 instanceof SphereCollider && c2 instanceof HeightMapCollider) {
+                return sphereHeightMapCollision((SphereCollider) c1, (HeightMapCollider) c2);
+            }
+            if (c1 instanceof HeightMapCollider && c2 instanceof SphereCollider) {
+                return sphereHeightMapCollision((SphereCollider) c2, (HeightMapCollider) c1);
+            }
         }
+        return false;
+    }
+
+    private static boolean sphereHeightMapCollision(SphereCollider sphere, HeightMapCollider heightMap) {
+
         return false;
     }
 
