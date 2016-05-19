@@ -12,8 +12,11 @@ public class BalloonGameMode implements GameMode {
 
     private final int totalBalloonCount = 25;
     private List<Collectible> balloonList = new ArrayList<Collectible>(totalBalloonCount);
+    private final int totalObstacleCount = 25;
+    private List<Obstacle> obstacleList = new ArrayList<Obstacle>(totalObstacleCount);
 
-    private int collectedBalloonsCount = 0;
+    private int balloonCombo = 0;
+    private int score = 0;
 
     private boolean gameIsFinished = false;
 
@@ -28,7 +31,7 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
-        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.addObserver(CollisionManager.OBSTACLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 obstacleCollision(event.data);
@@ -50,20 +53,36 @@ public class BalloonGameMode implements GameMode {
             float z = (float)Math.sin(step) * 60;
 
             // Every 100 meters from 1000m and up.
-            float y = ((float) i) * 100.0f + 1000.0f;
+            float y = step * 100.0f + 1000.0f;
 
             Collectible c = new Collectible(resourceRequirements, new Vector(x, y, z));
             balloonList.add(c);
+        }
+
+        for (int i = 0; i < totalObstacleCount; i++){
+            float step = (float) i;
+            float x = (float)Math.cos(step) * 30 + 100;
+            float z = (float)Math.sin(step) * 30 + 100;
+
+            // Every 100 meters from 1000m and up.
+            float y = step * 100.0f + 1000.0f + 100;
+
+            Obstacle o = new Obstacle(resourceRequirements, new Vector(x, y, z));
+            obstacleList.add(o);
         }
     }
 
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
         collisionData.getOtherObject().setEnabled(false);
-        collectedBalloonsCount += 1;
+        balloonCombo += 1;
+        score += 100*balloonCombo;
+        System.out.println(score);
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
-        // TODO: Implement this some way!
+        collisionData.getOtherObject().setEnabled(false);
+        balloonCombo = 0;
+        System.out.println("mine" + balloonCombo);
     }
 
     public void update(float deltaTime) {
@@ -71,8 +90,12 @@ public class BalloonGameMode implements GameMode {
             c.update(deltaTime);
         }
 
+        for (Obstacle o : obstacleList) {
+            o.update(deltaTime);
+        }
+
         if(gameIsFinished) {
-            String endText = "You caught " + collectedBalloonsCount + " out of " + totalBalloonCount + " possible!";
+            String endText = "Your score was: " + score;
             String playAgainText = "Tap the screen to play again";
 
             RenderQueue.addGUITask(new GUITextTask(endText, new Vector(1, 0, 0), new Vector(0.5f, 0, .6f), true));
@@ -83,8 +106,9 @@ public class BalloonGameMode implements GameMode {
     @Override
     public String toString() {
         return "BalloonGameMode{" +
-                "collectedBalloonsCount=" + collectedBalloonsCount +
                 ", totalBalloonCount=" + totalBalloonCount +
+                "balloonCombo=" + balloonCombo +
+                ", score=" + score +
                 '}';
     }
 }

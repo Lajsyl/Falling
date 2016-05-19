@@ -18,7 +18,7 @@ public class Obstacle implements Positioned {
 
 
     public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
-        quad = new Quad("balloonfilled.png", true, true, 1000, 100, 1, 1, false);
+        quad = new Quad("mine.png", true, true, 1000, 100, 1, 1, false);
         resourceRequirements.require(quad);
         sphereCollider = new SphereCollider(this, ID, 10);
         CollisionManager.addCollider(sphereCollider);
