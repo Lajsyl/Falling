@@ -29,25 +29,41 @@ public class RotationTest {
         assertTrue(r.getRight().equals(new Vector(0,0,1)));
     }
 
-    @Ignore
+
     @Test
     public void testRotate() throws Exception {
         Rotation r = new Rotation(new Vector(1,0,0), new Vector(0,1,0));
 
-        r.rotate(new Vector(0,1,0), (float)Math.PI/2);
+        Rotation actual = r.rotate(new Vector(0,1,0), (float)Math.PI/2);
 
-        //TODO account for inexactness caused by rounding errors
-        assertTrue(r.equals(new Rotation(new Vector(0,0,-1), new Vector(0,1,0))));
+
+        Rotation expected = new Rotation(new Vector(0,0,-1), new Vector(0,1,0));
+
+
+        assertEquals(expected.getDirection().getX(), actual.getDirection().getX(), 0.0000001f);
+        assertEquals(expected.getDirection().getY(), actual.getDirection().getY(), 0.0000001f);
+        assertEquals(expected.getDirection().getZ(), actual.getDirection().getZ(), 0.0000001f);
+
+        assertEquals(expected.getUp().getX(), actual.getUp().getX(), 0.0000001f);
+        assertEquals(expected.getUp().getY(), actual.getUp().getY(), 0.0000001f);
+        assertEquals(expected.getUp().getZ(), actual.getUp().getZ(), 0.0000001f);
     }
 
-    @Ignore
     @Test
     public void testRotate1() throws Exception {
         Rotation r = new Rotation(new Vector(1,0,0), new Vector(0,1,0));
-        r.rotate(new Rotation(new Vector(0,1,0), new Vector(0,0,1)));
+        Rotation actual = r.rotate(new Rotation(new Vector(0,0,-1), new Vector(0,1,0)));
 
-        //TODO how is this even supposed to work?
-        assertTrue(r.equals(new Rotation(new Vector(0,1,0), new Vector(0,0,1))));
+        Rotation expected = new Rotation(new Vector(0,0,-1), new Vector(0,1,0));
+
+
+        assertEquals(expected.getDirection().getX(), actual.getDirection().getX(), 0.0000001f);
+        assertEquals(expected.getDirection().getY(), actual.getDirection().getY(), 0.0000001f);
+        assertEquals(expected.getDirection().getZ(), actual.getDirection().getZ(), 0.0000001f);
+
+        assertEquals(expected.getUp().getX(), actual.getUp().getX(), 0.0000001f);
+        assertEquals(expected.getUp().getY(), actual.getUp().getY(), 0.0000001f);
+        assertEquals(expected.getUp().getZ(), actual.getUp().getZ(), 0.0000001f);
 
     }
 
