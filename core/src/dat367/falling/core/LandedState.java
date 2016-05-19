@@ -34,7 +34,7 @@ public class LandedState implements FallState {
         Vector currentVelocity = jumper.getVelocity();
 
         Vector newAcc = targetVelocity.sub(currentVelocity);
-        return newAcc.scale(1.1f); //TODO: Check scaling
+        return newAcc.scale(1.5f); //TODO: Check scaling
     }
 
     public Vector calculateVelocity(float deltaTime, Jumper jumper){

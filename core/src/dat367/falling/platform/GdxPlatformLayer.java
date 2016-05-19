@@ -10,29 +10,31 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.attributes.*;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.UBJsonReader;
+import com.google.vrtoolkit.cardboard.HeadTransform;
+import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.Ground;
+import dat367.falling.core.NotificationManager;
+import dat367.falling.core.PositionedSound;
+import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import sun.font.StandardGlyphVector;
+import dat367.falling.platform_abstraction.Model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsibilities
@@ -50,120 +52,60 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.1f;
+	private static final float Z_NEAR = 0.15f;//0.1f;
 	private static final float Z_FAR = Ground.SCALE;
 
-	private UBJsonReader jsonReader = new UBJsonReader();
-	private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
-
-	private ModelBatch modelBatch;
-	private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
-	private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
-	private ModelInstance quadModel;
-	private Environment environment;
-
-	private SpriteBatch spriteBatch;
-	private BitmapFont font;
+	private ResourceHandler resourceHandler = new ResourceHandler();
+	private RenderHandler renderHandler;
 
 	private Rotation desktopSimulatedHeadTransform;
+
+	private CardboardAudioEngine cardboardAudioEngine;
 
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
 	}
 
+	public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
+		this.cardboardAudioEngine = cardboardAudioEngine;
+	}
+
 	@Override
 	public void create() {
 
-		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-
-		game = new FallingGame();
-		loadResources(game.getCurrentJump().getResourceRequirements());
-
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
+			resourceHandler.setupSoundEventHandling();
 //			setDesktopCameraPosAndOrientation();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 			// Instead of getting the head transform from a VR device,
 			// we simulate this on desktop with a rotation controlled with the mouse
-			desktopSimulatedHeadTransform = new Rotation(new Vector(0, 0, 1), new Vector(0, 1, 0));
+			desktopSimulatedHeadTransform = new Rotation();
 
 			if (USING_DEBUG_CAMERA) {
 				// Set position first frame
 				setDesktopCameraPosAndOrientation();
 			}
 		}
+
+
+
+		game = new FallingGame();
+		resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+		renderHandler = new RenderHandler(resourceHandler, game, platformIsAndroid);
+
 		mainCamera.near = Z_NEAR;
 		mainCamera.far = Z_FAR;
 
-		// Create a new model batch that uses our custom shader provider
-		modelBatch = new ModelBatch(new FallingShaderProvider());
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
-		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 1.0f, 1.0f, 1.0f, 1.0f));
-
-		spriteBatch = new SpriteBatch();
-		font = new BitmapFont();
 	}
 
-	private void loadResources(ResourceRequirements resourceRequirements) {
-		for (Model model : resourceRequirements.getModels()) {
-			String fileName = model.getModelFileName();
-			if (!models.containsKey(fileName)) {
-				com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
-				ModelInstance gdxModelInstance = new ModelInstance(gdxModel);
-				models.put(fileName, gdxModelInstance);
-			}
-		}
 
-		// Create the quad model if quads are required
-		if (resourceRequirements.getQuads().size() > 0) {
 
-			ModelBuilder modelBuilder = new ModelBuilder();
-			final long attributes = VertexAttributes.Usage.Position |
-					VertexAttributes.Usage.Normal |
-					VertexAttributes.Usage.TextureCoordinates;
 
-			com.badlogic.gdx.graphics.g3d.Model quadModelSource = modelBuilder.createRect(
-					// Corners
-					-1, 0, -1,
-					-1, 0, +1,
-					+1, 0, +1,
-					+1, 0, -1,
-
-					// Normal
-					0, 1, 0,
-
-					// Material
-					new Material(
-							// (Just add a blend & cull-face attribute, the texture attribute will be set for every render)
-							// This is actually not currently used, since the QuadShader does its own thing
-							new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
-							IntAttribute.createCullFace(GL20.GL_NONE)
-					),
-
-					// Attributes
-					attributes
-			);
-			this.quadModel = new ModelInstance(quadModelSource);
-		}
-
-		for (Quad quad : resourceRequirements.getQuads()) {
-			String textureFileName = quad.getTextureFileName();
-			if (!quadTextureAttributes.containsKey(textureFileName)) {
-				FileHandle fileHandle = Gdx.files.internal(textureFileName);
-				Texture quadTexture = new Texture(fileHandle, false/*quad.shouldUseMipMaps()*/);
-				quadTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-				quadTexture.setFilter(Texture.TextureFilter.Linear/*MipMapLinearLinear*/, Texture.TextureFilter.Linear);
-				TextureAttribute quadTextureAttribute = TextureAttribute.createDiffuse(quadTexture);
-				quadTextureAttributes.put(textureFileName, quadTextureAttribute);
-
-				// Report aspect ratio back to Quad
-				quad.setAspectRatio((float) quadTexture.getWidth() / (float) quadTexture.getHeight());
-			}
-		}
-	}
 
 	@Override
 	public void resize(int width, int height) {
@@ -182,126 +124,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void dispose() {
-		modelBatch.dispose();
+		/*modelBatch.dispose();
 		spriteBatch.dispose();
+		for (String sound : preloadedSounds) {
+			cardboardAudioEngine.unloadSoundFile(sound);
+		}
+		preloadedSounds.clear();*/
 		// TODO: Dispose of all resources!
 	}
 
-	private void renderScene(Camera camera) {
-		Gdx.gl.glClearColor(165/255f, 215/255f, 250/255f, 1.0f); // (Bright desaturated sky blue)
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		// Render 3D
-		modelBatch.begin(camera);
-		{
-			Iterable<RenderTask> tasks = RenderQueue.getTasks();
-			for (RenderTask task : tasks) {
-
-				if (task instanceof ModelRenderTask) {
-					ModelRenderTask modelTask = (ModelRenderTask) task;
-					String modelFileName = modelTask.getModel().getModelFileName();
-
-					// Fetch model instance
-					if (models.containsKey(modelFileName)) {
-						ModelInstance instance = models.get(modelFileName);
-
-						instance.transform = new Matrix4()
-								.setFromEulerAngles(task.getOrientation().getX(), task.getOrientation().getY(), task.getOrientation().getZ())
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ())
-								.translate(libGdxVector(task.getPosition()));
-
-						modelBatch.render(instance, environment);
-					}
-				}
-
-				else if (task instanceof QuadRenderTask) {
-					QuadRenderTask quadTask = (QuadRenderTask) task;
-					String textureFileName = quadTask.getQuad().getTextureFileName();
-
-					// Fetch quad
-					if (quadTextureAttributes.containsKey(textureFileName)) {
-						TextureAttribute currentTextureAttribute = quadTextureAttributes.get(textureFileName);
-
-						// Render using the shared quadModel
-						ModelInstance sharedInstance = this.quadModel;
-
-						// NOTE: Will overwrite previous attribute of the same type!
-						sharedInstance.materials.get(0).set(currentTextureAttribute);
-
-						sharedInstance.transform = new Matrix4();
-
-						// Scale for aspect ratio
-						if (quadTask.getQuad().shouldAspectRatioAdjust()) {
-							Float aspectRatio = quadTask.getQuad().getAspectRatio();
-							if (aspectRatio != null && aspectRatio != 0.0f) {
-								sharedInstance.transform.scl(aspectRatio, 1, 1);
-							}
-						}
-
-						// NOTE: No rotation (for now?)!
-						sharedInstance.transform = sharedInstance.transform
-								.translate(libGdxVector(task.getPosition()))
-								.scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
-
-						// Make copy, since stuff like transform and materials would be shared if not
-						ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
-
-						// Set quad as user data so that the shader can use its properties
-						modelInstanceCopy.userData = quadTask.getQuad();
-						modelBatch.render(modelInstanceCopy, environment);
-					}
-				}
-
-			}
-		}
-		modelBatch.end();
-
-		// Render 2D
-		spriteBatch.begin();
-		{
-			Iterable<GUITask> tasks = RenderQueue.getGUITasks();
-			for(GUITask guiTask : tasks){
-				if(guiTask instanceof GUITextTask){
-					GUITextTask textTask = (GUITextTask)guiTask;
-					float posX = textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
-					float posZ = textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
-					if(textTask.shouldCenterHorizontal()){
-						final GlyphLayout layout = new GlyphLayout(font, textTask.getText());
-						posX -= layout.width/2f;
-					}
-
-					font.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
-					font.draw(spriteBatch, textTask.getText(), posX, posZ);//, Gdx.graphics.getWidth(), Align.center, true );
-				}
-			}
-
-			font.setColor(Color.CHARTREUSE);
-			String debugText =
-					getFallStateString() + "\n" +
-					"Camera pos: " + gameVector(camera.position) + "\n" +
-					"Look dir: " + gameVector(camera.direction) + "\n\n" +
-					"Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
-					"Speed: " + game.getCurrentJump().getJumper().getVelocity();
-
-							font.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
-			// Draw crosshair etc. for desktop control
-			if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
-				Color color = font.getColor().cpy();
-				{
-					font.setColor(Color.RED);
-					font.draw(spriteBatch, "o",
-							Gdx.graphics.getBackBufferWidth() / 2.0f - 5,
-							Gdx.graphics.getBackBufferHeight() / 2.0f + 8);
-
-					font.draw(spriteBatch, "*",
-							Gdx.input.getX() - 4,
-							Gdx.graphics.getBackBufferHeight() - Gdx.input.getY() + 4);
-				}
-				font.setColor(color);
-			}
-		}
-		spriteBatch.end();
-	}
 
 	private void updateGame() {
 		RenderQueue.clear();
@@ -345,6 +177,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		}
 
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			Vector position = game.getCurrentJump().getJumper().getPosition();
+			game.getCurrentJump().getJumper().setPosition(position.getX(), position.getY()-20, position.getZ());
+		}//FOR DEBUGGING
+
+
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
 			game.screenClicked(true);
 		}
@@ -377,7 +215,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
-			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, dX).rotate(up.cross(direction), dY);
+			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, -dX).rotate(direction.cross(up), -dY);
 			direction = desktopSimulatedHeadTransform.getDirection();
 			up = desktopSimulatedHeadTransform.getUp();
 
@@ -397,13 +235,17 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		final float mouseSensitivity = 0.002f;
 		final float rollSpeed = 15.0f;
 		float rotationZ = 0.0f;
-		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ += rollSpeed;
-		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) rotationZ -= rollSpeed;
+		if (Gdx.input.isKeyPressed(Input.Keys.E)) rotationZ += rollSpeed;
 		desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(simulatedHeadForward, rotationZ * mouseSensitivity);
 
 		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
+
+//		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
+//		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation()));
+//		game.setJumperHeadRotation(newHeadRotation);
 
 //		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
@@ -432,7 +274,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 			mainCamera.update();
-			renderScene(mainCamera);
+			renderHandler.renderScene(mainCamera);
 		}
 	}
 
@@ -478,28 +320,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.translate(translation);
 	}
 
-
 	//---- ANDROID-VR-SPECIFIC ----//
 
+
 	@Override
-	public void onNewFrame(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
+	public void onNewFrame(HeadTransform paramHeadTransform) {
 
-//		game.getCurrentJump().getJumper().setBodyRotation(new Rotation(game.getJumperBodyRotation().getDirection().rotateAroundY(0.1f), new Vector(0,1,0)));
-
-		Rotation bodyRotation = game.getJumperBodyRotation();
-		Rotation headRotation = new Rotation(getVRLookDirection(bodyRotation, paramHeadTransform),
-											 getVRUpVector(bodyRotation, paramHeadTransform));
-
-//		System.out.println("headRotation.getDirection() = " + headRotation.getDirection());
-		System.out.println("headRo dir.dot(up) = " + headRotation.getDirection().dot(headRotation.getUp()));
-		System.out.println("headRo up = " + headRotation.getUp());
-		System.out.println("headRo dir = " + headRotation.getDirection());
-
-//		game.setLookDirection(getVRLookDirection(paramHeadTransform));
-//		game.setUpVector(getVRUpVector(paramHeadTransform));
-
-		game.setJumperHeadRotation(headRotation);
-
+		// Update things that affect game logic
+		game.setJumperHeadRotation(getCurrentHeadRotation(paramHeadTransform));
 		if (Gdx.input.justTouched()) {
 			game.screenClicked(true);
 		}
@@ -507,14 +335,44 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Update game logic
 		updateGame();
 
-		bodyRotation = game.getJumperBodyRotation();
+		// Update things that are affected by game logic
+		updateCamera();
+		updateHeadPlacementForPositionalSound(paramHeadTransform);
+	}
 
-		// Set camera position depending on jumper position
+	private void updateCamera() {
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
-		// Also set camera orientation depending on jumper neutral direction
-		mainCamera.direction.set(libGdxVector(bodyRotation.getDirection()));
-		mainCamera.up.set(libGdxVector(bodyRotation.getUp()));
+		Rotation bodyRotation = game.getJumperBodyRotation();
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
+		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
+	}
+
+	private void updateHeadPlacementForPositionalSound(HeadTransform paramHeadTransform) {
+		Vector position = convertToCardboardCoordinateSystem(new Vector(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z));
+		cardboardAudioEngine.setHeadPosition(position.getX(), position.getY(), position.getZ());
+//		cardboardAudioEngine.setHeadPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+		Rotation head = getCurrentHeadRotation(paramHeadTransform);
+		Vector xAxis = head.getDirection();
+		Vector yAxis = head.getUp();
+		Vector zAxis = head.getRight();
+//		Vector xAxis = head.getRight().scale(-1);
+//		Vector yAxis = head.getUp();
+//		Vector zAxis = head.getDirection();
+		Quaternion headQuaternion = new Quaternion().setFromAxes(xAxis.getX(), xAxis.getY(), xAxis.getZ(),
+				yAxis.getX(), yAxis.getY(), yAxis.getZ(),
+				zAxis.getX(), zAxis.getY(), zAxis.getZ());
+		cardboardAudioEngine.setHeadRotation(headQuaternion.x, headQuaternion.y, headQuaternion.z, headQuaternion.w);
+	}
+
+	private Rotation getCurrentHeadRotation(HeadTransform paramHeadTransform) {
+		Rotation bodyRotation = game.getJumperBodyRotation();
+
+		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+		Rotation adjustedHeadRotation = new Rotation(getVRLookDirection(adjustedBodyRotation, paramHeadTransform),
+				getVRUpVector(adjustedBodyRotation, paramHeadTransform));
+		return adjustedHeadRotation;
 	}
 
 	private Vector getVRLookDirection(com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform) {
@@ -541,9 +399,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		float y = (float)(Math.sin(pitch));
 		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
 //		return new Vector(x, y, z);
+
 		return bodyRotation.getDirection().scale(x)
 				.add(bodyRotation.getUp().scale(y))
 				.add(bodyRotation.getDirection().cross(bodyRotation.getUp()).scale(z));
+//		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
+//		return adjustedBodyRotation.getDirection().scale(x)
+//				.add(adjustedBodyRotation.getUp().scale(y))
+//				.add(adjustedBodyRotation.getDirection().cross(adjustedBodyRotation.getUp()).scale(z));
 	}
 
 	private Vector getVRUpVector(Rotation bodyRotation, com.google.vrtoolkit.cardboard.HeadTransform paramHeadTransform){
@@ -571,7 +434,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 				.add(bodyRotation.getDirection().cross(bodyRotation.getUp()).scale(z));
 	}
 
-
 	@Override
 	public void onDrawEye(com.google.vrtoolkit.cardboard.Eye eye) {
 
@@ -584,12 +446,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 			cardboardCamera.update();
 
-			renderScene(cardboardCamera);
+			renderHandler.renderScene(cardboardCamera);
 
 		} else {
 			System.err.println("onDrawEye called and camera is not a CardboardCamera instance!");
 		}
 	}
+
 
 	@Override
 	public void onFinishFrame(com.google.vrtoolkit.cardboard.Viewport paramViewport) {
@@ -607,6 +470,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game.screenClicked(true);
 	}
 
+
+
+	// It seems that the cardboard coordinate system swaps x and z???
+	private Vector convertToCardboardCoordinateSystem(Vector position) {
+		return new Vector(position.getZ(), position.getY(), position.getX());
+	}
+
 	//---- UTILITIES ----//
 
 	private Vector3 libGdxVector(Vector vector) {
@@ -616,5 +486,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
 	}
+
+
 
 }

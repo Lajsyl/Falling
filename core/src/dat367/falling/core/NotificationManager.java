@@ -45,7 +45,7 @@ public class NotificationManager {
         public Event(D data) {
             this.data = data;
         }
-        final D data;
+        public final D data;
     }
 
     public interface EventHandler<T>{
