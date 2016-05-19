@@ -93,15 +93,7 @@ public class CloudSimulator {
                     passiveClouds.add(cloud);
                     cloudIterator.remove();
                 } else {
-                    if (jumper.getFallState() instanceof PreJumpState) {
-                        // TODO: Make sure clouds only spawn in the leading edge of the airplane direction, now it's possible that it spawn on the left side, and since the place goes right in high speed we will never see them.
-                        //spawnCloudAtSpawnBorders(cloud);
-                        spawnCloudAtBottom(cloud);
-                        randomizeYPosition(cloud);
-                    } else {
-                        // TODO: Make sure there isn't a big blob of clouds when you encounter the first clouds spawned at the bottom (i.e. when fall state initially is changed to FreeFallingState here below)
-                        spawnCloudAtBottom(cloud);
-                    }
+                    spawnCloud(cloud, jumper.getFallState(), airplane);
                 }
             }
 
@@ -114,13 +106,36 @@ public class CloudSimulator {
         }
     }
 
+    private void spawnCloud(Cloud cloud, FallState fallState, Airplane airplane) {
+        if (fallState instanceof PreJumpState) {
+            // If the jumper is still in the plane, always spawn on the leading edge.
+            spawnCloudAtLeadingEdge(cloud);
+        } else {
+            // If the jumper has left the airplane spawn at bottom of spawn volume. However, to make the segue smooth
+            // successively move over to spawning at the bottom.
+
+            float actualSpeed = airplane.getActualVelocity().length();
+            float maxSpeed = Airplane.VELOCITY.length();
+            float bottomSpawningRatio = actualSpeed / maxSpeed;
+
+            // Offset it a bit towards spawning at the leading edge.
+            bottomSpawningRatio = (float) Math.pow(bottomSpawningRatio, 2.0);
+
+            if (random.nextFloat() < bottomSpawningRatio) {
+                spawnCloudAtBottom(cloud);
+            } else {
+                spawnCloudAtLeadingEdge(cloud);
+            }
+        }
+    }
+
     private void spawnCloudAtBottom(Cloud cloud) {
         randomizePosition(cloud);
         randomizeVelocity(cloud);
         randomizeScale(cloud);
     }
     
-    private void spawnCloudAtSpawnBorders(Cloud cloud) {
+    private void spawnCloudAtLeadingEdge(Cloud cloud) {
         randomizeSpawnBorderPosition(cloud);
         randomizeYPosition(cloud);
         randomizeVelocity(cloud);
@@ -128,12 +143,18 @@ public class CloudSimulator {
     }
 
     private void randomizeSpawnBorderPosition(Cloud cloud) {
-        float distanceAlongBorder = (random.nextFloat() - 0.5f) * 2 * CLOUD_SPAWN_AREA_RADIUS * 2;
-        Vector spawnAreaCorner = basePosition.sub(new Vector(CLOUD_SPAWN_AREA_RADIUS, 0, CLOUD_SPAWN_AREA_RADIUS));
-        Vector newPosition = random.nextBoolean() ? spawnAreaCorner.add(new Vector(distanceAlongBorder, 0, 0))
-                                                  : spawnAreaCorner.add(new Vector(0, 0, distanceAlongBorder));
+        Vector airplaneDirection = Airplane.VELOCITY.normalized();
+        Vector airplaneRight = new Vector(0, 1, 0).cross(airplaneDirection);
 
-        cloud.setPosition(newPosition);
+        float leftOrRight = random.nextBoolean() ? +1.0f : -1.0f;
+        float randomDeviation = random.nextFloat() * CLOUD_SPAWN_AREA_RADIUS * leftOrRight;
+
+        Vector leadingSpawnEdge = airplaneDirection.scale(CLOUD_SPAWN_AREA_RADIUS);
+        Vector leadingEdgeDeviation = airplaneRight.scale(randomDeviation);
+
+        Vector spawnPosition = basePosition.add(leadingSpawnEdge).add(leadingEdgeDeviation);
+
+        cloud.setPosition(spawnPosition);
     }
 
     private void randomizePosition(Cloud cloud) {
