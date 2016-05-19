@@ -197,11 +197,11 @@ public class ResourceHandler {
 
 
     public Map<String, ModelInstance> getModels(){
-        return new HashMap(models);
+        return new HashMap<String, ModelInstance>(models);
     }
 
     public Map<String, TextureAttribute> getQuadTextureAttributes(){
-        return new HashMap(quadTextureAttributes);
+        return new HashMap<String, TextureAttribute>(quadTextureAttributes);
     }
 
     public ModelInstance getQuadModel(){
