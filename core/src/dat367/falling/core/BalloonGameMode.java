@@ -36,7 +36,7 @@ public class BalloonGameMode implements GameMode {
         });
 
         // When the player has landed and stopped moving the game is finished
-        NotificationManager.addObserver(LandedState.playerHasStopped, new NotificationManager.EventHandler<Object>() {
+        NotificationManager.addObserver(LandedState.PLAYER_HAS_STOPPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
 
             @Override
             public void handleEvent(NotificationManager.Event<Object> event) {

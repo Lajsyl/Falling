@@ -4,7 +4,7 @@ import dat367.falling.math.Vector;
 
 public class LandedState implements FallState {
 
-    public static final String playerHasStopped = "playerHasStopped";
+    public static final String PLAYER_HAS_STOPPED_EVENT_ID = "PLAYER_HAS_STOPPED_EVENT_ID";
 
     @Override
     public void setup(Jumper jumper) {
@@ -24,7 +24,7 @@ public class LandedState implements FallState {
 
         if(jumper.getVelocity().lengthSquared() < 0.05f){
             jumper.setVelocity(0, 0 , 0);
-            NotificationManager.registerEvent(playerHasStopped, null);
+            NotificationManager.registerEvent(PLAYER_HAS_STOPPED_EVENT_ID, null);
         }
 
         return null;
