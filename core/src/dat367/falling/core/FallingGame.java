@@ -22,6 +22,10 @@ public class FallingGame {
         }
     }
 
+    public void deviceShaken(boolean deviceShaken) {
+
+    }
+
     public Jump getCurrentJump() {
         return currentJump;
     }

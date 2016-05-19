@@ -15,6 +15,7 @@ public class Obstacle implements Positioned {
     private Vector position;
 
     private Quad quad;
+    private boolean enabled = true;
 
 
     public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
@@ -29,7 +30,14 @@ public class Obstacle implements Positioned {
         return position;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void update(float deltaTime){
-        RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Rotation(), new Vector(10, 1, 10)));
+        if (enabled) {
+            RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Rotation(), new Vector(10, 1, 10)));
+        }
     }
 }

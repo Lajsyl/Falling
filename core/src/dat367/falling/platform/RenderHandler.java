@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -192,8 +193,6 @@ public class RenderHandler {
         }
         spriteBatch.end();
     }
-
-
 
 
 

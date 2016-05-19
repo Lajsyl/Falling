@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
+import com.badlogic.gdx.backends.android.ShakeListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,10 +22,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
-import dat367.falling.core.FallingGame;
-import dat367.falling.core.Ground;
-import dat367.falling.core.NotificationManager;
-import dat367.falling.core.PositionedSound;
+import dat367.falling.core.*;
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -61,6 +59,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Rotation desktopSimulatedHeadTransform;
 
 	private CardboardAudioEngine cardboardAudioEngine;
+	private ShakeListener shakeListener;
 
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
@@ -77,7 +76,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			resourceHandler.setupSoundEventHandling();
-//			setDesktopCameraPosAndOrientation();
+			if (PreJumpState.JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
+				setupShakeEventHandling();
+			}
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -139,6 +140,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void updateGame() {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
+		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
 	}
 
 	private String getFallStateString() {
@@ -478,11 +480,25 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		return new Vector(position.getZ(), position.getY(), position.getX());
 	}
 
+	private void setupShakeEventHandling() {
+		this.shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
+			@Override
+			public void onShake() {
+				game.screenClicked(true);
+			}
+		});
+	}
+
+	public void setShakeListener(ShakeListener shakeListener) {
+		this.shakeListener = shakeListener;
+	}
+
 	//---- UTILITIES ----//
 
 	private Vector3 libGdxVector(Vector vector) {
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
 	}
+
 
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
