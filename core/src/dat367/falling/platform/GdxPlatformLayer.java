@@ -29,10 +29,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
-import dat367.falling.core.FallingGame;
-import dat367.falling.core.Ground;
-import dat367.falling.core.NotificationManager;
-import dat367.falling.core.PositionedSound;
+import dat367.falling.core.*;
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -92,8 +89,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			setupSoundEventHandling();
-			setupShakeEventHandling();
-//			setDesktopCameraPosAndOrientation();
+			if (PreJumpState.JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
+				setupShakeEventHandling();
+			}
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 

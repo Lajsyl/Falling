@@ -12,6 +12,10 @@ public class PreJumpState implements FallState {
 
     private final boolean THROW_OUT_JUMPER = false;
 
+    private final float JUMP_THRESHOLD = 0.93f;
+
+    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = false;
+
     private PositionedSound airplaneWind;
     private PositionedSound airplaneLeanoutWind;
 
@@ -30,10 +34,12 @@ public class PreJumpState implements FallState {
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
         final Vector lookDirection = jumper.getHeadRotation().getDirection().normalized();
+        final Vector headUpDirection = jumper.getHeadRotation().getUp();
         final Vector outwards = jumper.getBodyRotation().getDirection().normalized();
         final Vector up = new Vector(0, 1, 0);
+        final Vector down = new Vector(0, -1, 0);
 
-        double interpolation = FallingMath.clamp01(outwards.dot(jumper.getHeadRotation().getUp()));
+        double interpolation = FallingMath.clamp01(outwards.dot(headUpDirection));
 
         // The more you lean out of the plane, the louder the outside wind noise will be
         airplaneLeanoutWind.setVolume((0.1f + (float)interpolation * 0.9f) * 1.1f);
@@ -46,14 +52,25 @@ public class PreJumpState implements FallState {
         Vector finalHeadPosition = hipPosition.add(outwardsComponent).add(upComponent);
         jumper.setPosition(finalHeadPosition);
 
-
-        // If the player makes a jump in reality, jump them out of the plane in the game
-        if (jumper.getScreenClicked()) {
-            if (THROW_OUT_JUMPER) {
-                jumper.setVelocity(20, 0, 0);
+        if (JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
+            // If the player makes a jump in reality, jump them out of the plane in the game
+            if (jumper.getScreenClicked()) {
+                if (THROW_OUT_JUMPER) {
+                    jumper.setVelocity(20, 0, 0);
+                }
+                return new FreeFallingState();
             }
-            return new FreeFallingState();
+        } else {
+            // If the player leans out far enough, jump!
+            double lookDownAmount = FallingMath.clamp01(down.dot(lookDirection));
+            if (headUpDirection.getY() > 0 && lookDownAmount > JUMP_THRESHOLD) {
+                if (THROW_OUT_JUMPER) {
+                    jumper.setVelocity(20, 0, 0);
+                }
+                return new FreeFallingState();
+            }
         }
+
 
         return null;
     }
