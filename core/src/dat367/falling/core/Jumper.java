@@ -10,7 +10,8 @@ public class Jumper extends Observable implements Positioned {
 
     public static final float MASS = 70.0f;
     public static final float BODY_AREA = 0.8f;
-    public static final float BODY_AREA_AT_FULL_TURN = 0.5f * BODY_AREA;
+    public static final float BODY_HEIGHT = 1.7f;
+    public static final float BODY_AREA_AT_FULL_TURN = 0.3f * BODY_AREA;
     public static final float PARACHUTE_AREA = 17.0f;
     public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.5f * PARACHUTE_AREA;
     public static final float DRAG_COEFFICIENT = 1.1f;
@@ -20,6 +21,11 @@ public class Jumper extends Observable implements Positioned {
 
 
     private Model parachute = new Model("parachute.g3db", false);
+
+    public final Sound airplaneWindSound = new Sound("wind05.wav");
+    public final Sound airplaneLeanoutWindSound = new Sound("wind07.wav");
+    public final Sound fallingWindSound = new Sound("wind03.wav");
+    public final Sound tiltingWindSound = new Sound("wind08.wav");
 
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;
@@ -40,6 +46,10 @@ public class Jumper extends Observable implements Positioned {
     public Jumper(ResourceRequirements resourceRequirements, Vector position, Rotation bodyRotation) {
 
         resourceRequirements.require(parachute);
+        resourceRequirements.require(airplaneWindSound);
+        resourceRequirements.require(airplaneLeanoutWindSound);
+        resourceRequirements.require(fallingWindSound);
+        resourceRequirements.require(tiltingWindSound);
 
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
@@ -83,6 +93,10 @@ public class Jumper extends Observable implements Positioned {
 
     public Vector getPosition() {
         return position;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
     }
 
     public void setPosition(Vector position) {

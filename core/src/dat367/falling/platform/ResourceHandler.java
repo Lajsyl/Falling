@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
@@ -24,16 +25,14 @@ import dat367.falling.platform_abstraction.Quad;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 import dat367.falling.platform_abstraction.Sound;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ResourceHandler {
 
     private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
     private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
     private Set<String> preloadedSounds = new HashSet<String>();
+    private List<AnimationController> animationControllers = new ArrayList<AnimationController>();
     private ModelInstance quadModel;
 
     private UBJsonReader jsonReader = new UBJsonReader();
@@ -60,6 +59,17 @@ public class ResourceHandler {
                 com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
                 ModelInstance gdxModelInstance = new ModelInstance(gdxModel);
                 models.put(fileName, gdxModelInstance);
+                // If model has animation, loop it automatically
+                if (gdxModelInstance.animations.size > 0) {
+                    AnimationController animationController = new AnimationController(gdxModelInstance);
+                    animationController.setAnimation(gdxModelInstance.animations.get(gdxModelInstance.animations.size - 1).id, -1, 1.2f, new AnimationController.AnimationListener() {
+                        @Override
+                        public void onEnd(AnimationController.AnimationDesc animation) {}
+                        @Override
+                        public void onLoop(AnimationController.AnimationDesc animation) {}
+                    });
+                    animationControllers.add(animationController);
+                }
             }
         }
     }
@@ -197,11 +207,11 @@ public class ResourceHandler {
 
 
     public Map<String, ModelInstance> getModels(){
-        return new HashMap(models);
+        return new HashMap<String, ModelInstance>(models);
     }
 
     public Map<String, TextureAttribute> getQuadTextureAttributes(){
-        return new HashMap(quadTextureAttributes);
+        return new HashMap<String, TextureAttribute>(quadTextureAttributes);
     }
 
     public ModelInstance getQuadModel(){
@@ -210,5 +220,11 @@ public class ResourceHandler {
 
     public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
         this.cardboardAudioEngine = cardboardAudioEngine;
+    }
+
+    public void updateAnimations(float deltaTime) {
+        for (AnimationController animationController : animationControllers) {
+            animationController.update(Gdx.graphics.getDeltaTime());
+        }
     }
 }

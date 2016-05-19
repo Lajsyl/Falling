@@ -10,8 +10,10 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -106,32 +108,32 @@ public class RenderHandler {
                     if (resourceHandler.getQuadTextureAttributes().containsKey(textureFileName)) {
                         TextureAttribute currentTextureAttribute = resourceHandler.getQuadTextureAttributes().get(textureFileName);
 
-                        // Render using the shared quadModel
-                        ModelInstance sharedInstance = this.resourceHandler.getQuadModel();
+                        // Make copy, since stuff like transform and materials would be shared if not
+                        ModelInstance sharedInstance = resourceHandler.getQuadModel();
+                        ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
+
+                        // Set quad as user data so that the shader can use its properties
+                        modelInstanceCopy.userData = quadTask.getQuad();
 
                         // NOTE: Will overwrite previous attribute of the same type!
-                        sharedInstance.materials.get(0).set(currentTextureAttribute);
+                        modelInstanceCopy.materials.get(0).set(currentTextureAttribute);
+                        modelInstanceCopy.materials.first().set(new DepthTestAttribute(quadTask.getQuad().isOpaque()));
 
-                        sharedInstance.transform = new Matrix4();
+                        modelInstanceCopy.transform = new Matrix4();
 
                         // Scale for aspect ratio
                         if (quadTask.getQuad().shouldAspectRatioAdjust()) {
                             Float aspectRatio = quadTask.getQuad().getAspectRatio();
                             if (aspectRatio != null && aspectRatio != 0.0f) {
-                                sharedInstance.transform.scl(aspectRatio, 1, 1);
+                                modelInstanceCopy.transform.scl(aspectRatio, 1, 1);
                             }
                         }
 
                         // NOTE: No rotation (for now?)!
-                        sharedInstance.transform = sharedInstance.transform
+                        modelInstanceCopy.transform = modelInstanceCopy.transform
                                 .translate(libGdxVector(task.getPosition()))
                                 .scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-                        // Make copy, since stuff like transform and materials would be shared if not
-                        ModelInstance modelInstanceCopy = new ModelInstance(sharedInstance);
-
-                        // Set quad as user data so that the shader can use its properties
-                        modelInstanceCopy.userData = quadTask.getQuad();
                         modelBatch.render(modelInstanceCopy, environment);
                     }
                 }
@@ -191,8 +193,6 @@ public class RenderHandler {
         }
         spriteBatch.end();
     }
-
-
 
 
 

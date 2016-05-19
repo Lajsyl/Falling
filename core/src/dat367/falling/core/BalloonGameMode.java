@@ -4,6 +4,7 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.GUITextTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class BalloonGameMode implements GameMode {
     private int score = 0;
 
     private boolean gameIsFinished = false;
+
+    private Sound balloonSound = new Sound("balloon1.wav");
 
     public BalloonGameMode(ResourceRequirements resourceRequirements) {
 
@@ -39,7 +42,7 @@ public class BalloonGameMode implements GameMode {
         });
 
         // When the player has landed and stopped moving the game is finished
-        NotificationManager.addObserver(LandedState.playerHasStopped, new NotificationManager.EventHandler<Object>() {
+        NotificationManager.addObserver(LandedState.PLAYER_HAS_STOPPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
 
             @Override
             public void handleEvent(NotificationManager.Event<Object> event) {
@@ -77,6 +80,9 @@ public class BalloonGameMode implements GameMode {
         balloonCombo += 1;
         score += 100*balloonCombo;
         System.out.println(score);
+
+        PositionedSound balloonPositionedSound = new PositionedSound(balloonSound, collisionData.getJumperObject().getPosition());
+        balloonPositionedSound.play();
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
