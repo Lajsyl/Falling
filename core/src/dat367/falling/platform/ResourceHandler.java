@@ -221,4 +221,10 @@ public class ResourceHandler {
     public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
         this.cardboardAudioEngine = cardboardAudioEngine;
     }
+
+    public void updateAnimations(float deltaTime) {
+        for (AnimationController animationController : animationControllers) {
+            animationController.update(Gdx.graphics.getDeltaTime());
+        }
+    }
 }

@@ -14,7 +14,8 @@ public class PreJumpState implements FallState {
 
     private final float JUMP_THRESHOLD = 0.93f;
 
-    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = false;
+    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = true;
+    public static final boolean LOOK_DOWN_TO_JUMP_FROM_PLANE = false;
 
     private PositionedSound airplaneWind;
     private PositionedSound airplaneLeanoutWind;
@@ -60,7 +61,8 @@ public class PreJumpState implements FallState {
                 }
                 return new FreeFallingState();
             }
-        } else {
+        }
+        if (LOOK_DOWN_TO_JUMP_FROM_PLANE) {
             // If the player leans out far enough, jump!
             double lookDownAmount = FallingMath.clamp01(down.dot(lookDirection));
             if (headUpDirection.getY() > 0 && lookDownAmount > JUMP_THRESHOLD) {

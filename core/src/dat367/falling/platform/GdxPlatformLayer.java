@@ -140,6 +140,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void updateGame() {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
+		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
 	}
 
 	private String getFallStateString() {
@@ -486,16 +487,18 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		});
 	}
 
+	public void setShakeListener(ShakeListener shakeListener) {
+		this.shakeListener = shakeListener;
+	}
+
 	//---- UTILITIES ----//
 
 	private Vector3 libGdxVector(Vector vector) {
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
 	}
 
+
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
 	}
-
-
-
 }
