@@ -88,6 +88,7 @@ public class BalloonGameMode implements GameMode {
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
         collisionData.getOtherObject().setEnabled(false);
+        collisionData.getOtherObject().setParentEnabled(false);
         balloonCombo = 0;
         System.out.println("mine" + balloonCombo);
     }
