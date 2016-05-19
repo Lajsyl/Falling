@@ -13,6 +13,9 @@ public abstract class Collider {
         this.name = name;
     }
 
+    public void setParentEnabled(boolean parentEnabled) {
+        positioned.setEnabled(parentEnabled);
+    }
 
     public Vector getPosition(){
         return positioned.getPosition();

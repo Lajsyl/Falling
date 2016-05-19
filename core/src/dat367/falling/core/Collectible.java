@@ -13,6 +13,7 @@ public class Collectible implements Positioned {
 
     private Model model;
 
+    private boolean enabled;
 
     public Collectible(ResourceRequirements resourceRequirements, Vector position){
         model = new Model("balloon.g3db");
@@ -26,7 +27,14 @@ public class Collectible implements Positioned {
         return position;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void update(float deltaTime) {
-        RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(10,10,10)));
+        if (enabled) {
+            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(10,10,10)));
+        }
     }
 }
