@@ -125,7 +125,11 @@ public class ParachuteFallingState implements FallState {
     }
 
     private float calculateRotationalSpeed(float deltaTime){
-        return rotationalSpeed += rotationalAcceleration * deltaTime;
+        float speed = rotationalSpeed+(rotationalAcceleration*deltaTime);
+        if(speed<0.0000003f && speed>-0.000003f){
+            return 0;
+        }
+        return speed;
     }
 
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){

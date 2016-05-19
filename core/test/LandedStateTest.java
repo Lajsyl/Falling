@@ -3,6 +3,7 @@ import dat367.falling.core.LandedState;
 import dat367.falling.core.ParachuteFallingState;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.ResourceRequirements;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class LandedStateTest {
     @Test
     public void stopWhenLanded(){
-        Jumper jumper = new Jumper(new Vector(0,1,0), new Rotation(new Vector(0,0,0), new Vector(0,0,0)));
+        Jumper jumper = new Jumper(new ResourceRequirements(), new Vector(0,1,0), new Rotation(new Vector(0,0,0), new Vector(0,0,0)));
         jumper.setFallState(new LandedState());
         jumper.setVelocity(10,10,10);
         float startY = jumper.getPosition().getY();

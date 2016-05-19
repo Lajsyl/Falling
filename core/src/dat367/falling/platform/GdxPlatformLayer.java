@@ -68,6 +68,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
 		this.cardboardAudioEngine = cardboardAudioEngine;
+		resourceHandler.setCardboardAudioEngine(cardboardAudioEngine);
 	}
 
 	@Override
