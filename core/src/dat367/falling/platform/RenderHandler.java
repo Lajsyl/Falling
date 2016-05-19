@@ -61,7 +61,7 @@ public class RenderHandler {
         spriteBatch = new SpriteBatch();
 
         debugFont = new BitmapFont();
-        smallFont = new BitmapFont(Gdx.files.internal("quadrangl.fnt"));
+        smallFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
         bigFont = new BitmapFont(Gdx.files.internal("yuppy_tc_53pt.fnt"));
     }
 
