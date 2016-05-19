@@ -473,6 +473,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game.screenClicked(true);
 	}
 
+
+
 	// It seems that the cardboard coordinate system swaps x and z???
 	private Vector convertToCardboardCoordinateSystem(Vector position) {
 		return new Vector(position.getZ(), position.getY(), position.getX());
@@ -501,4 +503,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Vector gameVector(Vector3 vector) {
 		return new Vector(vector.x, vector.y, vector.z);
 	}
+
+
+
 }
