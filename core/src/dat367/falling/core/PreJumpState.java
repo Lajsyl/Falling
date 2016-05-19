@@ -14,8 +14,8 @@ public class PreJumpState implements FallState {
 
     private final float JUMP_THRESHOLD = 0.93f;
 
-    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = true;
-    public static final boolean LOOK_DOWN_TO_JUMP_FROM_PLANE = false;
+    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = false;
+    public static final boolean LOOK_DOWN_TO_JUMP_FROM_PLANE = true;
 
     private PositionedSound airplaneWind;
     private PositionedSound airplaneLeanoutWind;

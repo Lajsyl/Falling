@@ -3,6 +3,7 @@ package dat367.falling.core;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.IOException;
 
 public class HeightMapCollider extends Collider {
@@ -12,7 +13,7 @@ public class HeightMapCollider extends Collider {
     public HeightMapCollider(Positioned positioned, String name, String heightMapFileName) {
         super(positioned, name);
         try {
-            image = ImageIO.read(HeightMapCollider.class.getResource(heightMapFileName));
+            image = ImageIO.read(HeightMapCollider.class.getResource("android/assets/"+heightMapFileName));
             int width = image.getWidth();
             int height = image.getHeight();
 
@@ -23,9 +24,10 @@ public class HeightMapCollider extends Collider {
             assert image.getColorModel().getNumComponents() == 1; // Assert grayscale image
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    pixelBrightness[y][x] = data[y * width + x];
+                    pixelBrightness[y][x] = (data[y * width + x] - Byte.MIN_VALUE) / (Byte.MAX_VALUE-Byte.MIN_VALUE);
                 }
             }
+            System.out.println(pixelBrightness);
             // TODO: CONTINUE HERE
 
 
