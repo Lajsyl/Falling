@@ -93,7 +93,6 @@ public class ParachuteFallingState implements FallState {
     }
 
     private Vector calculateVelocity(float deltaTime, Jumper jumper){
-        System.out.println(jumper.getBodyRotation().getDirection());
         return new Vector(0, jumper.getVelocity().getY(), 0).add(jumper.getAcceleration().scale(deltaTime))
                 .add(jumper.getBodyRotation().getDirection().scale(forwardSpeed));
     }
@@ -113,7 +112,6 @@ public class ParachuteFallingState implements FallState {
         Vector projected = jumper.getHeadRotation().getUp().projectOntoLine(rightDirection);
 
         Float rollAmount = rightDirection.sub(projected).length() - 1;
-        System.out.println("rollAmount = " + rollAmount);
 
         float maxRollAmount = 0.5f;
         rollAmount = FallingMath.clamp(rollAmount, -maxRollAmount, maxRollAmount);
@@ -133,8 +131,6 @@ public class ParachuteFallingState implements FallState {
     }
 
     private Vector calculatePosition(float deltaTime, Jumper jumper, Vector v0){
-
-        System.out.println("position: " + jumper.getPosition());
         return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
     }
 
