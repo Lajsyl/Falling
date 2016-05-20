@@ -17,6 +17,8 @@ public class ParachuteFallingState implements FallState {
 
     private float forwardSpeed = 30;
 
+    private FallState impendingState = null;
+
     @Override
     public void setup(Jumper jumper) {
         Rotation initialParachuteRotation = decideInitialParachuteRotation(jumper);
@@ -25,7 +27,12 @@ public class ParachuteFallingState implements FallState {
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
         jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
         jumper.setArea(jumper.PARACHUTE_AREA);
-
+        NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
+                impendingState = new LandedState((HeightMapCollider)event.data.getOtherObject());
+            }
+        });
     }
 
     private Rotation decideInitialParachuteRotation(Jumper jumper) {
@@ -46,6 +53,7 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
+
         jumper.setAcceleration(calculateAcceleration(jumper));
 
         Vector v0 = jumper.getVelocity();
@@ -63,9 +71,11 @@ public class ParachuteFallingState implements FallState {
         jumper.setVelocity(velocity);
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
-
+        if (impendingState != null) {
+            return impendingState;
+        }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
-            return new LandedState();
+            return new CrashedState();
         }
 
         return null;

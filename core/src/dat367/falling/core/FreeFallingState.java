@@ -4,6 +4,7 @@ import dat367.falling.math.FallingMath;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.GUITextTask;
+import dat367.falling.platform_abstraction.HeightMap;
 import dat367.falling.platform_abstraction.RenderQueue;
 
 import java.util.Observable;
@@ -30,8 +31,10 @@ public class FreeFallingState implements FallState, Observer {
     private PositionedSound fallingWind; // Has max volume when tilting straight towards ground
     private PositionedSound tiltingWind; // Has max volume when tilting fully towards a side, is positioned on that side
 
+    private FallState impendingState = null;
+
     @Override
-    public void setup(Jumper jumper) {
+    public void setup(final Jumper jumper) {
         jumper.addObserver(this);
         uprightRotation = jumper.getBodyRotation();
 //        tiltBodyIntoGroundMode(jumper);
@@ -39,6 +42,16 @@ public class FreeFallingState implements FallState, Observer {
         fallingWind.loop();
         tiltingWind = new PositionedSound(jumper.tiltingWindSound, jumper.getPosition().add(new Vector(0, -3, 0)), 0.0f);
         tiltingWind.loop();
+        NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
+                float x = jumper.getPosition().getX();
+                float z = jumper.getPosition().getZ();
+                float y = ((HeightMapCollider)event.data.getOtherObject()).getHeight(x, z) + Jumper.BODY_HEIGHT;
+                jumper.setPosition(x, y, z);
+                impendingState = new CrashedState();
+            }
+        });
     }
 
     private void tiltBodyIntoGroundMode(Jumper jumper) {
@@ -77,6 +90,12 @@ public class FreeFallingState implements FallState, Observer {
 
         if (parachutePulled){
             return new ParachuteFallingState();
+        }
+        if (impendingState != null) {
+            return impendingState;
+        }
+        if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
+            return new CrashedState();
         }
 
         return null;

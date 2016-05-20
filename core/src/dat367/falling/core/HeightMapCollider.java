@@ -36,7 +36,7 @@ public class HeightMapCollider extends Collider {
         return baseCenterPosition.getY() + heightMap.getBrightnessAtPixel(imageX, imageY) * maxHeight;
     }
 
-    private boolean pointIsInsideXZBoundary(Vector point) {
+    public boolean pointIsInsideXZBoundary(Vector point) {
         return point.getX() > baseCenterPosition.getX() - xDimension/2
             && point.getX() < baseCenterPosition.getX() + xDimension/2
             && point.getZ() > baseCenterPosition.getZ() - zDimension/2

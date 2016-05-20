@@ -46,7 +46,7 @@ import java.util.Set;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private boolean platformIsAndroid;
-	private final boolean USING_DEBUG_CAMERA = true;
+	private final boolean USING_DEBUG_CAMERA = false;
 
 	private FallingGame game;
 	private Camera mainCamera;

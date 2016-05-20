@@ -4,7 +4,12 @@ import dat367.falling.math.Vector;
 
 public class LandedState implements FallState {
 
+    private final HeightMapCollider landingTerrain;
     public static final String PLAYER_HAS_STOPPED_EVENT_ID = "PLAYER_HAS_STOPPED_EVENT_ID";
+
+    public LandedState(HeightMapCollider landingTerrain) {
+        this.landingTerrain = landingTerrain;
+    }
 
     @Override
     public void setup(Jumper jumper) {

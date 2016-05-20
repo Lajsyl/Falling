@@ -20,7 +20,7 @@ public class Island implements Positioned {
         resourceRequirements.require(island);
 
         resourceRequirements.require(heightMap);
-        heightMapCollider = new HeightMapCollider(this, ID, heightMap, position, 2400, 2400, 200);
+        heightMapCollider = new HeightMapCollider(this, ID, heightMap, position, 2400, 2400, 210);
         CollisionManager.addCollider(heightMapCollider);
 
     }
