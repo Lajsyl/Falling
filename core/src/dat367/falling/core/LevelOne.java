@@ -13,44 +13,118 @@ public class LevelOne extends BalloonLevel {
 
     @Override
     public void create() {
-        for (int i = 0; i < 25; i++) {
-            float step = (float) i;
-            float x = (float)Math.cos(step) * 60;
-            float z = (float)Math.sin(step) * 60;
+        // Creates a balloons and obstacles from the bottom and up, starting at currentHeight, offsetX and offsetZ
+        int currentHeight = 500;
+        // TODO: Set offset so that they end at a good point
+        int offsetX = 100;
+        int offsetZ = 100;
 
-            // Every 100 meters from 1000m and up.
-            float y = step * 100.0f + 1000.0f;
+        // Create slalom by alternating balloons and obstacles
+        for (int i = 0; i < 4; i++) {
+            float y = currentHeight;
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, y, offsetZ));
+            balloonList.add(balloon);
 
-            Collectible c = new Collectible(resourceRequirements, new Vector(x, y, z));
-            balloonList.add(c);
+            y += 50;
+            Obstacle obstacle = new Obstacle(resourceRequirements, new Vector(offsetX, y, offsetZ));
+            obstacleList.add(obstacle);
+            currentHeight += 100;
         }
 
-        for (int i = 0; i < 25; i++){
+        balloonList.add(new Collectible(resourceRequirements, new Vector(0,(currentHeight+10),0)));
 
+        // Height between the slalom and the spiral
+        currentHeight += 200;
+
+        // Create a spriral pattern of balloons guarded by 2 obstacles each
+        for (int i = 0; i < 10; i++) {
             float step = (float) i;
+            float x = (float)Math.cos(step) * 60 + offsetX;
+            float z = (float)Math.sin(step) * 60 + offsetZ;
 
             // Every 100 meters from 1000m and up.
-            if(i < 15) {
-                float y1 = step * 100.0f + 1000.0f - 25;
-                float y2 = step * 100.0f + 1000.0f + 25;
-                float x = (float)Math.cos(step) * 60;
-                float z = (float)Math.sin(step) * 60;
-                Obstacle o1 = new Obstacle(resourceRequirements, new Vector(x, y1, z));
-                Obstacle o2 = new Obstacle(resourceRequirements, new Vector(x, y2, z));
-                obstacleList.add(o1);
-                obstacleList.add(o2);
-            }else{
-                float y = step * 100.0f + 1000.0f;
-                float x1 = (float)Math.cos(step) * 60 + 10;
-                float x2 = (float)Math.cos(step) * 60 - 10;
-                float z1 = (float)Math.sin(step) * 60 + 10;
-                float z2 = (float)Math.sin(step) * 60 - 10;
-                Obstacle o1 = new Obstacle(resourceRequirements, new Vector(x1, y, z1));
-                Obstacle o2 = new Obstacle(resourceRequirements, new Vector(x2, y, z2));
-                obstacleList.add(o1);
-                obstacleList.add(o2);
-            }
+            float y = currentHeight;
+            currentHeight += 100;
+
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(x, y, z));
+            x -= 10;
+            z -= 10;
+            Obstacle o1 = new Obstacle(resourceRequirements, new Vector(x, y, z));
+            x += 20;
+            z += 20;
+            Obstacle o2 = new Obstacle(resourceRequirements, new Vector(x, y, z));
+            balloonList.add(balloon);
+            obstacleList.add(o1);
+            obstacleList.add(o2);
         }
+
+        // Space between sprial and next balloon +100
+        currentHeight += 50;
+
+        //TODO: Lägg till en rad med (inte jättemånga) ballonger där hinder är på ena sidan, och på den sista är det på andra sidan
+
+        //TODO: Fix so offset is okay
+
+        //TODO: Add obstacle before the first line balloon
+
+        // Create steep line of balloons
+        for (int i = 0; i < 3; i++){
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            balloonList.add(balloon);
+            currentHeight += 23;
+            offsetX += 15;
+            offsetZ -= 15;
+        }
+
+        // Space between line and next line +23
+        currentHeight += 70;
+
+        offsetZ -= 30;
+        // Create steep line of balloons
+        for (int i = 0; i < 3; i++){
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            balloonList.add(balloon);
+            currentHeight += 23;
+            offsetX -= 15;
+            offsetZ -= 15;
+        }
+
+        // Space between line and next line +23
+        currentHeight += 95;
+
+        offsetX -= 30;
+        // Create steep line of balloons
+        for (int i = 0; i < 3; i++){
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            balloonList.add(balloon);
+            currentHeight += 23;
+            offsetX -= 15;
+            offsetZ += 15;
+        }
+
+        // Space between line and next line +23
+        currentHeight += 120;
+
+        offsetZ += 30;
+        // Create steep line of balloons
+        for (int i = 0; i < 3; i++){
+            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            balloonList.add(balloon);
+            currentHeight += 23;
+            offsetX += 15;
+            offsetZ += 15;
+        }
+
+        // Space between line and next balloon +23
+        currentHeight += 120;
+
+        //TODO: Add balloons, quite far apart but without obstacles
+
+        /*Collectible balloon = new Collectible(resourceRequirements, new Vector(20, currentHeight, 0));
+        Obstacle obstacle = new Obstacle(resourceRequirements, new Vector(25, currentHeight, 10));
+        balloonList.add(balloon);
+        obstacleList.add(obstacle);*/
+
     }
 
     @Override
