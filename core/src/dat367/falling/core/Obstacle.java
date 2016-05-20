@@ -9,6 +9,9 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Obstacle implements Positioned {
 
+
+    //TODO: Make this abstract so that different obstacles can be added
+
     public static final String ID = "Obstacle";
 
     private SphereCollider sphereCollider;
