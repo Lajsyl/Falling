@@ -24,6 +24,7 @@ import dat367.falling.platform_abstraction.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.*;
 
 public class ResourceHandler {
@@ -57,33 +58,21 @@ public class ResourceHandler {
             FileHandle imageFile = Gdx.files.internal(heightMap.getHeightMapFileName());
             InputStream inputStream = imageFile.read();
             try {
-                Gdx2DPixmap gdx2DPixMap = new Gdx2DPixmap(inputStream, Gdx2DPixmap.GDX2D_FORMAT_ALPHA);
+                Gdx2DPixmap gdx2DPixMap = new Gdx2DPixmap(inputStream, Gdx2DPixmap.GDX2D_FORMAT_RGB888);
+                int width = gdx2DPixMap.getWidth();
+                int height = gdx2DPixMap.getHeight();
+
+                float[][] pixelBrightness = new float[height][width];
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        // Extract the red value from the pixel's RGBA data
+                        pixelBrightness[y][x] = (float)(gdx2DPixMap.getPixel(x, y) >>> 24) / 255.0f;
+                    }
+                }
+                heightMap.setHeightMapData(pixelBrightness);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Pixmap pixMap = new Pixmap(imageFile);
-            ByteBuffer byteBuffer = pixMap.getPixels();
-//            System.out.println(byteBuffer.get(0));
-            int width = pixMap.getWidth();
-            int height = pixMap.getHeight();
-            float[][] pixelBrightness = new float[height][width];
-
-//            float max = 0.0f;
-//            float min = 1.0f;
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    pixelBrightness[y][x] = (float)(byteBuffer.get() - Byte.MIN_VALUE) / (float)(Byte.MAX_VALUE-Byte.MIN_VALUE);
-//                    if (pixelBrightness[y][x] > max) {
-//                        max = pixelBrightness[y][x];
-//                    }
-//                    if (pixelBrightness[y][x] < min) {
-//                        min = pixelBrightness[y][x];
-//                    }
-                }
-            }
-            heightMap.setHeightMapData(pixelBrightness);
-//            heightMap.setHighestPixelBrightnessValue(max);
-//            heightMap.setLowestPixelBrightnessValue(min);
         }
     }
 

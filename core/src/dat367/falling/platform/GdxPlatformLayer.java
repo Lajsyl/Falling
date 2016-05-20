@@ -46,7 +46,7 @@ import java.util.Set;
 public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private boolean platformIsAndroid;
-	private final boolean USING_DEBUG_CAMERA = false;
+	private final boolean USING_DEBUG_CAMERA = true;
 
 	private FallingGame game;
 	private Camera mainCamera;
@@ -85,11 +85,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			// Instead of getting the head transform from a VR device,
 			// we simulate this on desktop with a rotation controlled with the mouse
 			desktopSimulatedHeadTransform = new Rotation();
-
-			if (USING_DEBUG_CAMERA) {
-				// Set position first frame
-				setDesktopCameraPosAndOrientation();
-			}
 		}
 
 
@@ -102,6 +97,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		mainCamera.far = Z_FAR;
 
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
+		if (USING_DEBUG_CAMERA && !platformIsAndroid) {
+			// Set position first frame
+			setDesktopCameraPosAndOrientation();
+		}
 
 	}
 
@@ -283,7 +283,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private void handleDebugCameraControl() {
 		final float mouseSensitivity = 0.1f;
-		final float speed = 0.05f;
+		final float speed = 25f;
 		final float rollSpeed = 15.0f;
 
 		Vector3 up = new Vector3(mainCamera.up).nor();
@@ -321,6 +321,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) translation.sub(up);
 		translation.nor().scl(speed);
 		mainCamera.translate(translation);
+
+		game.getCurrentJump().getJumper().setPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
 	}
 
 	//---- ANDROID-VR-SPECIFIC ----//
