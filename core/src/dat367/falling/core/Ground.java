@@ -9,9 +9,6 @@ public class Ground {
     private Quad groundQuad;
     private QuadRenderTask renderGround;
 
-    private Model island = new Model("island.g3db");
-    private ModelRenderTask renderIsland;
-
     public static final float SCALE = 30000.0f;
 
     public static final String TEXTURE_NAME = "waterclear256blue.bmp";
@@ -24,8 +21,6 @@ public class Ground {
         this.groundQuad = new Quad(TEXTURE_NAME, true, true, SCALE, 15000, UV_SCALE, UV_SCALE, false);
         resourceRequirements.require(groundQuad);
 
-        renderIsland = new ModelRenderTask(island, new Vector(0,0,0), new Rotation(), new Vector(10,10,10));
-        resourceRequirements.require(island);
 
         renderGround = new QuadRenderTask(
                 this.groundQuad,
@@ -37,6 +32,5 @@ public class Ground {
 
     public void update(float deltaTime) {
         RenderQueue.addTask(renderGround);
-        RenderQueue.addTask(renderIsland);
     }
 }

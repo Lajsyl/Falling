@@ -1,44 +1,22 @@
 package dat367.falling.core;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.io.IOException;
+import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.HeightMap;
 
 public class HeightMapCollider extends Collider {
-    private BufferedImage image;
-    private float[][] pixelBrightness;
+    private final HeightMap heightMap;
+    private Vector baseCenterPosition;
+    private float xDimension;
+    private float zDimension;
+    private float maxHeight;
 
-    public HeightMapCollider(Positioned positioned, String name, String heightMapFileName) {
+    public HeightMapCollider(Positioned positioned, String name, HeightMap heightMap, Vector baseCenterPosition, float xDimension, float zDimension, float maxHeight) {
         super(positioned, name);
-        try {
-            image = ImageIO.read(HeightMapCollider.class.getResource("android/assets/"+heightMapFileName));
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            pixelBrightness = new float[height][width];
-
-//            int[] data = new int[height * width];
-            final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-            assert image.getColorModel().getNumComponents() == 1; // Assert grayscale image
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    pixelBrightness[y][x] = (data[y * width + x] - Byte.MIN_VALUE) / (Byte.MAX_VALUE-Byte.MIN_VALUE);
-                }
-            }
-            System.out.println(pixelBrightness);
-            // TODO: CONTINUE HERE
-
-
-//            image.getData()
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public float getHeight(float x, float z) {
-        return 0;//image.getData();
+        this.heightMap = heightMap;
+        this.baseCenterPosition = baseCenterPosition;
+        this.xDimension = xDimension;
+        this.zDimension = zDimension;
+        this.maxHeight = maxHeight;
     }
 
     @Override
@@ -46,4 +24,20 @@ public class HeightMapCollider extends Collider {
         return Collider.areColliding(this, collider);
     }
 
+    public boolean collidesWithPoint(Vector point) {
+        return pointIsInsideXZBoundary(point) && getHeight(point.getX(), point.getZ()) >= point.getY();
+    }
+
+    public float getHeight(float x, float z) {
+        int imageX = (int)(heightMap.getImageWidth() * ((x - baseCenterPosition.getX() - xDimension/2) / xDimension));
+        int imageY = (int)(heightMap.getImageHeight() * ((z - baseCenterPosition.getZ() - zDimension/2) / zDimension));
+        return heightMap.getBrightnessAtPixel(imageX, imageY) * maxHeight;
+    }
+
+    private boolean pointIsInsideXZBoundary(Vector point) {
+        return point.getX() > baseCenterPosition.getX() - xDimension
+            && point.getX() < baseCenterPosition.getX() + xDimension
+            && point.getZ() > baseCenterPosition.getZ() - zDimension
+            && point.getZ() < baseCenterPosition.getZ() + zDimension;
+    }
 }

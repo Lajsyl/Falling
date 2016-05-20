@@ -68,21 +68,22 @@ public class ResourceHandler {
             int height = pixMap.getHeight();
             float[][] pixelBrightness = new float[height][width];
 
-            float max = -1000;
-            float min = 1000;
+//            float max = 0.0f;
+//            float min = 1.0f;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    pixelBrightness[y][x] = (byteBuffer.get() - Byte.MIN_VALUE) / (Byte.MAX_VALUE-Byte.MIN_VALUE);
-                    if (pixelBrightness[y][x] > max) {
-                        max = pixelBrightness[y][x];
-                    }
-                    if (pixelBrightness[y][x] < min) {
-                        min = pixelBrightness[y][x];
-                    }
+                    pixelBrightness[y][x] = (float)(byteBuffer.get() - Byte.MIN_VALUE) / (float)(Byte.MAX_VALUE-Byte.MIN_VALUE);
+//                    if (pixelBrightness[y][x] > max) {
+//                        max = pixelBrightness[y][x];
+//                    }
+//                    if (pixelBrightness[y][x] < min) {
+//                        min = pixelBrightness[y][x];
+//                    }
                 }
             }
-            System.out.println(pixelBrightness[0]);
-
+            heightMap.setHeightMapData(pixelBrightness);
+//            heightMap.setHighestPixelBrightnessValue(max);
+//            heightMap.setLowestPixelBrightnessValue(min);
         }
     }
 
