@@ -21,9 +21,12 @@ public class BalloonGameMode implements GameMode {
 
     private boolean gameIsFinished = false;
 
-    private Sound balloonSound = new Sound("balloon1.wav");
+    private List<Sound> balloonSounds = new ArrayList<Sound>();
+    private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements) {
+
+        initBalloonSounds(resourceRequirements);
 
         // Listen for all relevant collision events
 
@@ -82,8 +85,25 @@ public class BalloonGameMode implements GameMode {
         score += 100*balloonCombo;
         System.out.println(score);
 
-        PositionedSound balloonPositionedSound = new PositionedSound(balloonSound, collisionData.getJumperObject().getPosition());
-        balloonPositionedSound.play();
+        PositionedSound balloonSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
+        balloonSound.play();
+    }
+
+    private void initBalloonSounds(ResourceRequirements resourceRequirements) {
+        for (int i = 1; i <= NUMBER_OF_BALLOON_SOUNDS; i++) {
+            Sound sound = new Sound("balloon" + i + ".wav");
+            balloonSounds.add(sound);
+            resourceRequirements.require(sound);
+        }
+    }
+
+    private Sound getBalloonSound(int note) {
+        int soundIndex = note - 1;
+        if (soundIndex >= balloonSounds.size()) {
+            return balloonSounds.get(balloonSounds.size() - 1);
+        } else {
+            return balloonSounds.get(soundIndex);
+        }
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
