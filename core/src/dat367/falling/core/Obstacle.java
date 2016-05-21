@@ -13,6 +13,7 @@ public class Obstacle implements Positioned {
     //TODO: Make this abstract so that different obstacles can be added
 
     public static final String ID = "Obstacle";
+    public static final String POSITION_CHANGED_EVENT_ID = "ObstaclePositionChangedEvent";
 
     private SphereCollider sphereCollider;
     private Vector position;
@@ -34,8 +35,18 @@ public class Obstacle implements Positioned {
     }
 
     @Override
+    public String getPositionChangedEventID() {
+        return POSITION_CHANGED_EVENT_ID;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setPosition(Vector position) {
+        this.position = position;
+        NotificationManager.registerEvent(getPositionChangedEventID(), this);
     }
 
     public void update(float deltaTime){

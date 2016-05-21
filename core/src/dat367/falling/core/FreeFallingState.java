@@ -37,10 +37,9 @@ public class FreeFallingState implements FallState, Observer {
     public void setup(final Jumper jumper) {
         jumper.addObserver(this);
         uprightRotation = jumper.getBodyRotation();
-//        tiltBodyIntoGroundMode(jumper);
-        fallingWind = new PositionedSound(jumper.fallingWindSound, jumper.getPosition().add(jumper.getPosition().add(new Vector(0, -3, 0))));
+        fallingWind = new PinnedPositionedSound(jumper.fallingWindSound, jumper, new Vector(0, -3, 0));
         fallingWind.loop();
-        tiltingWind = new PositionedSound(jumper.tiltingWindSound, jumper.getPosition().add(new Vector(0, -3, 0)), 0.0f);
+        tiltingWind = new PinnedPositionedSound(jumper.tiltingWindSound, jumper, new Vector(0, -3, 0), 0.0f);
         tiltingWind.loop();
         NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
@@ -54,11 +53,6 @@ public class FreeFallingState implements FallState, Observer {
         });
     }
 
-    private void tiltBodyIntoGroundMode(Jumper jumper) {
-//        jumper
-//        Rotation bodyRotation = jumper.getBodyRotation();
-//        jumper.setBodyRotation(bodyRotation.rotate(new Vector(0, 0, 1), (float)-Math.PI / 2));
-    }
 
     @Override // from Observer
     public void update(Observable o, Object arg) {
@@ -151,10 +145,6 @@ public class FreeFallingState implements FallState, Observer {
         // The more you turn, the more distorted the wind sound is
         tiltingWind.setVolume(turnAmount * 0.5f);
         fallingWind.setVolume((1.0f - turnAmount * 0.8f) * 0.9f);
-
-        // Set sound positions
-        tiltingWind.setPosition(jumper.getPosition().add(new Vector(0, -3, 0)));//.add(targetVelocityNonScaled.normalized().scale(0.1f))));
-        fallingWind.setPosition(jumper.getPosition().add(new Vector(0, -3, 0)));
 
         // Calculate acceleration from target speed
         Vector currentVelocity = jumper.getVelocity().projectOntoPlaneXZ();

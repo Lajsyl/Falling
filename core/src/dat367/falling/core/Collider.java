@@ -17,6 +17,10 @@ public abstract class Collider {
         positioned.setEnabled(parentEnabled);
     }
 
+    public Positioned getParent() {
+        return positioned;
+    }
+
     public Vector getPosition(){
         return positioned.getPosition();
     }
@@ -56,7 +60,6 @@ public abstract class Collider {
     private static boolean sphereHeightMapCollision(SphereCollider sphere, HeightMapCollider heightMap) {
         // Use simplified collision by checking only whether the bottom-most point of the sphere touches the heightMap
         Vector sphereBottom = sphere.getPosition().add(new Vector(0, -sphere.getRadius(), 0));
-//        System.out.println("heightMap.collidesWithPoint(sphereBottom) = " + heightMap.collidesWithPoint(sphereBottom));
         if (heightMap.collidesWithPoint(sphereBottom)) {
             System.out.println("ISLAND COLLISION!");
         }

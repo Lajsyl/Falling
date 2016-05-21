@@ -35,6 +35,11 @@ public class Island implements Positioned {
     }
 
     @Override
+    public String getPositionChangedEventID() {
+        return null;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
 
     }
