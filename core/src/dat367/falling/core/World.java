@@ -12,6 +12,7 @@ public class World {
     public static final float GRAVITATION = -9.82f;
 
     private Ground ground;
+    private Island island;
     private CloudSimulator cloudSimulator;
     private Jumper jumper;
     private Airplane airplane;
@@ -22,6 +23,7 @@ public class World {
 
         airplane = new Airplane(resourceRequirements, new Vector(0, 4000, 0));
         ground = new Ground(resourceRequirements);
+        island = new Island(resourceRequirements, new Vector(0,0,0));
 
         // Create jumper using the airplane metrics
         jumper = new Jumper(resourceRequirements, airplane.getHeadStartPosition(), airplane.getLookOutDirection());
@@ -33,6 +35,7 @@ public class World {
     public void update(float deltaTime) {
         jumper.update(deltaTime);
         ground.update(deltaTime);
+        island.update(deltaTime);
         cloudSimulator.update(deltaTime, jumper, airplane);
         airplane.update(deltaTime);
 

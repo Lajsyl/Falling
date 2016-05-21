@@ -16,8 +16,8 @@ public class LandedStateTest {
         Jumper jumper = new Jumper(new ResourceRequirements(), new Vector(0,1,0), new Rotation(new Vector(0,0,0), new Vector(0,0,0)));
         jumper.setFallState(new LandedState());
         jumper.setVelocity(10,10,10);
+        jumper.getFallState().setup(jumper);
         float startY = jumper.getPosition().getY();
-        jumper.getFallState().handleFalling(0.0016f, jumper);
         assertFalse(jumper.getVelocity().length() == 0);
         assertTrue(jumper.getVelocity().getY() == 0);
         assertTrue(startY == jumper.getPosition().getY());
