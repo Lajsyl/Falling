@@ -27,6 +27,17 @@ public class LandedState implements FallState {
         jumper.setVelocity(jumper.getVelocity().scale(0.98f));
         jumper.setPosition(jumper.getPosition().add(jumper.getVelocity().scale(deltaTime)));
 
+        float x = jumper.getPosition().getX();
+        float z = jumper.getPosition().getZ();
+        float groundHeight;
+        if (landingTerrain.pointIsInsideXZBoundary(jumper.getPosition())) {
+            groundHeight = landingTerrain.getHeight(x, z);
+        } else {
+            groundHeight = landingTerrain.getBasePosition().getY();
+        }
+        float y = groundHeight + Jumper.BODY_HEIGHT;
+        jumper.setPosition(x, y, z);
+
         if(jumper.getVelocity().lengthSquared() < 0.05f){
             jumper.setVelocity(0, 0 , 0);
             NotificationManager.registerEvent(PLAYER_HAS_STOPPED_EVENT_ID, null);

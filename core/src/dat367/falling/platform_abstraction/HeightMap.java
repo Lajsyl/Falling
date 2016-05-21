@@ -3,8 +3,6 @@ package dat367.falling.platform_abstraction;
 public class HeightMap {
     private String heightMapFileName;
     private float[][] pixelBrightness;
-//    private float pixelBrightnessMinValue;
-//    private float pixelBrightnessMaxValue;
 
     public HeightMap(String heightMapFileName) {
         this.heightMapFileName = heightMapFileName;
@@ -22,6 +20,22 @@ public class HeightMap {
         return pixelBrightness[y][x];
     }
 
+    // Get brightness data for non-integer image coordinates by interpolating the closest pixels
+    public float getInterpolatedBrightnessAt(float x, float y) {
+        int intX = (int)x;
+        int intY = (int)y;
+        float fracX = x - intX;
+        float fracY = y - intY;
+        float pixelTL = getBrightnessAtPixel(intX, intY);
+        float pixelTR = getBrightnessAtPixel(intX + 1, intY);
+        float pixelBL = getBrightnessAtPixel(intX, intY + 1);
+        float pixelBR = getBrightnessAtPixel(intX + 1, intY + 1);
+        float interpolationTop = pixelTL * (1 - fracX) + pixelTR * fracX;
+        float interpolationBottom = pixelBL * (1 - fracX) + pixelBR * fracX;
+        float interpolation = interpolationTop * (1 - fracY) + interpolationBottom * fracY;
+        return interpolation;
+    }
+
     public int getImageWidth() {
         return pixelBrightness[0].length;
     }
@@ -29,20 +43,4 @@ public class HeightMap {
     public int getImageHeight() {
         return pixelBrightness.length;
     }
-
-//    public float getHighestPixelBrightnessValue() {
-//        return pixelBrightnessMaxValue;
-//    }
-//
-//    public float getLowestPixelBrightnessValue() {
-//        return pixelBrightnessMinValue;
-//    }
-//
-//    public void setHighestPixelBrightnessValue(float pixelBrightnessMaxValue) {
-//        this.pixelBrightnessMaxValue = pixelBrightnessMaxValue;
-//    }
-//
-//    public void setLowestPixelBrightnessValue(float pixelBrightnessMinValue) {
-//        this.pixelBrightnessMinValue = pixelBrightnessMinValue;
-//    }
 }

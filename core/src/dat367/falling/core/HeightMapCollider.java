@@ -29,17 +29,20 @@ public class HeightMapCollider extends Collider {
     }
 
     public float getHeight(float x, float z) {
-        int imageX = (int)(heightMap.getImageWidth() * ((x - (baseCenterPosition.getX() - xDimension/2)) / xDimension));
-        int imageY = (int)(heightMap.getImageHeight() * ((z - (baseCenterPosition.getZ() - zDimension/2)) / zDimension));
-        System.out.println(imageX + ", " + imageY);
-        System.out.println(baseCenterPosition.getY() + heightMap.getBrightnessAtPixel(imageX, imageY) * maxHeight);
-        return baseCenterPosition.getY() + heightMap.getBrightnessAtPixel(imageX, imageY) * maxHeight;
+        float imageX = (heightMap.getImageWidth() * ((x - (baseCenterPosition.getX() - xDimension/2)) / xDimension));
+        float imageY = (heightMap.getImageHeight() * ((z - (baseCenterPosition.getZ() - zDimension/2)) / zDimension));
+        System.out.println(baseCenterPosition.getY() + heightMap.getInterpolatedBrightnessAt(imageX, imageY) * maxHeight);
+        return baseCenterPosition.getY() + heightMap.getInterpolatedBrightnessAt(imageX, imageY) * maxHeight;
     }
 
     public boolean pointIsInsideXZBoundary(Vector point) {
-        return point.getX() > baseCenterPosition.getX() - xDimension/2
-            && point.getX() < baseCenterPosition.getX() + xDimension/2
-            && point.getZ() > baseCenterPosition.getZ() - zDimension/2
-            && point.getZ() < baseCenterPosition.getZ() + zDimension/2;
+        return point.getX() >= baseCenterPosition.getX() - xDimension/2
+            && point.getX() <  baseCenterPosition.getX() + xDimension/2
+            && point.getZ() >= baseCenterPosition.getZ() - zDimension/2
+            && point.getZ() <  baseCenterPosition.getZ() + zDimension/2;
+    }
+
+    public Vector getBasePosition() {
+        return baseCenterPosition;
     }
 }
