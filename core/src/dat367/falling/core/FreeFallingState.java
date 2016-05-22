@@ -17,7 +17,7 @@ public class FreeFallingState implements FallState, Observer {
     public static final float XZ_ACCELERATION_MULTIPLIER =  1.0f;
     public static final float Y_ACCELERATION_MULTIPLIER =  1.0f;
 
-    private float bodyTiltAmount = 0.0f; // 0 = upright mode, 1 = ground mode
+    private float bodyTiltAmount = 0.0f; // 0 = upright mode, 1 = groundSystem.out.println( mode
     private Rotation uprightRotation;
     public static final float GROUND_MODE_TILT_RADIANS = (float)Math.PI*0.4f;// / 2;
     public static final float VIEW_MODE_TRANSITION_DURATION = 3.000f; // sec
@@ -119,8 +119,12 @@ public class FreeFallingState implements FallState, Observer {
 
     private Vector calculateAccelerationY(Jumper jumper, float deltaTime) {
         float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
-
-        float drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
+        float drag;
+        if (jumper.getVelocity().getY() < 0) {
+            drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
+        } else {
+            drag = 0;
+        }
         float newY = (World.GRAVITATION * 90 + drag) / 90;
 
         return new Vector(0, newY, 0).scale(Y_ACCELERATION_MULTIPLIER);

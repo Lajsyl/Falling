@@ -6,10 +6,10 @@ import dat367.falling.platform_abstraction.Sound;
 
 public class World {
 
-    public static final float AIR_DENSITY = 1.2041f; // kg/m3 (at 20°C)
+    public static final float AIR_DENSITY = 1.2041f * 5; // kg/m3 (at 20°C)
 
     // Defined according to the coordinate system used
-    public static final float GRAVITATION = -9.82f;
+    public static final float GRAVITATION = -9.82f * 10;
 
     private Ground ground;
     private Island island;

@@ -18,13 +18,19 @@ public class Obstacle implements Positioned {
     private Model model;
     private boolean enabled = true;
 
+    private float explosiveness;
 
-    public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
+    public Obstacle(ResourceRequirements resourceRequirements, Vector position, float explosiveness) {
         model = new Model("mine.g3db");
         resourceRequirements.require(model);
         sphereCollider = new SphereCollider(this, ID, 10);
         CollisionManager.addCollider(sphereCollider);
         this.position = position;
+        this.explosiveness = explosiveness;
+    }
+
+    public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
+        this(resourceRequirements, position, 1.0f);
     }
 
     public Vector getPosition() {
@@ -44,6 +50,10 @@ public class Obstacle implements Positioned {
     public void setPosition(Vector position) {
         this.position = position;
         NotificationManager.registerEvent(getPositionChangedEventID(), this);
+    }
+
+    public float getExplosiveness() {
+        return explosiveness;
     }
 
     public void update(float deltaTime){
