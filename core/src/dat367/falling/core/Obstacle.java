@@ -48,7 +48,7 @@ public class Obstacle implements Positioned {
 
     public void update(float deltaTime){
         if (enabled) {
-//            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5,5,5)));
+            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5,5,5)));
         }
     }
 }
