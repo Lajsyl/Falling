@@ -50,8 +50,30 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
+
         this.level = level;
         level.create();
+        // Wait with enabling game elements rendering
+        // until after the player jumps out of the plane
+        // in order to improve frame rate
+        setGameElementsEnabled(false);
+
+        // When the player jumps out of the plane, enable collectibles and obstacles
+        NotificationManager.addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<Object> event) {
+                setGameElementsEnabled(true);
+            }
+        });
+    }
+
+    private void setGameElementsEnabled(boolean enabled) {
+        for (Collectible collectible : level.getBalloonList()) {
+            collectible.setEnabled(enabled);
+        }
+        for (Obstacle obstacle : level.getObstacleList()) {
+            obstacle.setEnabled(enabled);
+        }
     }
 
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
