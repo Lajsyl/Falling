@@ -114,7 +114,7 @@ public class BalloonGameMode implements GameMode {
         Vector playerPos = collisionData.getJumperObject().getPosition();
         Vector obstaclePos = collisionData.getOtherObject().getPosition();
         Vector xzBounce = playerPos.sub(obstaclePos).projectOntoPlaneXZ().scale(100.0f);//new Vector(jumper.getVelocity().getX(), 0, jumper.getVelocity().getZ());
-        jumper.setVelocity(xzBounce.add(yBounce).scale(obstacle.getExplosiveness()));
+        jumper.setVelocity(xzBounce.add(yBounce));
 //        PositionedSound explosionPositionedSound = new PinnedPositionedSound(explosionSound, collisionData.getJumperObject().getParent(), new Vector(0, -5, 0));
         PositionedSound explosionPositionedSound = new PositionedSound(explosionSound, collisionData.getOtherObject().getPosition());
         explosionPositionedSound.play();

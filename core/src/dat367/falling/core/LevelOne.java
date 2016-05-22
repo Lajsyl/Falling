@@ -129,8 +129,16 @@ public class LevelOne extends BalloonLevel {
 
         Collectible balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 3015, 0));
         balloonList.add(balloonNearPlane);
-        Obstacle obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 2930, -50), 1.5f);
+        Obstacle obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 2930, -50));
         obstacleList.add(obstacleNearPlane);
+        Obstacle obstacleNearPlane2 = new Obstacle(resourceRequirements, new Vector(-20, 2960, -50));
+        obstacleList.add(obstacleNearPlane2);
+        Obstacle obstacleNearPlane3 = new Obstacle(resourceRequirements, new Vector(-30, 2990, -50));
+        obstacleList.add(obstacleNearPlane3);
+        Obstacle obstacleNearPlane4 = new Obstacle(resourceRequirements, new Vector(-35, 3010, -50));
+        obstacleList.add(obstacleNearPlane4);
+        Obstacle obstacleNearPlane5 = new Obstacle(resourceRequirements, new Vector(-35, 3030, -50));
+        obstacleList.add(obstacleNearPlane5);
 
 
     }
