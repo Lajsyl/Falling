@@ -123,11 +123,7 @@ public class BalloonGameMode implements GameMode {
 
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
-        if (balloonCombo < 15) {
-            balloonCombo = 0;
-        }else{
-            balloonCombo -= 15;
-        }
+        balloonCombo = 0;
         System.out.println("mine hit");
     }
 
