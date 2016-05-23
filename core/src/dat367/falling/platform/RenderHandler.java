@@ -13,8 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import dat367.falling.core.FallingGame;
@@ -47,11 +46,21 @@ public class RenderHandler {
         this.game = game;
         this.platformIsAndroid = platformIsAndroid;
 
-        // Create a new model batch that uses our custom shader provider
-        modelBatch = new ModelBatch(new DefaultShaderProvider() {
+        // Create a new model batch that only uses the simple shader (for everything)
+        modelBatch = new ModelBatch(new ShaderProvider() {
+            SimpleShader simpleShader = null;
             @Override
-            protected Shader createShader(Renderable renderable) {
-                return new FallingShader(renderable, config);
+            public Shader getShader(Renderable renderable) {
+                if (simpleShader == null) {
+                    simpleShader = new SimpleShader();
+                    simpleShader.init();
+                }
+                return simpleShader;
+            }
+
+            @Override
+            public void dispose() {
+                simpleShader.dispose();
             }
         });
 
