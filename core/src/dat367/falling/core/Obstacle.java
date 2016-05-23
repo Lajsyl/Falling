@@ -21,7 +21,7 @@ public class Obstacle implements Positioned {
     public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
         model = new Model("mine.g3db");
         resourceRequirements.require(model);
-        sphereCollider = new SphereCollider(this, ID, 10);
+        sphereCollider = new SphereCollider(this, ID, 7.5f);
         CollisionManager.addCollider(sphereCollider);
         this.position = position;
     }
