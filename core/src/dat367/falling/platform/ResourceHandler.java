@@ -4,9 +4,8 @@ package dat367.falling.platform;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
@@ -20,11 +19,12 @@ import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.NotificationManager;
 import dat367.falling.core.PositionedSound;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
-import dat367.falling.platform_abstraction.Quad;
-import dat367.falling.platform_abstraction.ResourceRequirements;
-import dat367.falling.platform_abstraction.Sound;
+import dat367.falling.platform_abstraction.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.*;
 
 public class ResourceHandler {
@@ -47,8 +47,32 @@ public class ResourceHandler {
     public void loadResources(ResourceRequirements resourceRequirements, boolean platformIsAndroid) {
         loadModels(resourceRequirements);
         loadQuads(resourceRequirements);
+        loadHeightMaps(resourceRequirements);
         if (platformIsAndroid) {
             loadSounds(resourceRequirements);
+        }
+    }
+
+    private void loadHeightMaps(ResourceRequirements resourceRequirements) {
+        for (HeightMap heightMap : resourceRequirements.getHeightMaps()) {
+            FileHandle imageFile = Gdx.files.internal(heightMap.getHeightMapFileName());
+            InputStream inputStream = imageFile.read();
+            try {
+                Gdx2DPixmap gdx2DPixMap = new Gdx2DPixmap(inputStream, Gdx2DPixmap.GDX2D_FORMAT_RGB888);
+                int width = gdx2DPixMap.getWidth();
+                int height = gdx2DPixMap.getHeight();
+
+                float[][] pixelBrightness = new float[height][width];
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        // Extract the red value from the pixel's RGBA data
+                        pixelBrightness[y][x] = (float)(gdx2DPixMap.getPixel(x, y) >>> 24) / 255.0f;
+                    }
+                }
+                heightMap.setHeightMapData(pixelBrightness);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

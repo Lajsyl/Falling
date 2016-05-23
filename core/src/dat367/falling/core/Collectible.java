@@ -8,6 +8,7 @@ public class Collectible implements Positioned {
 
     //TODO: Make this abstract so that different collectibles can be added
     public static final String ID = "Collectible";
+    public static final String POSITION_CHANGED_EVENT_ID = "CollectiblePositionChangedEvent";
 
     private SphereCollider sphereCollider;
     private Vector position;
@@ -29,8 +30,18 @@ public class Collectible implements Positioned {
     }
 
     @Override
+    public String getPositionChangedEventID() {
+        return POSITION_CHANGED_EVENT_ID;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setPosition(Vector position) {
+        this.position = position;
+        NotificationManager.registerEvent(getPositionChangedEventID(), this);
     }
 
     public void update(float deltaTime) {

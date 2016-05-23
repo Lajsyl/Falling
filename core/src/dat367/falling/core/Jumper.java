@@ -11,7 +11,7 @@ public class Jumper extends Observable implements Positioned {
     public static final float MASS = 70.0f;
     public static final float BODY_AREA = 0.8f;
     public static final float BODY_HEIGHT = 1.7f;
-    public static final float BODY_AREA_AT_FULL_TURN = 0.3f * BODY_AREA;
+    public static final float BODY_AREA_AT_FULL_TURN = 0.9f * BODY_AREA; //0.3f
     public static final float PARACHUTE_AREA = 17.0f;
     public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.5f * PARACHUTE_AREA;
     public static final float DRAG_COEFFICIENT = 1.1f;
@@ -42,6 +42,7 @@ public class Jumper extends Observable implements Positioned {
 
     private SphereCollider sphereCollider;
     public static final String NAME = "Jumper";
+    public static final String POSITION_CHANGED_EVENT_ID = "JumperPositionChangedEvent";
 
     public Jumper(ResourceRequirements resourceRequirements, Vector position, Rotation bodyRotation) {
 
@@ -89,10 +90,17 @@ public class Jumper extends Observable implements Positioned {
         velocity = new Vector(x, y, z);
     }
 
-    public void setPosition(float x, float y, float z){ position = new Vector(x,y,z);}
+    public void setPosition(float x, float y, float z){
+        setPosition(new Vector(x, y, z));
+    }
 
     public Vector getPosition() {
         return position;
+    }
+
+    @Override
+    public String getPositionChangedEventID() {
+        return POSITION_CHANGED_EVENT_ID;
     }
 
     @Override
@@ -101,6 +109,7 @@ public class Jumper extends Observable implements Positioned {
 
     public void setPosition(Vector position) {
         this.position = position;
+        NotificationManager.registerEvent(getPositionChangedEventID(), this);
     }
 
     public Vector getVelocity() {
@@ -185,4 +194,5 @@ public class Jumper extends Observable implements Positioned {
         RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,3,0)), bodyRotation, new Vector(1,1,1));
         RenderQueue.addTask(parachuteRender);
     }
+
 }

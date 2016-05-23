@@ -170,7 +170,9 @@ public class RenderHandler {
                             "Camera pos: " + gameVector(camera.position) + "\n" +
                             "Look dir: " + gameVector(camera.direction) + "\n\n" +
                             "Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
-                            "Speed: " + game.getCurrentJump().getJumper().getVelocity();
+                            "Speed: " + game.getCurrentJump().getJumper().getVelocity() + "\n" +
+                            "                                                                                                                        " +
+                            "FPS: " + Gdx.graphics.getFramesPerSecond();
 
             debugFont.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
 

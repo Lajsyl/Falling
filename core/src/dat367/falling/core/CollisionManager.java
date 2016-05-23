@@ -11,6 +11,7 @@ public class CollisionManager {
     public static final String COLLISION_EVENT_ID = "CollisionEvent";
     public static final String COLLECTIBLE_COLLISION_EVENT_ID = "CollectibleCollisionEvent";
     public static final String OBSTACLE_COLLISION_EVENT_ID = "ObstacleCollisionEvent";
+    public static final String ISLAND_COLLISION_EVENT_ID = "IslandCollisionEvent";
 
     public static void addCollider(Collider collider) {
         if(collider.getName().equals(Jumper.NAME)) {
@@ -40,6 +41,7 @@ public class CollisionManager {
     private static String getEventID(Collider collider) {
         if (collider.getName().equals(Collectible.ID)) return COLLECTIBLE_COLLISION_EVENT_ID;
         if (collider.getName().equals(Obstacle.ID)) return OBSTACLE_COLLISION_EVENT_ID;
+        if (collider.getName().equals(Island.ID)) return ISLAND_COLLISION_EVENT_ID;
 
         // Generic collision event
         return COLLISION_EVENT_ID;

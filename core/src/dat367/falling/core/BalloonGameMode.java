@@ -18,9 +18,14 @@ public class BalloonGameMode implements GameMode {
 
     private boolean gameIsFinished = false;
 
-    private Sound balloonSound = new Sound("balloon1.wav");
+    private List<Sound> balloonSounds = new ArrayList<Sound>();
+    private Sound explosionSound = new Sound("explosion.wav");
+    private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements, BalloonLevel level) {
+
+        initBalloonSounds(resourceRequirements);
+        resourceRequirements.require(explosionSound);
 
         // Listen for all relevant collision events
 
@@ -47,8 +52,30 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
+
         this.level = level;
         level.create();
+        // Wait with enabling game elements rendering
+        // until after the player jumps out of the plane
+        // in order to improve frame rate
+//        setGameElementsEnabled(false);
+
+        // When the player jumps out of the plane, enable collectibles and obstacles
+        NotificationManager.addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<Object> event) {
+                setGameElementsEnabled(true);
+            }
+        });
+    }
+
+    private void setGameElementsEnabled(boolean enabled) {
+        for (Collectible collectible : level.getBalloonList()) {
+            collectible.setEnabled(enabled);
+        }
+        for (Obstacle obstacle : level.getObstacleList()) {
+            obstacle.setEnabled(enabled);
+        }
     }
 
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
@@ -58,11 +85,42 @@ public class BalloonGameMode implements GameMode {
         score += 100*balloonCombo;
         System.out.println(score);
 
-        PositionedSound balloonPositionedSound = new PositionedSound(balloonSound, collisionData.getJumperObject().getPosition());
+        PositionedSound balloonPositionedSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
         balloonPositionedSound.play();
     }
 
+    private void initBalloonSounds(ResourceRequirements resourceRequirements) {
+        for (int i = 1; i <= NUMBER_OF_BALLOON_SOUNDS; i++) {
+            Sound sound = new Sound("balloon" + i + ".wav");
+            balloonSounds.add(sound);
+            resourceRequirements.require(sound);
+        }
+    }
+
+    private Sound getBalloonSound(int note) {
+        int soundIndex = note - 1;
+        if (soundIndex >= balloonSounds.size()) {
+            return balloonSounds.get(balloonSounds.size() - 1);
+        } else {
+            return balloonSounds.get(soundIndex);
+        }
+    }
+
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
+        // Experiment with bouncing on mine
+        Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
+        Obstacle obstacle = (Obstacle)collisionData.getOtherObject().getParent();
+        Vector yBounce = new Vector(0, 220.0f, 0);
+        Vector playerPos = collisionData.getJumperObject().getPosition();
+        Vector obstaclePos = collisionData.getOtherObject().getPosition();
+        Vector xzBounce = playerPos.sub(obstaclePos).projectOntoPlaneXZ().scale(100.0f);//new Vector(jumper.getVelocity().getX(), 0, jumper.getVelocity().getZ());
+        jumper.setVelocity(xzBounce.add(yBounce));
+//        PositionedSound explosionPositionedSound = new PinnedPositionedSound(explosionSound, collisionData.getJumperObject().getParent(), new Vector(0, -5, 0));
+        PositionedSound explosionPositionedSound = new PositionedSound(explosionSound, collisionData.getOtherObject().getPosition());
+        explosionPositionedSound.play();
+//        jumper.setVelocity(jumper.getVelocity().getX(), -1000.0f, jumper.getVelocity().getZ());
+        // --------------------------------
+
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
         if (balloonCombo < 15) {
