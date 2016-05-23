@@ -114,6 +114,7 @@ public class LevelOne extends BalloonLevel {
             offsetZ += 15;
         }
 
+        /*
         // Space between line and next balloon +23
         currentHeight += 210;
         offsetX += 120;
@@ -143,7 +144,7 @@ public class LevelOne extends BalloonLevel {
         offsetX += 10;
         offsetZ += 50;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));*/
 
         Collectible balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 3015, 0));
         balloonList.add(balloonNearPlane);
