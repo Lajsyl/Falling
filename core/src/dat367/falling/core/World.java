@@ -21,7 +21,7 @@ public class World {
     public World(ResourceRequirements resourceRequirements) {
         CollisionManager.clear();
 
-        airplane = new Airplane(resourceRequirements, new Vector(0, 3000, 0));
+        airplane = new Airplane(resourceRequirements, new Vector(0, 4000, 0));
         ground = new Ground(resourceRequirements);
         island = new Island(resourceRequirements, new Vector(0,0,0));
 

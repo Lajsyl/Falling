@@ -19,6 +19,13 @@ public class LandedState implements FallState {
 
         Vector position = jumper.getPosition();
         jumper.setPosition(position.getX(), Jumper.BODY_HEIGHT, position.getZ());
+
+        // Create shore sound from multiple directions
+        for (float angle = 0; angle < 2*Math.PI; angle += 2*Math.PI/3) {
+            Vector soundPos = new Vector(position.getX(), 0, position.getZ()).add(new Vector((float)Math.sin(angle)*5, 0, (float)Math.cos(angle)*5));
+            PositionedSound shore = new PositionedSound(jumper.shoreSound, soundPos);
+            shore.loop();
+        }
     }
 
     // TODO: Might create a change in position as to mimic the shock when landing

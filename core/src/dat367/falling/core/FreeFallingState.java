@@ -83,12 +83,18 @@ public class FreeFallingState implements FallState, Observer {
 
 
         if (parachutePulled){
+            fallingWind.stop();
+            tiltingWind.stop();
+            PositionedSound parachuteOpeningPositionedSound = new PinnedPositionedSound(jumper.parachuteOpeningSound, jumper, new Vector(0, 1, 0));
+            parachuteOpeningPositionedSound.play();
             return new ParachuteFallingState();
         }
         if (impendingState != null) {
             return impendingState;
         }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
+            PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
+            landingWaterPositionedSound.play();
             return new CrashedState();
         }
 

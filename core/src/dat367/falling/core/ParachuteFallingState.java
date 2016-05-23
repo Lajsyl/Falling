@@ -19,6 +19,8 @@ public class ParachuteFallingState implements FallState {
 
     private FallState impendingState = null;
 
+    private PositionedSound parachuteWind;
+
     @Override
     public void setup(Jumper jumper) {
         Rotation initialParachuteRotation = decideInitialParachuteRotation(jumper);
@@ -27,6 +29,8 @@ public class ParachuteFallingState implements FallState {
         jumper.setVelocity(jumper.getVelocity().add(jumper.getBodyRotation().getDirection().scale(10)));
         jumper.setDragCoefficient(jumper.PARACHUTE_DRAG_COEFFICIENT);
         jumper.setArea(jumper.PARACHUTE_AREA);
+        parachuteWind = new PinnedPositionedSound(jumper.parachuteWindSound, jumper, new Vector(0, 2.5f, 0));
+        parachuteWind.loop();
         NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
@@ -63,18 +67,19 @@ public class ParachuteFallingState implements FallState {
         jumper.setBodyRotation(new Rotation(jumper.getBodyRotation().getDirection().rotateAroundY(rotationalSpeed), jumper.getBodyRotation().getUp()));
 
 
-        jumper.setArea(calculateArea());
-
-
         Vector velocity = calculateVelocity(deltaTime, jumper);
 
         jumper.setVelocity(velocity);
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
         if (impendingState != null) {
+            parachuteWind.stop();
             return impendingState;
         }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
+            parachuteWind.stop();
+            PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
+            landingWaterPositionedSound.play();
             return new CrashedState();
         }
 
@@ -128,6 +133,8 @@ public class ParachuteFallingState implements FallState {
 
         Float rollAmount = rightDirection.sub(projected).length() - 1;
 
+        jumper.setArea(calculateArea(Math.abs(rollAmount)));
+
         float maxRollAmount = 0.5f;
         rollAmount = FallingMath.clamp(rollAmount, -maxRollAmount, maxRollAmount);
         rollAmount = rollAmount / maxRollAmount;
@@ -149,8 +156,8 @@ public class ParachuteFallingState implements FallState {
         return jumper.getPosition().add(jumper.getVelocity().add(v0).scale(deltaTime/2));
     }
 
-    private float calculateArea(){
-        float turnAmount = Math.abs(rotationalSpeed)/MAX_ROTATIONAL_SPEED;
+    private float calculateArea(float turnAmount){
+//        float turnAmount = Math.abs(rotationalSpeed)/MAX_ROTATIONAL_SPEED;
         return Jumper.PARACHUTE_AREA - (Jumper.PARACHUTE_AREA-Jumper.PARACHUTE_AREA_AT_FULL_TURN) * turnAmount;
 
     }

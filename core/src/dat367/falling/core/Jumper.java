@@ -13,7 +13,7 @@ public class Jumper extends Observable implements Positioned {
     public static final float BODY_HEIGHT = 1.7f;
     public static final float BODY_AREA_AT_FULL_TURN = 0.9f * BODY_AREA; //0.3f
     public static final float PARACHUTE_AREA = 17.0f;
-    public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.5f * PARACHUTE_AREA;
+    public static final float PARACHUTE_AREA_AT_FULL_TURN = 0.3f * PARACHUTE_AREA;
     public static final float DRAG_COEFFICIENT = 1.1f;
     public static final float PARACHUTE_DRAG_COEFFICIENT = 1.4f;
 
@@ -26,6 +26,10 @@ public class Jumper extends Observable implements Positioned {
     public final Sound airplaneLeanoutWindSound = new Sound("wind07.wav");
     public final Sound fallingWindSound = new Sound("wind03.wav");
     public final Sound tiltingWindSound = new Sound("wind08.wav");
+    public final Sound parachuteOpeningSound = new Sound("parachute_opening.wav");
+    public final Sound parachuteWindSound = new Sound("wind03.wav");
+    public final Sound landingWaterSound = new Sound("landing_water.wav");
+    public final Sound shoreSound = new Sound("shore.wav");
 
     private float area = BODY_AREA;
     private float dragCoefficient = DRAG_COEFFICIENT;
@@ -51,6 +55,10 @@ public class Jumper extends Observable implements Positioned {
         resourceRequirements.require(airplaneLeanoutWindSound);
         resourceRequirements.require(fallingWindSound);
         resourceRequirements.require(tiltingWindSound);
+        resourceRequirements.require(parachuteOpeningSound);
+        resourceRequirements.require(parachuteWindSound);
+        resourceRequirements.require(landingWaterSound);
+        resourceRequirements.require(shoreSound);
 
         this.position = position;
         this.sphereCollider = new SphereCollider(this, NAME, 0.5f);
