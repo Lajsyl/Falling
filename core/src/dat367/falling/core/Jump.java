@@ -11,7 +11,7 @@ public class Jump {
     public Jump() {
         // Create world
         world = new World(resourceRequirements);
-        gameMode = new BalloonGameMode(resourceRequirements);
+        gameMode = new BalloonGameMode(resourceRequirements, new LevelOne(resourceRequirements));
     }
 
     public void update(float deltaTime) {

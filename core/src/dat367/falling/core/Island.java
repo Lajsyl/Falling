@@ -16,11 +16,16 @@ public class Island implements Positioned {
     public Island(ResourceRequirements resourceRequirements, Vector position) {
         this.position = position;
 
-        renderIsland = new ModelRenderTask(island, position, new Rotation(), new Vector(10,10,10));
+        float islandModelHeight = 0.617f;
+
+        float islandRadius = 500.0f;
+        float islandHeight = 200.0f;//islandRadius*islandModelHeight;
+        float islandHeightScale = islandHeight / islandModelHeight;
+        renderIsland = new ModelRenderTask(island, position, new Rotation(), new Vector(islandRadius,islandHeightScale,islandRadius));
         resourceRequirements.require(island);
 
         resourceRequirements.require(heightMap);
-        heightMapCollider = new HeightMapCollider(this, ID, heightMap, position, 2400, 2400, 210);
+        heightMapCollider = new HeightMapCollider(this, ID, heightMap, position, 2*islandRadius, 2*islandRadius, islandHeight);
         CollisionManager.addCollider(heightMapCollider);
 
     }

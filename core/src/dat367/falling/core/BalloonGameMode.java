@@ -11,10 +11,7 @@ import java.util.List;
 
 public class BalloonGameMode implements GameMode {
 
-    private final int totalBalloonCount = 25;
-    private List<Collectible> balloonList = new ArrayList<Collectible>(totalBalloonCount);
-    private final int totalObstacleCount = 25;
-    private List<Obstacle> obstacleList = new ArrayList<Obstacle>(totalObstacleCount);
+    private BalloonLevel level;
 
     private int balloonCombo = 0;
     private int score = 0;
@@ -22,11 +19,13 @@ public class BalloonGameMode implements GameMode {
     private boolean gameIsFinished = false;
 
     private List<Sound> balloonSounds = new ArrayList<Sound>();
+    private Sound explosionSound = new Sound("explosion.wav");
     private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
-    public BalloonGameMode(ResourceRequirements resourceRequirements) {
+    public BalloonGameMode(ResourceRequirements resourceRequirements, BalloonLevel level) {
 
         initBalloonSounds(resourceRequirements);
+        resourceRequirements.require(explosionSound);
 
         // Listen for all relevant collision events
 
@@ -53,28 +52,29 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
-        for (int i = 0; i < totalBalloonCount; i++) {
-            float step = (float) i;
-            float x = (float)Math.cos(step) * 60;
-            float z = (float)Math.sin(step) * 60;
 
-            // Every 100 meters from 1000m and up.
-            float y = step * 100.0f + 1000.0f;
+        this.level = level;
+        level.create();
+        // Wait with enabling game elements rendering
+        // until after the player jumps out of the plane
+        // in order to improve frame rate
+//        setGameElementsEnabled(false);
 
-            Collectible c = new Collectible(resourceRequirements, new Vector(x, y, z));
-            balloonList.add(c);
+        // When the player jumps out of the plane, enable collectibles and obstacles
+        NotificationManager.addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
+            @Override
+            public void handleEvent(NotificationManager.Event<Object> event) {
+                setGameElementsEnabled(true);
+            }
+        });
+    }
+
+    private void setGameElementsEnabled(boolean enabled) {
+        for (Collectible collectible : level.getBalloonList()) {
+            collectible.setEnabled(enabled);
         }
-
-        for (int i = 0; i < totalObstacleCount; i++){
-            float step = (float) i;
-            float x = (float)Math.cos(step) * 30 + 100;
-            float z = (float)Math.sin(step) * 30 + 100;
-
-            // Every 100 meters from 1000m and up.
-            float y = step * 100.0f + 1000.0f + 100;
-
-            Obstacle o = new Obstacle(resourceRequirements, new Vector(x, y, z));
-            obstacleList.add(o);
+        for (Obstacle obstacle : level.getObstacleList()) {
+            obstacle.setEnabled(enabled);
         }
     }
 
@@ -85,8 +85,8 @@ public class BalloonGameMode implements GameMode {
         score += 100*balloonCombo;
         System.out.println(score);
 
-        PositionedSound balloonSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
-        balloonSound.play();
+        PositionedSound balloonPositionedSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
+        balloonPositionedSound.play();
     }
 
     private void initBalloonSounds(ResourceRequirements resourceRequirements) {
@@ -107,21 +107,40 @@ public class BalloonGameMode implements GameMode {
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
+        // Experiment with bouncing on mine
+        Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
+        Obstacle obstacle = (Obstacle)collisionData.getOtherObject().getParent();
+        Vector yBounce = new Vector(0, 220.0f, 0);
+        Vector playerPos = collisionData.getJumperObject().getPosition();
+        Vector obstaclePos = collisionData.getOtherObject().getPosition();
+        Vector xzBounce = playerPos.sub(obstaclePos).projectOntoPlaneXZ().scale(100.0f);//new Vector(jumper.getVelocity().getX(), 0, jumper.getVelocity().getZ());
+        jumper.setVelocity(xzBounce.add(yBounce));
+//        PositionedSound explosionPositionedSound = new PinnedPositionedSound(explosionSound, collisionData.getJumperObject().getParent(), new Vector(0, -5, 0));
+        PositionedSound explosionPositionedSound = new PositionedSound(explosionSound, collisionData.getOtherObject().getPosition());
+        explosionPositionedSound.play();
+//        jumper.setVelocity(jumper.getVelocity().getX(), -1000.0f, jumper.getVelocity().getZ());
+        // --------------------------------
+
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
-        balloonCombo = 0;
-        System.out.println("mine" + balloonCombo);
+        if (balloonCombo < 15) {
+            balloonCombo = 0;
+        }else{
+            balloonCombo -= 15;
+        }
+        System.out.println("mine hit");
     }
 
     public void update(float deltaTime) {
-        for (Collectible c : balloonList) {
+        /*for (Collectible c : balloonList) {
             c.update(deltaTime);
         }
 
         for (Obstacle o : obstacleList) {
             o.update(deltaTime);
-        }
+        }*/
 
+        level.update(deltaTime);
         if(gameIsFinished) {
             String endText = "Your score was: " + score;
             String playAgainText = "Tap the screen to play again";
@@ -134,7 +153,7 @@ public class BalloonGameMode implements GameMode {
     @Override
     public String toString() {
         return "BalloonGameMode{" +
-                ", totalBalloonCount=" + totalBalloonCount +
+                "level=" + level +
                 "balloonCombo=" + balloonCombo +
                 ", score=" + score +
                 '}';

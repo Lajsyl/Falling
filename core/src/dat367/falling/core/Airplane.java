@@ -46,12 +46,14 @@ public class Airplane {
             position = position.add(actualVelocity.scale(deltaTime));
         }
 
-        RenderQueue.addTask(new ModelRenderTask(
-                airplaneModel,
-                position,
-                new Rotation(),
-                new Vector(1, 1, 1)
-        ));
+//        if (!playerHasJumpedOffAirplane) {
+            RenderQueue.addTask(new ModelRenderTask(
+                    airplaneModel,
+                    position,
+                    new Rotation(),
+                    new Vector(1, 1, 1)
+            ));
+//        }
     }
 
     public Vector getActualVelocity() {

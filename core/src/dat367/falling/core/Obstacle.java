@@ -2,12 +2,12 @@ package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Quad;
-import dat367.falling.platform_abstraction.QuadRenderTask;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
+import dat367.falling.platform_abstraction.*;
 
 public class Obstacle implements Positioned {
+
+
+    //TODO: Make this abstract so that different obstacles can be added
 
     public static final String ID = "Obstacle";
     public static final String POSITION_CHANGED_EVENT_ID = "ObstaclePositionChangedEvent";
@@ -15,13 +15,12 @@ public class Obstacle implements Positioned {
     private SphereCollider sphereCollider;
     private Vector position;
 
-    private Quad quad;
+    private Model model;
     private boolean enabled = true;
 
-
     public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
-        quad = new Quad("mine.png", true, true, 1000, 100, 1, 1, false);
-        resourceRequirements.require(quad);
+        model = new Model("mine.g3db");
+        resourceRequirements.require(model);
         sphereCollider = new SphereCollider(this, ID, 10);
         CollisionManager.addCollider(sphereCollider);
         this.position = position;
@@ -48,7 +47,7 @@ public class Obstacle implements Positioned {
 
     public void update(float deltaTime){
         if (enabled) {
-            RenderQueue.addTask(new QuadRenderTask(quad, getPosition(), new Rotation(), new Vector(10, 1, 10)));
+            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5,5,5)));
         }
     }
 }

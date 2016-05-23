@@ -5,6 +5,8 @@ import dat367.falling.math.Vector;
 
 public class PreJumpState implements FallState {
 
+    public static final String PLAYER_HAS_JUMPED_EVENT_ID = "PLAYER_HAS_JUMPED_EVENT_ID";
+
     private final double BACK_ROTATION_MAX = Math.toRadians(75.0);
     private final float HIP_TO_HEAD_DISTANCE = 0.8f; // should be as big as leanout arc radius
     private final float LEANOUT_ARC_HEIGHT = 0.5f; // the shape of the arc when leaning out
@@ -59,6 +61,7 @@ public class PreJumpState implements FallState {
                 if (THROW_OUT_JUMPER) {
                     jumper.setVelocity(20, 0, 0);
                 }
+                NotificationManager.registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
                 return new FreeFallingState();
             }
         }
@@ -69,6 +72,7 @@ public class PreJumpState implements FallState {
                 if (THROW_OUT_JUMPER) {
                     jumper.setVelocity(20, 0, 0);
                 }
+                NotificationManager.registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
                 return new FreeFallingState();
             }
         }

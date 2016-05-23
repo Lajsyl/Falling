@@ -6,6 +6,7 @@ import dat367.falling.platform_abstraction.*;
 
 public class Collectible implements Positioned {
 
+    //TODO: Make this abstract so that different collectibles can be added
     public static final String ID = "Collectible";
     public static final String POSITION_CHANGED_EVENT_ID = "CollectiblePositionChangedEvent";
 
