@@ -17,6 +17,7 @@ public class SimpleShader implements Shader {
 
     private boolean hasBegun = false;
     private RenderContext renderContext;
+    private Camera currentCamera;
 
     @Override
     public void init() {
@@ -53,6 +54,7 @@ public class SimpleShader implements Shader {
 
         hasBegun = true;
         renderContext = context;
+        currentCamera = camera;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class SimpleShader implements Shader {
         }
 
         shaderProgram.setUniformMatrix("u_worldTrans", renderable.worldTransform);
+        shaderProgram.setUniformf("u_cameraPos", currentCamera.position);
 
         if (renderable.material.has(TextureAttribute.Diffuse)) {
             TextureAttribute textureAttribute = (TextureAttribute) renderable.material.get(TextureAttribute.Diffuse);
@@ -78,12 +81,21 @@ public class SimpleShader implements Shader {
             renderContext.setDepthMask(quad.isOpaque());
 
             shaderProgram.setUniformf("u_uvScale", new Vector2(quad.getUvXScale(), quad.getUvYScale()));
+
+            float maxOpacityDistance = quad.getMaxDrawDistance() - quad.getFadeOutDistance();
+            shaderProgram.setUniformf("u_maxDrawDistance", quad.getMaxDrawDistance());
+            shaderProgram.setUniformf("u_maxOpacityDistance", maxOpacityDistance);
         }
 
         else /* if it's a normal model */ {
 
             renderContext.setDepthMask(true);
             shaderProgram.setUniformf("u_uvScale", new Vector2(1, 1));
+
+            // Some arbitrary big number, so objects that shouldn't fade wont.
+            final float drawDistance = 10000000; /* 10 million meters. */
+            shaderProgram.setUniformf("u_maxDrawDistance", drawDistance);
+            shaderProgram.setUniformf("u_maxOpacityDistance", drawDistance);
         }
 
         // Perform actual render
@@ -94,6 +106,7 @@ public class SimpleShader implements Shader {
     public void end() {
         hasBegun = false;
         renderContext = null;
+        currentCamera = null;
 
         shaderProgram.end();
     }
