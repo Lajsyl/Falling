@@ -6,6 +6,8 @@ import dat367.falling.math.Vector;
 public class FallingGame {
     private Jump currentJump;
 
+    public static final String RESTART_GAME_EVENT = "RestartGameEvent";
+
     public FallingGame() {
         currentJump = new Jump();
     }
@@ -18,7 +20,7 @@ public class FallingGame {
         currentJump.getJumper().setScreenClicked(screenClicked);
         //Can be done before you've stopped
         if(currentJump.getJumper().getFallState() instanceof LandedState || currentJump.getJumper().getFallState() instanceof CrashedState){
-            this.resetGame();
+            this.restartGame();
         }
     }
 
@@ -48,8 +50,9 @@ public class FallingGame {
         this.currentJump = jump;
     }
 
-    private void resetGame(){
+    private void restartGame(){
         setCurrentJump(new Jump());
+        NotificationManager.registerEvent(RESTART_GAME_EVENT, this);
     }
 
     public Rotation getJumperBodyRotation() {

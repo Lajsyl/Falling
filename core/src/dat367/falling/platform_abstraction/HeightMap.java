@@ -2,14 +2,14 @@ package dat367.falling.platform_abstraction;
 
 public class HeightMap {
     private String heightMapFileName;
-    private float[][] pixelBrightness;
+    private ImageBrightnessData imageBrightnessData;
 
     public HeightMap(String heightMapFileName) {
         this.heightMapFileName = heightMapFileName;
     }
 
-    public void setHeightMapData(float[][] pixelBrightness) {
-        this.pixelBrightness = pixelBrightness;
+    public void setImageBrightnessData(ImageBrightnessData imageBrightnessData) {
+        this.imageBrightnessData = imageBrightnessData;
     }
 
     public String getHeightMapFileName() {
@@ -17,7 +17,7 @@ public class HeightMap {
     }
 
     public float getBrightnessAtPixel(int x, int y) {
-        return pixelBrightness[y][x];
+        return imageBrightnessData.getBrightness(x, y);
     }
 
     // Get brightness data for non-integer image coordinates by interpolating the closest pixels
@@ -37,10 +37,35 @@ public class HeightMap {
     }
 
     public int getImageWidth() {
-        return pixelBrightness[0].length;
+        return imageBrightnessData.getImageWidth();
     }
 
     public int getImageHeight() {
-        return pixelBrightness.length;
+        return imageBrightnessData.getImageHeight();
+    }
+
+    public static class ImageBrightnessData {
+        private float[][] pixelBrightness;
+
+        public ImageBrightnessData(float[][] pixelBrightness) {
+            this.pixelBrightness = new float[pixelBrightness.length][pixelBrightness[0].length];
+            for (int y = 0; y < pixelBrightness.length; y++) {
+                for (int x = 0; x < pixelBrightness[0].length; x++) {
+                    this.pixelBrightness[y][x] = pixelBrightness[y][x];
+                }
+            }
+        }
+
+        public float getBrightness(int x, int y) {
+            return pixelBrightness[y][x];
+        }
+
+        public int getImageWidth() {
+            return pixelBrightness[0].length;
+        }
+
+        public int getImageHeight() {
+            return pixelBrightness.length;
+        }
     }
 }

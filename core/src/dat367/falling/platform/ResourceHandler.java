@@ -23,14 +23,13 @@ import dat367.falling.platform_abstraction.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.*;
 
 public class ResourceHandler {
 
     private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
     private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
+    private Map<String, HeightMap.ImageBrightnessData> heightMapImages = new HashMap<String, HeightMap.ImageBrightnessData>();
     private Set<String> preloadedSounds = new HashSet<String>();
     private List<AnimationController> animationControllers = new ArrayList<AnimationController>();
     private ModelInstance quadModel;
@@ -39,7 +38,6 @@ public class ResourceHandler {
     private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
 
     private CardboardAudioEngine cardboardAudioEngine;
-
 
 
 
@@ -55,23 +53,29 @@ public class ResourceHandler {
 
     private void loadHeightMaps(ResourceRequirements resourceRequirements) {
         for (HeightMap heightMap : resourceRequirements.getHeightMaps()) {
-            FileHandle imageFile = Gdx.files.internal(heightMap.getHeightMapFileName());
-            InputStream inputStream = imageFile.read();
-            try {
-                Gdx2DPixmap gdx2DPixMap = new Gdx2DPixmap(inputStream, Gdx2DPixmap.GDX2D_FORMAT_RGB888);
-                int width = gdx2DPixMap.getWidth();
-                int height = gdx2DPixMap.getHeight();
+            if (heightMapImages.containsKey(heightMap.getHeightMapFileName())) {
+                heightMap.setImageBrightnessData(heightMapImages.get(heightMap.getHeightMapFileName()));
+            } else {
+                FileHandle imageFile = Gdx.files.internal(heightMap.getHeightMapFileName());
+                InputStream inputStream = imageFile.read();
+                try {
+                    Gdx2DPixmap gdx2DPixMap = new Gdx2DPixmap(inputStream, Gdx2DPixmap.GDX2D_FORMAT_RGB888);
+                    int width = gdx2DPixMap.getWidth();
+                    int height = gdx2DPixMap.getHeight();
 
-                float[][] pixelBrightness = new float[height][width];
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        // Extract the red value from the pixel's RGBA data
-                        pixelBrightness[y][x] = (float)(gdx2DPixMap.getPixel(x, y) >>> 24) / 255.0f;
+                    float[][] pixelBrightness = new float[height][width];
+                    for (int y = 0; y < height; y++) {
+                        for (int x = 0; x < width; x++) {
+                            // Extract the red value from the pixel's RGBA data
+                            pixelBrightness[y][x] = (float)(gdx2DPixMap.getPixel(x, y) >>> 24) / 255.0f;
+                        }
                     }
+                    HeightMap.ImageBrightnessData imageBrightnessData = new HeightMap.ImageBrightnessData(pixelBrightness);
+                    heightMapImages.put(heightMap.getHeightMapFileName(), imageBrightnessData);
+                    heightMap.setImageBrightnessData(imageBrightnessData);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                heightMap.setHeightMapData(pixelBrightness);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -148,6 +152,10 @@ public class ResourceHandler {
 
                 // Report aspect ratio back to Quad
                 quad.setAspectRatio((float) quadTexture.getWidth() / (float) quadTexture.getHeight());
+            } else {
+                Texture quadTexture = quadTextureAttributes.get(textureFileName).textureDescription.texture;
+                // Report aspect ratio back to Quad
+                quad.setAspectRatio((float) quadTexture.getWidth() / (float) quadTexture.getHeight());
             }
         }
     }
@@ -164,21 +172,21 @@ public class ResourceHandler {
 
 
     public void setupSoundEventHandling() {
-        NotificationManager.addObserver(PositionedSound.playSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.addObserver(PositionedSound.PLAY_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 makeSoundAvailable(event.data);
                 cardboardAudioEngine.playSound(event.data.getSoundObjectID(), false);
             }
         });
-        NotificationManager.addObserver(PositionedSound.loopSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.addObserver(PositionedSound.LOOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 makeSoundAvailable(event.data);
                 cardboardAudioEngine.playSound(event.data.getSoundObjectID(), true);
             }
         });
-        NotificationManager.addObserver(PositionedSound.stopSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.addObserver(PositionedSound.STOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {
@@ -186,7 +194,7 @@ public class ResourceHandler {
                 }
             }
         });
-        NotificationManager.addObserver(PositionedSound.changePositionSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.addObserver(PositionedSound.CHANGE_POSITION_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {
@@ -195,7 +203,7 @@ public class ResourceHandler {
                 }
             }
         });
-        NotificationManager.addObserver(PositionedSound.changeVolumeSoundEvent, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.addObserver(PositionedSound.CHANGE_VOLUME_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {
@@ -241,6 +249,7 @@ public class ResourceHandler {
     public ModelInstance getQuadModel(){
         return new ModelInstance(quadModel);
     }
+
 
     public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
         this.cardboardAudioEngine = cardboardAudioEngine;

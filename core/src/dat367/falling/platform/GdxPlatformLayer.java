@@ -87,7 +87,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			desktopSimulatedHeadTransform = new Rotation();
 		}
 
-
+		setupRestartGameEventHandling();
 
 		game = new FallingGame();
 		resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
@@ -105,8 +105,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
-
-
+	private void setupRestartGameEventHandling() {
+		NotificationManager.addObserver(FallingGame.RESTART_GAME_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<FallingGame> event) {
+				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+			}
+		});
+	}
 
 
 	@Override
