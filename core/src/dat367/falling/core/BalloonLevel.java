@@ -1,5 +1,6 @@
 package dat367.falling.core;
 
+import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
 import java.util.ArrayList;
@@ -17,14 +18,23 @@ public abstract class BalloonLevel {
 
     public abstract void create();
 
-    public void update(float deltaTime){
+    public void update(float deltaTime, Jumper jumper){
         for (Collectible c : balloonList) {
-            c.update(deltaTime);
+            if (shouldBeRendered(c, jumper)) {
+                c.update(deltaTime);
+            }
         }
 
         for (Obstacle o : obstacleList) {
-            o.update(deltaTime);
+            if (shouldBeRendered(o, jumper)) {
+                o.update(deltaTime);
+            }
         }
+    }
+
+    private boolean shouldBeRendered(Positioned positioned, Jumper jumper) {
+        Vector between = positioned.getPosition().sub(jumper.getPosition());
+        return between.length() <= BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE;
     }
 
     public List<Collectible> getBalloonList(){

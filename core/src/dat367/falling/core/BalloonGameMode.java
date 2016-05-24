@@ -130,16 +130,8 @@ public class BalloonGameMode implements GameMode {
         System.out.println("mine hit");
     }
 
-    public void update(float deltaTime) {
-        /*for (Collectible c : balloonList) {
-            c.update(deltaTime);
-        }
-
-        for (Obstacle o : obstacleList) {
-            o.update(deltaTime);
-        }*/
-
-        level.update(deltaTime);
+    public void update(float deltaTime, World world) {
+        level.update(deltaTime, world.getJumper());
         if(gameIsFinished) {
             String endText = "Your score was: " + score;
             String playAgainText = "Tap the screen to play again";
