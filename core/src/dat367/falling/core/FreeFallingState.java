@@ -48,7 +48,7 @@ public class FreeFallingState implements FallState, Observer {
                 float z = jumper.getPosition().getZ();
                 float y = ((HeightMapCollider)event.data.getOtherObject()).getHeight(x, z) + Jumper.BODY_HEIGHT;
                 jumper.setPosition(x, y, z);
-                impendingState = new CrashedState();
+                impendingState = new CrashedState(false);
             }
         });
     }
@@ -95,7 +95,7 @@ public class FreeFallingState implements FallState, Observer {
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
             landingWaterPositionedSound.play();
-            return new CrashedState();
+            return new CrashedState(false);
         }
 
         return null;

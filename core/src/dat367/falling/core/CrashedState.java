@@ -9,6 +9,11 @@ public class CrashedState implements FallState {
     public static final String PLAYER_HAS_CRASHED_EVENT_ID = "PLAYER_HAS_CRASHED_EVENT_ID";
 
     private float delay = 1.0f;
+    private boolean parachutePulled;
+
+    public CrashedState(boolean parachutePulled){
+        this.parachutePulled = parachutePulled;
+    }
 
     @Override
     public void setup(Jumper jumper) {
@@ -31,8 +36,15 @@ public class CrashedState implements FallState {
         if(delay>0){
             delay -= deltaTime;
         }else {
+            String message;
+            if (parachutePulled){
+                message = "Beware of where you land";
+            }else{
+                message = "Do not forget to pull the parachute";
+            }
+
             GUITextTask crashMessage =
-                    new GUITextTask("You have crashed! Game over!", new Vector(200,200,200), new Vector(0.5f, 0.5f, .5f), true);
+                    new GUITextTask("You have crashed! Game over!\n" + message, new Vector(200,200,200), new Vector(.5f, .5f, .5f), true);
             RenderQueue.addGUITask(crashMessage);
         }
 

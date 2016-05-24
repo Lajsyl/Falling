@@ -80,7 +80,7 @@ public class ParachuteFallingState implements FallState {
             parachuteWind.stop();
             PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
             landingWaterPositionedSound.play();
-            return new CrashedState();
+            return new CrashedState(true);
         }
 
         return null;
