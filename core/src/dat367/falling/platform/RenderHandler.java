@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
@@ -119,11 +118,11 @@ public class RenderHandler {
                         ModelInstance instance = resourceHandler.getModels().get(modelFileName);
                         instance.transform = new Matrix4()
                                 .translate(libGdxVector(task.getPosition()))
-                                //.setFromEulerAngles(task.getRotation().getX(), task.getRotation().getY(), task.getRotation().getZ())
                                 .mul(libGdxRotationMatrix(task.getRotation().relativeTo(new Rotation())))
                                 .scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
-                        instance.materials.first().set(IntAttribute.createCullFace(modelTask.getModel().getShouldCullFaces() ? GL20.GL_CW : GL20.GL_NONE));
+                        // Set Model as user data so that the shader can use its properties
+                        instance.userData = modelTask.getModel();
 
                         modelBatch.render(instance, environment);
                     }
@@ -223,6 +222,10 @@ public class RenderHandler {
             }
         }
         spriteBatch.end();
+    }
+
+    public void reset() {
+        this.hasCrashed = false;
     }
 
 

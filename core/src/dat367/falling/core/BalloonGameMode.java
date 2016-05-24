@@ -13,6 +13,9 @@ public class BalloonGameMode implements GameMode {
 
     private BalloonLevel level;
 
+    public static final float BALLOON_MAX_DRAW_DISTANCE = 500.0f;
+    public static final float BALLOON_FADE_OUT_DISTANCE = 50.0f;
+
     private int balloonCombo = 0;
     private int score = 0;
 
@@ -127,8 +130,8 @@ public class BalloonGameMode implements GameMode {
         System.out.println("mine hit");
     }
 
-    public void update(float deltaTime) {
-        level.update(deltaTime);
+    public void update(float deltaTime, World world) {
+        level.update(deltaTime, world.getJumper());
         if(gameIsFinished) {
             String endText = "Your score was: " + score;
             String playAgainText = "Tap the screen to play again";

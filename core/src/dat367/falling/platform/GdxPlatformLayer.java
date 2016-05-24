@@ -5,16 +5,20 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.backends.android.ShakeListener;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
-import dat367.falling.core.*;
+import dat367.falling.core.FallingGame;
+import dat367.falling.core.NotificationManager;
+import dat367.falling.core.PreJumpState;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.*;
+import dat367.falling.platform_abstraction.RenderQueue;
 
 /**
  * Responsibilities
@@ -32,8 +36,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.15f;//0.1f;
-	private static final float Z_FAR = 30000;//Ground.SCALE;
+	private static final float Z_NEAR = 0.15f;
+	private static final float Z_FAR = 30000.0f;
 
 	private ResourceHandler resourceHandler = new ResourceHandler();
 	private RenderHandler renderHandler;
@@ -102,6 +106,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+				renderHandler.reset();
 			}
 		});
 	}

@@ -16,7 +16,7 @@ public class Jump {
 
     public void update(float deltaTime) {
         world.update(deltaTime);
-        gameMode.update(deltaTime);
+        gameMode.update(deltaTime, world);
     }
 
     public ResourceRequirements getResourceRequirements() {
