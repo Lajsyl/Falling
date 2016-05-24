@@ -17,7 +17,7 @@ public class FallingGame {
     public void screenClicked(boolean screenClicked) {
         currentJump.getJumper().setScreenClicked(screenClicked);
         //Can be done before you've stopped
-        if(currentJump.getJumper().getFallState() instanceof LandedState){
+        if(currentJump.getJumper().getFallState() instanceof LandedState || currentJump.getJumper().getFallState() instanceof CrashedState){
             this.resetGame();
         }
     }
