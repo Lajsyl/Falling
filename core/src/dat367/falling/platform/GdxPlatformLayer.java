@@ -1,38 +1,20 @@
 package dat367.falling.platform;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.backends.android.ShakeListener;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.*;
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.*;
-import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
-import dat367.falling.platform_abstraction.Model;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Responsibilities
@@ -60,6 +42,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private CardboardAudioEngine cardboardAudioEngine;
 	private ShakeListener shakeListener;
+
+	public static final float DOUBLEPRESS_TIME_MIN_SECONDS = 0.050f;
+	public static final float DOUBLEPRESS_TIME_MAX_SECONDS = 0.500f;
+	private float timeSinceLastScreenPress = 0.0f;
 
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
@@ -106,7 +92,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void setupRestartGameEventHandling() {
-		NotificationManager.addObserver(FallingGame.RESTART_GAME_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+		NotificationManager.addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<FallingGame> event) {
+				resourceHandler.stopAllLoopingSounds();
+			}
+		});
+		NotificationManager.addObserver(FallingGame.AFTER_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
@@ -147,10 +139,20 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
 		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
+		timeSinceLastScreenPress += Gdx.graphics.getDeltaTime();
 	}
 
 	private String getFallStateString() {
 		return game.getCurrentJump().getJumper().getFallStateDebugString();
+	}
+
+	private void screenClick() {
+		game.screenClicked(true);
+		if (timeSinceLastScreenPress >= DOUBLEPRESS_TIME_MIN_SECONDS
+				&& timeSinceLastScreenPress <= DOUBLEPRESS_TIME_MAX_SECONDS) {
+			game.screenDoubleClick();
+		}
+		timeSinceLastScreenPress = 0;
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
@@ -193,7 +195,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
-			game.screenClicked(true);
+			screenClick();
 		}
 
 		if (Gdx.input.isCursorCatched()) {
@@ -340,7 +342,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Update things that affect game logic
 		game.setJumperHeadRotation(getCurrentHeadRotation(paramHeadTransform));
 		if (Gdx.input.justTouched()) {
-			game.screenClicked(true);
+			screenClick();
 		}
 
 		// Update game logic
@@ -478,7 +480,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	//screen clicks should release the parachute
 	@Override
 	public void onCardboardTrigger() {
-		game.screenClicked(true);
+		screenClick();
 	}
 
 

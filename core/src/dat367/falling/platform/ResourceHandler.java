@@ -31,6 +31,7 @@ public class ResourceHandler {
     private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
     private Map<String, HeightMap.ImageBrightnessData> heightMapImages = new HashMap<String, HeightMap.ImageBrightnessData>();
     private Set<String> preloadedSounds = new HashSet<String>();
+    private List<Integer> loopingSounds = new ArrayList<Integer>();
     private List<AnimationController> animationControllers = new ArrayList<AnimationController>();
     private ModelInstance quadModel;
 
@@ -184,6 +185,7 @@ public class ResourceHandler {
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 makeSoundAvailable(event.data);
                 cardboardAudioEngine.playSound(event.data.getSoundObjectID(), true);
+                loopingSounds.add(event.data.getSoundObjectID());
             }
         });
         NotificationManager.addObserver(PositionedSound.STOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
@@ -228,6 +230,12 @@ public class ResourceHandler {
         Vector pos = convertToCardboardCoordinateSystem(positionedSound.getPosition());
         cardboardAudioEngine.setSoundObjectPosition(positionedSound.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
         cardboardAudioEngine.setSoundVolume(positionedSound.getSoundObjectID(), positionedSound.getVolume());
+    }
+
+    public void stopAllLoopingSounds() {
+        while (!loopingSounds.isEmpty()) {
+            cardboardAudioEngine.stopSound(loopingSounds.remove(0));
+        }
     }
 
 
