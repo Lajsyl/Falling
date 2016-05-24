@@ -1,38 +1,23 @@
 package dat367.falling.platform;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
 import com.badlogic.gdx.backends.android.ShakeListener;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.*;
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.UBJsonReader;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
-import dat367.falling.core.*;
-import dat367.falling.math.Matrix;
+import dat367.falling.core.FallingGame;
+import dat367.falling.core.PreJumpState;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.*;
-import dat367.falling.platform_abstraction.Model;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import dat367.falling.platform_abstraction.RenderQueue;
 
 /**
  * Responsibilities
@@ -50,8 +35,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	private FallingGame game;
 	private Camera mainCamera;
-	private static final float Z_NEAR = 0.15f;//0.1f;
-	private static final float Z_FAR = 30000;//Ground.SCALE;
+	private static final float Z_NEAR = 0.15f;
+	private static final float Z_FAR = 30000.0f;
 
 	private ResourceHandler resourceHandler = new ResourceHandler();
 	private RenderHandler renderHandler;

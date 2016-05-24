@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -46,16 +47,19 @@ public class SimpleShader implements Shader {
 
     @Override
     public void begin(Camera camera, RenderContext context) {
-        shaderProgram.begin();
+        renderContext = context;
+        currentCamera = camera;
 
-        context.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        context.setDepthTest(GL20.GL_LEQUAL);
+        shaderProgram.begin();
+        renderContext.begin();
+
+        renderContext.setCullFace(GL20.GL_BACK);
+        renderContext.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        renderContext.setDepthTest(GL20.GL_LEQUAL);
 
         shaderProgram.setUniformMatrix("u_projViewTrans", camera.combined);
 
         hasBegun = true;
-        renderContext = context;
-        currentCamera = camera;
     }
 
     @Override
@@ -70,6 +74,13 @@ public class SimpleShader implements Shader {
         shaderProgram.setUniformMatrix("u_worldTrans", renderable.worldTransform);
         shaderProgram.setUniformf("u_cameraPos", currentCamera.position);
         shaderProgram.setUniformf("u_objectPos", renderablePosition);
+
+        // Assume back face culling (changes are optimized in the context)
+        renderContext.setCullFace(GL20.GL_BACK);
+        if (renderable.material.has(IntAttribute.CullFace)) {
+            IntAttribute cullFace = (IntAttribute) renderable.material.get(IntAttribute.CullFace);
+            renderContext.setCullFace(cullFace.value);
+        }
 
         if (renderable.material.has(TextureAttribute.Diffuse)) {
             TextureAttribute textureAttribute = (TextureAttribute) renderable.material.get(TextureAttribute.Diffuse);
@@ -109,11 +120,13 @@ public class SimpleShader implements Shader {
 
     @Override
     public void end() {
-        hasBegun = false;
-        renderContext = null;
-        currentCamera = null;
+        hasBegun = false;;
 
+        renderContext.end();
         shaderProgram.end();
+
+        currentCamera = null;
+        renderContext = null;
     }
 
     @Override

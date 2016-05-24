@@ -4,7 +4,9 @@ package dat367.falling.platform;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -23,8 +25,6 @@ import dat367.falling.platform_abstraction.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.*;
 
 public class ResourceHandler {
@@ -80,9 +80,15 @@ public class ResourceHandler {
         for (Model model : resourceRequirements.getModels()) {
             String fileName = model.getModelFileName();
             if (!models.containsKey(fileName)) {
+
                 com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
                 ModelInstance gdxModelInstance = new ModelInstance(gdxModel);
+
+                int cullFace = model.getShouldCullFaces() ? GL20.GL_BACK : GL20.GL_NONE;
+                gdxModelInstance.materials.first().set(IntAttribute.createCullFace(cullFace));
+
                 models.put(fileName, gdxModelInstance);
+
                 // If model has animation, loop it automatically
                 if (gdxModelInstance.animations.size > 0) {
                     AnimationController animationController = new AnimationController(gdxModelInstance);
