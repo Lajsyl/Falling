@@ -101,6 +101,9 @@ public class RenderHandler {
                                 .mul(libGdxRotationMatrix(task.getRotation().relativeTo(new Rotation())))
                                 .scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
 
+                        // Set Model as user data so that the shader can use its properties
+                        instance.userData = modelTask.getModel();
+
                         modelBatch.render(instance, environment);
                     }
                 }

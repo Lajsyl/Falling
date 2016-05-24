@@ -2,7 +2,10 @@ package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.*;
+import dat367.falling.platform_abstraction.Model;
+import dat367.falling.platform_abstraction.ModelRenderTask;
+import dat367.falling.platform_abstraction.RenderQueue;
+import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Obstacle implements Positioned {
 
@@ -19,7 +22,7 @@ public class Obstacle implements Positioned {
     private boolean enabled = true;
 
     public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
-        model = new Model("mine.g3db");
+        model = new Model("mine.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
         sphereCollider = new SphereCollider(this, ID, 5);
         CollisionManager.addCollider(sphereCollider);

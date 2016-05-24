@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import dat367.falling.platform_abstraction.Model;
 import dat367.falling.platform_abstraction.Quad;
 
 public class SimpleShader implements Shader {
@@ -90,32 +91,62 @@ public class SimpleShader implements Shader {
             shaderProgram.setUniformi("u_diffuseTexture", boundPosition);
         }
 
+        //
+        // Set specific uniforms
+        //
+
         if (renderable.userData instanceof Quad) {
-            Quad quad = (Quad) renderable.userData;
+            final Quad quad = (Quad) renderable.userData;
+            setQuadUniforms(quad);
 
-            // Depth mask if quad is opaque
-            renderContext.setDepthMask(quad.isOpaque());
-
-            shaderProgram.setUniformf("u_uvScale", new Vector2(quad.getUvXScale(), quad.getUvYScale()));
-
-            float maxOpacityDistance = quad.getMaxDrawDistance() - quad.getFadeOutDistance();
-            shaderProgram.setUniformf("u_maxDrawDistance", quad.getMaxDrawDistance());
-            shaderProgram.setUniformf("u_maxOpacityDistance", maxOpacityDistance);
-        }
-
-        else /* if it's a normal model */ {
-
-            renderContext.setDepthMask(true);
-            shaderProgram.setUniformf("u_uvScale", new Vector2(1, 1));
-
-            // Some arbitrary big number, so objects that shouldn't fade wont.
-            final float drawDistance = 10000000; /* 10 million meters. */
-            shaderProgram.setUniformf("u_maxDrawDistance", drawDistance);
-            shaderProgram.setUniformf("u_maxOpacityDistance", drawDistance);
+        } else if (renderable.userData instanceof Model) {
+            final Model model = (Model) renderable.userData;
+            setModelUniforms(model, renderablePosition);
         }
 
         // Perform actual render
         renderable.meshPart.render(shaderProgram, true);
+    }
+
+    private void setQuadUniforms(Quad quad) {
+        // Depth mask if quad is opaque
+        renderContext.setDepthMask(quad.isOpaque());
+
+        shaderProgram.setUniformf("u_uvScale", new Vector2(quad.getUvXScale(), quad.getUvYScale()));
+
+        float maxOpacityDistance = quad.getMaxDrawDistance() - quad.getFadeOutDistance();
+        shaderProgram.setUniformf("u_maxDrawDistance", quad.getMaxDrawDistance());
+        shaderProgram.setUniformf("u_maxOpacityDistance", maxOpacityDistance);
+    }
+
+    private void setModelUniforms(Model model, Vector3 renderablePosition) {
+        renderContext.setDepthMask(true);
+        shaderProgram.setUniformf("u_uvScale", new Vector2(1, 1));
+
+        float maxDrawDistance;
+        float maxOpacityDistance;
+
+        if (model.shouldFadeOut()) {
+            maxDrawDistance = model.getMaxDrawDistance();
+            maxOpacityDistance = model.getMaxDrawDistance() - model.getFadeOutDistance();
+
+            float cameraObjectDistanceSqr = currentCamera.position.cpy().sub(renderablePosition).len2();
+            float maxOpacityDistanceSqr = maxOpacityDistance * maxOpacityDistance;
+            boolean depthMask = cameraObjectDistanceSqr < maxOpacityDistanceSqr;
+            renderContext.setDepthMask(depthMask);
+        } else {
+            // Some arbitrary big number, so objects that shouldn't fade wont.
+            final float drawDistance = 10000000; /* 10 million meters. */
+
+            maxDrawDistance = drawDistance;
+            maxOpacityDistance = drawDistance;
+
+            // Do depth mask, since it's completely opaque
+            renderContext.setDepthMask(true);
+        }
+
+        shaderProgram.setUniformf("u_maxDrawDistance", maxDrawDistance);
+        shaderProgram.setUniformf("u_maxOpacityDistance", maxOpacityDistance);
     }
 
     @Override
