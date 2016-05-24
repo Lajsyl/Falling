@@ -224,6 +224,10 @@ public class RenderHandler {
         spriteBatch.end();
     }
 
+    public void reset() {
+        this.hasCrashed = false;
+    }
+
 
 
 

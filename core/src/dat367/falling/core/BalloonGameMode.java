@@ -13,7 +13,7 @@ public class BalloonGameMode implements GameMode {
 
     private BalloonLevel level;
 
-    public static final float BALLOON_MAX_DRAW_DISTANCE = 1000.0f;
+    public static final float BALLOON_MAX_DRAW_DISTANCE = 500.0f;
     public static final float BALLOON_FADE_OUT_DISTANCE = 50.0f;
 
     private int balloonCombo = 0;

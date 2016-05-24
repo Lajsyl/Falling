@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.NotificationManager;
 import dat367.falling.core.PreJumpState;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -105,6 +106,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+				renderHandler.reset();
 			}
 		});
 	}
