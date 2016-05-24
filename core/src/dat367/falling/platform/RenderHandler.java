@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector3;
 import dat367.falling.core.CrashedState;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.NotificationManager;
+import dat367.falling.core.World;
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -88,7 +89,8 @@ public class RenderHandler {
     public void renderScene(Camera camera) {
 
         if(!hasCrashed){
-            Gdx.gl.glClearColor(165/255f, 215/255f, 250/255f, 1.0f); // (Bright desaturated sky blue)
+            Vector c = World.ATMOSPHERE_COLOR;
+            Gdx.gl.glClearColor(c.getX(), c.getY(), c.getZ(), 1.0f); // (Bright desaturated sky blue)
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
             render3D(camera);

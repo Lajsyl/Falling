@@ -2,7 +2,6 @@ package dat367.falling.core;
 
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.ResourceRequirements;
-import dat367.falling.platform_abstraction.Sound;
 
 public class World {
 
@@ -10,6 +9,8 @@ public class World {
 
     // Defined according to the coordinate system used
     public static final float GRAVITATION = -9.82f * 10;
+    
+    public static final Vector ATMOSPHERE_COLOR = new Vector(165 / 255f, 215 / 255f, 250 / 255f);
 
     private Ground ground;
     private Island island;
