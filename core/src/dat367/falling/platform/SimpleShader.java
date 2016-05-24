@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import dat367.falling.platform_abstraction.Quad;
 
 public class SimpleShader implements Shader {
@@ -63,8 +64,12 @@ public class SimpleShader implements Shader {
             throw new IllegalStateException("All render(..) calls must be issued after begin(..) and before end()");
         }
 
+        Vector3 renderablePosition = new Vector3();
+        renderablePosition = renderable.worldTransform.getTranslation(renderablePosition);
+
         shaderProgram.setUniformMatrix("u_worldTrans", renderable.worldTransform);
         shaderProgram.setUniformf("u_cameraPos", currentCamera.position);
+        shaderProgram.setUniformf("u_objectPos", renderablePosition);
 
         if (renderable.material.has(TextureAttribute.Diffuse)) {
             TextureAttribute textureAttribute = (TextureAttribute) renderable.material.get(TextureAttribute.Diffuse);
