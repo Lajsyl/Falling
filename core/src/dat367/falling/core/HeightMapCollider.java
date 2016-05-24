@@ -9,6 +9,7 @@ public class HeightMapCollider extends Collider {
     private float xDimension;
     private float zDimension;
     private float maxHeight;
+    private float imageX;
 
     public HeightMapCollider(Positioned positioned, String name, HeightMap heightMap, Vector baseCenterPosition, float xDimension, float zDimension, float maxHeight) {
         super(positioned, name);
@@ -29,8 +30,8 @@ public class HeightMapCollider extends Collider {
     }
 
     public float getHeight(float x, float z) {
-        float imageX = (heightMap.getImageWidth() * ((x - (baseCenterPosition.getX() - xDimension/2)) / xDimension));
-        float imageY = (heightMap.getImageHeight() * ((z - (baseCenterPosition.getZ() - zDimension/2)) / zDimension));
+        float imageX = ((heightMap.getImageHeight()-1) * ((z - (baseCenterPosition.getZ() - zDimension / 2)) / zDimension));
+        float imageY = ((heightMap.getImageWidth()-1) * ((x - (baseCenterPosition.getX() - xDimension/2)) / xDimension));
         return baseCenterPosition.getY() + heightMap.getInterpolatedBrightnessAt(imageX, imageY) * maxHeight;
     }
 
