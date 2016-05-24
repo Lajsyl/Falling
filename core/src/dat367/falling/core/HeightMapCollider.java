@@ -31,7 +31,6 @@ public class HeightMapCollider extends Collider {
     public float getHeight(float x, float z) {
         float imageX = (heightMap.getImageWidth() * ((x - (baseCenterPosition.getX() - xDimension/2)) / xDimension));
         float imageY = (heightMap.getImageHeight() * ((z - (baseCenterPosition.getZ() - zDimension/2)) / zDimension));
-        System.out.println(baseCenterPosition.getY() + heightMap.getInterpolatedBrightnessAt(imageX, imageY) * maxHeight);
         return baseCenterPosition.getY() + heightMap.getInterpolatedBrightnessAt(imageX, imageY) * maxHeight;
     }
 
