@@ -51,7 +51,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private FallingGame game;
 	private Camera mainCamera;
 	private static final float Z_NEAR = 0.15f;//0.1f;
-	private static final float Z_FAR = Ground.SCALE;
+	private static final float Z_FAR = 30000;//Ground.SCALE;
 
 	private ResourceHandler resourceHandler = new ResourceHandler();
 	private RenderHandler renderHandler;
