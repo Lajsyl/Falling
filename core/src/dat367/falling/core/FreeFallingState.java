@@ -76,12 +76,6 @@ public class FreeFallingState implements FallState, Observer {
             handleBodyTilting(deltaTime, jumper);
         }
 
-        if (jumper.getPosition().getY() < 850){
-            String text = "Pull the parachute by tapping the screen";
-            RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
-        }
-
-
         if (parachutePulled){
             fallingWind.stop();
             tiltingWind.stop();
