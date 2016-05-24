@@ -136,8 +136,8 @@ public class BalloonGameMode implements GameMode {
             String endText = "Your score was: " + score;
             String playAgainText = "Tap the screen to play again";
 
-            RenderQueue.addGUITask(new GUITextTask(endText, new Vector(1, 0, 0), new Vector(0.5f, 0, .6f), true));
-            RenderQueue.addGUITask(new GUITextTask(playAgainText, new Vector(1, 0, 0), new Vector(0.5f, 0, .4f), true));
+            RenderQueue.addGUITask(new GUITextTask(endText, new Vector(133f/255, 188f/255, 143f/255), new Vector(0.5f, 0, .6f), true));
+            RenderQueue.addGUITask(new GUITextTask(playAgainText, new Vector(133f/255, 188f/255, 143f/255), new Vector(0.5f, 0, .4f), true));
         }
     }
 

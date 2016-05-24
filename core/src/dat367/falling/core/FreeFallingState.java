@@ -48,7 +48,7 @@ public class FreeFallingState implements FallState, Observer {
                 float z = jumper.getPosition().getZ();
                 float y = ((HeightMapCollider)event.data.getOtherObject()).getHeight(x, z) + Jumper.BODY_HEIGHT;
                 jumper.setPosition(x, y, z);
-                impendingState = new CrashedState();
+                impendingState = new CrashedState(false);
             }
         });
     }
@@ -76,12 +76,6 @@ public class FreeFallingState implements FallState, Observer {
             handleBodyTilting(deltaTime, jumper);
         }
 
-        if (jumper.getPosition().getY() < 850){
-            String text = "Pull the parachute by tapping the screen";
-            RenderQueue.addGUITask(new GUITextTask(text, new Vector(1, 0, 0), new Vector(0.5f, 0.5f, .5f), true));
-        }
-
-
         if (parachutePulled){
             fallingWind.stop();
             tiltingWind.stop();
@@ -95,7 +89,7 @@ public class FreeFallingState implements FallState, Observer {
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
             landingWaterPositionedSound.play();
-            return new CrashedState();
+            return new CrashedState(false);
         }
 
         return null;

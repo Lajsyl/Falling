@@ -11,11 +11,11 @@ public class PositionedSound {
     private float volume;
     private int soundObjectID = -1;
 
-    public static final String playSoundEvent = "PlaySoundEvent";
-    public static final String loopSoundEvent = "LoopSoundEvent";
-    public static final String stopSoundEvent = "StopSoundEvent";
-    public static final String changePositionSoundEvent = "ChangePositionSoundEvent";
-    public static final String changeVolumeSoundEvent = "ChangeVolumeSoundEvent";
+    public static final String PLAY_SOUND_EVENT = "PlaySoundEvent";
+    public static final String LOOP_SOUND_EVENT = "LoopSoundEvent";
+    public static final String STOP_SOUND_EVENT = "StopSoundEvent";
+    public static final String CHANGE_POSITION_SOUND_EVENT = "ChangePositionSoundEvent";
+    public static final String CHANGE_VOLUME_SOUND_EVENT = "ChangeVolumeSoundEvent";
 
     public PositionedSound(Sound sound, Vector position, float volume) {
         this.sound = sound;
@@ -28,15 +28,15 @@ public class PositionedSound {
     }
 
     public void play() {
-        NotificationManager.registerEvent(playSoundEvent, this);
+        NotificationManager.registerEvent(PLAY_SOUND_EVENT, this);
     }
 
     public void loop() {
-        NotificationManager.registerEvent(loopSoundEvent, this);
+        NotificationManager.registerEvent(LOOP_SOUND_EVENT, this);
     }
 
     public void stop() {
-        NotificationManager.registerEvent(stopSoundEvent, this);
+        NotificationManager.registerEvent(STOP_SOUND_EVENT, this);
     }
 
 //    new PositionedSound(new Sound("wind01.wav"), new Vector(0, 4000, 0), 1.0).play()
@@ -60,7 +60,7 @@ public class PositionedSound {
 
     public void setPosition(Vector position) {
         this.position = position;
-        NotificationManager.registerEvent(changePositionSoundEvent, this);
+        NotificationManager.registerEvent(CHANGE_POSITION_SOUND_EVENT, this);
     }
 
     public float getVolume() {
@@ -69,6 +69,6 @@ public class PositionedSound {
 
     public void setVolume(float volume) {
         this.volume = volume;
-        NotificationManager.registerEvent(changeVolumeSoundEvent, this);
+        NotificationManager.registerEvent(CHANGE_VOLUME_SOUND_EVENT, this);
     }
 }

@@ -46,6 +46,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private CardboardAudioEngine cardboardAudioEngine;
 	private ShakeListener shakeListener;
 
+	public static final float DOUBLEPRESS_TIME_MIN_SECONDS = 0.050f;
+	public static final float DOUBLEPRESS_TIME_MAX_SECONDS = 0.500f;
+	private float timeSinceLastScreenPress = 0.0f;
+
 	public GdxPlatformLayer(boolean platformIsAndroid) {
 		this.platformIsAndroid = platformIsAndroid;
 	}
@@ -72,7 +76,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			desktopSimulatedHeadTransform = new Rotation();
 		}
 
-
+		setupRestartGameEventHandling();
 
 		game = new FallingGame();
 		resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
@@ -90,8 +94,20 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
-
-
+	private void setupRestartGameEventHandling() {
+		NotificationManager.addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<FallingGame> event) {
+				resourceHandler.stopAllLoopingSounds();
+			}
+		});
+		NotificationManager.addObserver(FallingGame.AFTER_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+			@Override
+			public void handleEvent(NotificationManager.Event<FallingGame> event) {
+				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+			}
+		});
+	}
 
 
 	@Override
@@ -126,10 +142,20 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		RenderQueue.clear();
 		game.update(Gdx.graphics.getDeltaTime());
 		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
+		timeSinceLastScreenPress += Gdx.graphics.getDeltaTime();
 	}
 
 	private String getFallStateString() {
 		return game.getCurrentJump().getJumper().getFallStateDebugString();
+	}
+
+	private void screenClick() {
+		game.screenClicked(true);
+		if (timeSinceLastScreenPress >= DOUBLEPRESS_TIME_MIN_SECONDS
+				&& timeSinceLastScreenPress <= DOUBLEPRESS_TIME_MAX_SECONDS) {
+			game.screenDoubleClick();
+		}
+		timeSinceLastScreenPress = 0;
 	}
 
 	//---- DESKTOP-SPECIFIC ----//
@@ -172,7 +198,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
-			game.screenClicked(true);
+			screenClick();
 		}
 
 		if (Gdx.input.isCursorCatched()) {
@@ -319,7 +345,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Update things that affect game logic
 		game.setJumperHeadRotation(getCurrentHeadRotation(paramHeadTransform));
 		if (Gdx.input.justTouched()) {
-			game.screenClicked(true);
+			screenClick();
 		}
 
 		// Update game logic
@@ -457,7 +483,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	//screen clicks should release the parachute
 	@Override
 	public void onCardboardTrigger() {
-		game.screenClicked(true);
+		screenClick();
 	}
 
 
