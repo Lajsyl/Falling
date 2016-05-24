@@ -1,10 +1,14 @@
 package dat367.falling.core;
 
 import dat367.falling.math.Vector;
+import dat367.falling.platform_abstraction.GUITextTask;
+import dat367.falling.platform_abstraction.RenderQueue;
 
 public class CrashedState implements FallState {
 
     public static final String PLAYER_HAS_CRASHED_EVENT_ID = "PLAYER_HAS_CRASHED_EVENT_ID";
+
+    private float delay = 1.0f;
 
     @Override
     public void setup(Jumper jumper) {
@@ -23,6 +27,16 @@ public class CrashedState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
+
+        if(delay>0){
+            delay -= deltaTime;
+        }else {
+            GUITextTask crashMessage =
+                    new GUITextTask("You have crashed! Game over!", new Vector(200,200,200), new Vector(0.5f, 0.5f, .5f), true);
+            RenderQueue.addGUITask(crashMessage);
+        }
+
+
         return null;
     }
 

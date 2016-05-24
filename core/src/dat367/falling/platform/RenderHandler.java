@@ -17,7 +17,9 @@ import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import dat367.falling.core.CrashedState;
 import dat367.falling.core.FallingGame;
+import dat367.falling.core.NotificationManager;
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -41,6 +43,7 @@ public class RenderHandler {
     private BitmapFont smallFont;
     private BitmapFont bigFont;
 
+    private boolean hasCrashed = false;
 
     public RenderHandler(ResourceHandler resourceHandler, FallingGame game, boolean platformIsAndroid){
         this.resourceHandler = resourceHandler;
@@ -63,14 +66,29 @@ public class RenderHandler {
         debugFont = new BitmapFont();
         smallFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
         bigFont = new BitmapFont(Gdx.files.internal("yuppy_tc_53pt.fnt"));
+
+        NotificationManager.addObserver(CrashedState.PLAYER_HAS_CRASHED_EVENT_ID, new NotificationManager.EventHandler() {
+
+            @Override
+            public void handleEvent(NotificationManager.Event event) {
+                hasCrashed = true;
+            }
+        });
     }
 
     public void renderScene(Camera camera) {
 
-        Gdx.gl.glClearColor(165/255f, 215/255f, 250/255f, 1.0f); // (Bright desaturated sky blue)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        if(!hasCrashed){
+            Gdx.gl.glClearColor(165/255f, 215/255f, 250/255f, 1.0f); // (Bright desaturated sky blue)
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        render3D(camera);
+            render3D(camera);
+        } else {
+            Gdx.gl.glClearColor(0f, 0f, 0f, 1.0f); // Black
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        }
+
+
         render2D(camera);
 
     }
