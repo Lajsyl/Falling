@@ -44,7 +44,7 @@ public class CrashedState implements FallState {
             }
 
             GUITextTask crashMessage =
-                    new GUITextTask("You have crashed! Game over!\n" + message, new Vector(200,200,200), new Vector(.5f, .5f, .5f), true);
+                    new GUITextTask("You have crashed! Game over!\n" + message + "\n\nPress the screen to restart", new Vector(200,200,200), new Vector(.5f, .5f, .65f), true);
             RenderQueue.addGUITask(crashMessage);
         }
 
