@@ -10,10 +10,10 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public abstract class Interactable implements Positioned{
 
-    private Collider collider;
-    private Vector position;
+    protected Collider collider;
+    protected Vector position;
 
-    private boolean enabled = true;
+    protected boolean enabled = true;
 
 
     @Override

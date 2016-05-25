@@ -40,7 +40,7 @@ public class CollisionManager {
 
     private static String getEventID(Collider collider) {
         if (collider.getName().equals(Collectible.ID)) return COLLECTIBLE_COLLISION_EVENT_ID;
-        if (collider.getName().equals(Obstacle.ID)) return OBSTACLE_COLLISION_EVENT_ID;
+        if (collider.getName().equals(Obstacle.INTERACTABLE_ID)) return OBSTACLE_COLLISION_EVENT_ID;
         if (collider.getName().equals(Island.ID)) return ISLAND_COLLISION_EVENT_ID;
 
         // Generic collision event

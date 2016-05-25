@@ -76,7 +76,7 @@ public class BalloonGameMode implements GameMode {
         for (Collectible collectible : level.getBalloonList()) {
             collectible.setEnabled(enabled);
         }
-        for (Obstacle obstacle : level.getObstacleList()) {
+        for (Interactable obstacle : level.getObstacleList()) {
             obstacle.setEnabled(enabled);
         }
     }

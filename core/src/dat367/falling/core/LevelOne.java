@@ -25,7 +25,7 @@ public class LevelOne extends BalloonLevel {
             balloonList.add(balloon);
 
             y += 22 + 2.5f*i;
-            Obstacle obstacle = new Obstacle(resourceRequirements, new Vector(offsetX, y, offsetZ));
+            Interactable obstacle = new Obstacle(resourceRequirements, new Vector(offsetX, y, offsetZ));
             obstacleList.add(obstacle);
             currentHeight += (22 + 2.5f*i)*2;
         }
@@ -49,10 +49,10 @@ public class LevelOne extends BalloonLevel {
             Collectible balloon = new Collectible(resourceRequirements, new Vector(x, y, z));
             x -= (7+(i/2)-.5f);
             z -= (7+(i/2)-.5f);
-            Obstacle o1 = new Obstacle(resourceRequirements, new Vector(x, y, z));
+            Interactable o1 = new Obstacle(resourceRequirements, new Vector(x, y, z));
             x += ((7+(i/2))-.5f)*2;
             z += ((7+(i/2))-.5f)*2;
-            Obstacle o2 = new Obstacle(resourceRequirements, new Vector(x, y, z));
+            Interactable o2 = new Obstacle(resourceRequirements, new Vector(x, y, z));
             balloonList.add(balloon);
             obstacleList.add(o1);
             obstacleList.add(o2);
@@ -144,15 +144,15 @@ public class LevelOne extends BalloonLevel {
 
         Collectible balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 4015, 0));
         balloonList.add(balloonNearPlane);
-        Obstacle obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 3930, -50));
+        Interactable obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 3930, -50));
         obstacleList.add(obstacleNearPlane);
-        Obstacle obstacleNearPlane2 = new Obstacle(resourceRequirements, new Vector(-20, 3960, -50));
+        Interactable obstacleNearPlane2 = new Obstacle(resourceRequirements, new Vector(-20, 3960, -50));
         obstacleList.add(obstacleNearPlane2);
-        Obstacle obstacleNearPlane3 = new Obstacle(resourceRequirements, new Vector(-30, 3990, -50));
+        Interactable obstacleNearPlane3 = new Obstacle(resourceRequirements, new Vector(-30, 3990, -50));
         obstacleList.add(obstacleNearPlane3);
-        Obstacle obstacleNearPlane4 = new Obstacle(resourceRequirements, new Vector(-35, 4010, -50));
+        Interactable obstacleNearPlane4 = new Obstacle(resourceRequirements, new Vector(-35, 4010, -50));
         obstacleList.add(obstacleNearPlane4);
-        Obstacle obstacleNearPlane5 = new Obstacle(resourceRequirements, new Vector(-35, 4030, -50));
+        Interactable obstacleNearPlane5 = new Obstacle(resourceRequirements, new Vector(-35, 4030, -50));
         obstacleList.add(obstacleNearPlane5);
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class BalloonLevel {
 
     List<Collectible> balloonList = new ArrayList<Collectible>();
-    List<Obstacle> obstacleList = new ArrayList<Obstacle>();
+    List<Interactable> obstacleList = new ArrayList<Interactable>();
     ResourceRequirements resourceRequirements;
 
     public BalloonLevel(ResourceRequirements resourceRequirements){
@@ -25,7 +25,7 @@ public abstract class BalloonLevel {
             }
         }
 
-        for (Obstacle o : obstacleList) {
+        for (Interactable o : obstacleList) {
             if (shouldBeRendered(o, jumper)) {
                 o.update(deltaTime);
             }
@@ -40,7 +40,7 @@ public abstract class BalloonLevel {
     public List<Collectible> getBalloonList(){
         return balloonList;
     }
-    public List<Obstacle> getObstacleList(){
+    public List<Interactable> getObstacleList(){
         return obstacleList;
     }
 
