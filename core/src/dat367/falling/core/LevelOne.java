@@ -22,14 +22,14 @@ public class LevelOne extends BalloonLevel {
         for (int i = 0; i < 4; i++) {
             float y = currentHeight;
             Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, y, offsetZ));
-            balloonList.add(balloon);
+            interactableList.add(balloon);
 
             y += 22 + 2.5f*i;
             Interactable obstacle = new Obstacle(resourceRequirements, new Vector(offsetX, y, offsetZ));
-            obstacleList.add(obstacle);
+            interactableList.add(obstacle);
             currentHeight += (22 + 2.5f*i)*2;
         }
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight+10, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight+10, offsetZ)));
 
         // Height between the slalom and the spiral -10
         currentHeight += 200;
@@ -53,19 +53,19 @@ public class LevelOne extends BalloonLevel {
             x += ((7+(i/2))-.5f)*2;
             z += ((7+(i/2))-.5f)*2;
             Interactable o2 = new Obstacle(resourceRequirements, new Vector(x, y, z));
-            balloonList.add(balloon);
-            obstacleList.add(o1);
-            obstacleList.add(o2);
+            interactableList.add(balloon);
+            interactableList.add(o1);
+            interactableList.add(o2);
         }
 
         // Space between sprial and next balloon +100
         currentHeight += 50;
 
-        obstacleList.add(new Obstacle(resourceRequirements, new Vector(offsetX-15,currentHeight-23,offsetZ+15)));
+        interactableList.add(new Obstacle(resourceRequirements, new Vector(offsetX-15,currentHeight-23,offsetZ+15)));
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
-            balloonList.add(balloon);
+            interactableList.add(balloon);
             currentHeight += 23;
             offsetX += 15;
             offsetZ -= 15;
@@ -78,7 +78,7 @@ public class LevelOne extends BalloonLevel {
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
-            balloonList.add(balloon);
+            interactableList.add(balloon);
             currentHeight += 23;
             offsetX -= 15;
             offsetZ -= 15;
@@ -91,7 +91,7 @@ public class LevelOne extends BalloonLevel {
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
-            balloonList.add(balloon);
+            interactableList.add(balloon);
             currentHeight += 23;
             offsetX -= 15;
             offsetZ += 15;
@@ -104,7 +104,7 @@ public class LevelOne extends BalloonLevel {
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
-            balloonList.add(balloon);
+            interactableList.add(balloon);
             currentHeight += 23;
             offsetX += 15;
             offsetZ += 15;
@@ -115,45 +115,45 @@ public class LevelOne extends BalloonLevel {
         offsetX += 120;
         offsetZ += 80;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 300;
         offsetX -= 40;
         offsetZ += 200;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 150;
         offsetX -= 60;
         offsetZ -= 70;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 350;
         offsetX -= 40;
         offsetZ -= 200;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 100;
         offsetX += 10;
         offsetZ += 50;
 
-        balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+        interactableList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
 
         Interactable balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 4015, 0));
-        balloonList.add(balloonNearPlane);
+        interactableList.add(balloonNearPlane);
         Interactable obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 3930, -50));
-        obstacleList.add(obstacleNearPlane);
+        interactableList.add(obstacleNearPlane);
         Interactable obstacleNearPlane2 = new Obstacle(resourceRequirements, new Vector(-20, 3960, -50));
-        obstacleList.add(obstacleNearPlane2);
+        interactableList.add(obstacleNearPlane2);
         Interactable obstacleNearPlane3 = new Obstacle(resourceRequirements, new Vector(-30, 3990, -50));
-        obstacleList.add(obstacleNearPlane3);
+        interactableList.add(obstacleNearPlane3);
         Interactable obstacleNearPlane4 = new Obstacle(resourceRequirements, new Vector(-35, 4010, -50));
-        obstacleList.add(obstacleNearPlane4);
+        interactableList.add(obstacleNearPlane4);
         Interactable obstacleNearPlane5 = new Obstacle(resourceRequirements, new Vector(-35, 4030, -50));
-        obstacleList.add(obstacleNearPlane5);
+        interactableList.add(obstacleNearPlane5);
     }
 
     @Override

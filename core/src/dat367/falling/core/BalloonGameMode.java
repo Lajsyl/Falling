@@ -31,7 +31,6 @@ public class BalloonGameMode implements GameMode {
         resourceRequirements.require(explosionSound);
 
         // Listen for all relevant collision events
-
         NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
@@ -73,11 +72,8 @@ public class BalloonGameMode implements GameMode {
     }
 
     private void setGameElementsEnabled(boolean enabled) {
-        for (Interactable collectible : level.getBalloonList()) {
-            collectible.setEnabled(enabled);
-        }
-        for (Interactable obstacle : level.getObstacleList()) {
-            obstacle.setEnabled(enabled);
+        for (Interactable interactable : level.getInteractableList()) {
+            interactable.setEnabled(enabled);
         }
     }
 

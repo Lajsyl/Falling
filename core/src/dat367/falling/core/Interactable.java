@@ -1,12 +1,6 @@
 package dat367.falling.core;
 
-
-import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.Model;
-import dat367.falling.platform_abstraction.ModelRenderTask;
-import dat367.falling.platform_abstraction.RenderQueue;
-import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public abstract class Interactable implements Positioned{
 
@@ -14,7 +8,6 @@ public abstract class Interactable implements Positioned{
     protected Vector position;
 
     protected boolean enabled = true;
-
 
     @Override
     public Vector getPosition() {
