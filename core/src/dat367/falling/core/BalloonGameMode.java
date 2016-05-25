@@ -31,7 +31,6 @@ public class BalloonGameMode implements GameMode {
         resourceRequirements.require(explosionSound);
 
         // Listen for all relevant collision events
-
         NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
@@ -73,11 +72,8 @@ public class BalloonGameMode implements GameMode {
     }
 
     private void setGameElementsEnabled(boolean enabled) {
-        for (Collectible collectible : level.getBalloonList()) {
-            collectible.setEnabled(enabled);
-        }
-        for (Obstacle obstacle : level.getObstacleList()) {
-            obstacle.setEnabled(enabled);
+        for (Interactable interactable : level.getInteractableList()) {
+            interactable.setEnabled(enabled);
         }
     }
 
@@ -112,7 +108,7 @@ public class BalloonGameMode implements GameMode {
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
         // Experiment with bouncing on mine
         Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
-        Obstacle obstacle = (Obstacle)collisionData.getOtherObject().getParent();
+        Mine mine = (Mine)collisionData.getOtherObject().getParent();
         Vector yBounce = new Vector(0, 220.0f, 0);
         Vector playerPos = collisionData.getJumperObject().getPosition();
         Vector obstaclePos = collisionData.getOtherObject().getPosition();

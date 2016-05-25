@@ -7,30 +7,20 @@ import dat367.falling.platform_abstraction.ModelRenderTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class Obstacle implements Positioned {
+public class Mine extends Interactable {
 
 
-    //TODO: Make this abstract so that different obstacles can be added
-
-    public static final String ID = "Obstacle";
+    public static final String INTERACTABLE_ID = "Mine";
     public static final String POSITION_CHANGED_EVENT_ID = "ObstaclePositionChangedEvent";
 
-    private SphereCollider sphereCollider;
-    private Vector position;
-
     private Model model;
-    private boolean enabled = true;
 
-    public Obstacle(ResourceRequirements resourceRequirements, Vector position) {
+    public Mine(ResourceRequirements resourceRequirements, Vector position) {
         model = new Model("mine.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
-        sphereCollider = new SphereCollider(this, ID, 5);
-        CollisionManager.addCollider(sphereCollider);
+        collider = new SphereCollider(this, INTERACTABLE_ID, 5);
+        CollisionManager.addCollider(collider);
         this.position = position;
-    }
-
-    public Vector getPosition() {
-        return position;
     }
 
     @Override
@@ -39,13 +29,8 @@ public class Obstacle implements Positioned {
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setPosition(Vector position) {
-        this.position = position;
-        NotificationManager.registerEvent(getPositionChangedEventID(), this);
+    public String getInteractableID() {
+        return INTERACTABLE_ID;
     }
 
     public void update(float deltaTime){
@@ -54,3 +39,5 @@ public class Obstacle implements Positioned {
         }
     }
 }
+
+
