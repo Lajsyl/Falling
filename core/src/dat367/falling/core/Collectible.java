@@ -7,14 +7,10 @@ import dat367.falling.platform_abstraction.ModelRenderTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class Collectible implements Positioned {
+public class Collectible extends Interactable {
 
-    //TODO: Make this abstract so that different collectibles can be added
-    public static final String ID = "Collectible";
+    public static final String INTERACTABLE_ID = "Collectible";
     public static final String POSITION_CHANGED_EVENT_ID = "CollectiblePositionChangedEvent";
-
-    private SphereCollider sphereCollider;
-    private Vector position;
 
     private Model model;
 
@@ -23,13 +19,9 @@ public class Collectible implements Positioned {
     public Collectible(ResourceRequirements resourceRequirements, Vector position){
         model = new Model("balloon.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
-        sphereCollider = new SphereCollider(this, ID, 5);
-        CollisionManager.addCollider(sphereCollider);
+        collider = new SphereCollider(this, INTERACTABLE_ID, 5);
+        CollisionManager.addCollider(collider);
         this.position = position;
-    }
-
-    public Vector getPosition() {
-        return position;
     }
 
     @Override
@@ -38,16 +30,11 @@ public class Collectible implements Positioned {
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public String getInteractableID() {
+        return INTERACTABLE_ID;
     }
 
-    public void setPosition(Vector position) {
-        this.position = position;
-        NotificationManager.registerEvent(getPositionChangedEventID(), this);
-    }
-
-    public void update(float deltaTime) {
+    public void update(float deltaTime){
         if (enabled) {
             RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5,5,5)));
         }

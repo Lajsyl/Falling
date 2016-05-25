@@ -21,7 +21,7 @@ public class LevelOne extends BalloonLevel {
         // Create slalom by alternating balloons and obstacles
         for (int i = 0; i < 4; i++) {
             float y = currentHeight;
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, y, offsetZ));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, y, offsetZ));
             balloonList.add(balloon);
 
             y += 22 + 2.5f*i;
@@ -46,7 +46,7 @@ public class LevelOne extends BalloonLevel {
             float y = currentHeight;
             currentHeight += 100;
 
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(x, y, z));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(x, y, z));
             x -= (7+(i/2)-.5f);
             z -= (7+(i/2)-.5f);
             Interactable o1 = new Obstacle(resourceRequirements, new Vector(x, y, z));
@@ -64,7 +64,7 @@ public class LevelOne extends BalloonLevel {
         obstacleList.add(new Obstacle(resourceRequirements, new Vector(offsetX-15,currentHeight-23,offsetZ+15)));
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             balloonList.add(balloon);
             currentHeight += 23;
             offsetX += 15;
@@ -77,7 +77,7 @@ public class LevelOne extends BalloonLevel {
         offsetZ -= 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             balloonList.add(balloon);
             currentHeight += 23;
             offsetX -= 15;
@@ -90,7 +90,7 @@ public class LevelOne extends BalloonLevel {
         offsetX -= 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             balloonList.add(balloon);
             currentHeight += 23;
             offsetX -= 15;
@@ -103,7 +103,7 @@ public class LevelOne extends BalloonLevel {
         offsetZ += 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
-            Collectible balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
+            Interactable balloon = new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             balloonList.add(balloon);
             currentHeight += 23;
             offsetX += 15;
@@ -142,7 +142,7 @@ public class LevelOne extends BalloonLevel {
         balloonList.add(new Collectible(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
 
-        Collectible balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 4015, 0));
+        Interactable balloonNearPlane = new Collectible(resourceRequirements, new Vector(-13.3f, 4015, 0));
         balloonList.add(balloonNearPlane);
         Interactable obstacleNearPlane = new Obstacle(resourceRequirements, new Vector(0, 3930, -50));
         obstacleList.add(obstacleNearPlane);
