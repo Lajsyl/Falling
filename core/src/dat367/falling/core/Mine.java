@@ -7,17 +7,16 @@ import dat367.falling.platform_abstraction.ModelRenderTask;
 import dat367.falling.platform_abstraction.RenderQueue;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class Collectible extends Interactable {
+public class Mine extends Interactable {
 
-    public static final String INTERACTABLE_ID = "Collectible";
-    public static final String POSITION_CHANGED_EVENT_ID = "CollectiblePositionChangedEvent";
+
+    public static final String INTERACTABLE_ID = "Mine";
+    public static final String POSITION_CHANGED_EVENT_ID = "ObstaclePositionChangedEvent";
 
     private Model model;
 
-    private boolean enabled = true;
-
-    public Collectible(ResourceRequirements resourceRequirements, Vector position){
-        model = new Model("balloon.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
+    public Mine(ResourceRequirements resourceRequirements, Vector position) {
+        model = new Model("mine.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
         collider = new SphereCollider(this, INTERACTABLE_ID, 5);
         CollisionManager.addCollider(collider);
@@ -40,3 +39,5 @@ public class Collectible extends Interactable {
         }
     }
 }
+
+

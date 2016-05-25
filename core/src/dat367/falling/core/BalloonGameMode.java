@@ -108,7 +108,7 @@ public class BalloonGameMode implements GameMode {
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
         // Experiment with bouncing on mine
         Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
-        Obstacle obstacle = (Obstacle)collisionData.getOtherObject().getParent();
+        Mine mine = (Mine)collisionData.getOtherObject().getParent();
         Vector yBounce = new Vector(0, 220.0f, 0);
         Vector playerPos = collisionData.getJumperObject().getPosition();
         Vector obstaclePos = collisionData.getOtherObject().getPosition();
