@@ -201,8 +201,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
-			NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
-
 			screenClick();
 		}
 
@@ -224,7 +222,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			dY /= MOUSE_SENSITIVITY;
 
 
-
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
 			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, -dX).rotate(direction.cross(up), -dY);
@@ -234,11 +231,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 //			System.out.println(desktopSimulatedHeadTransform.getUp());
 
-//			Vector3 lookAtVector = libGdxVector(game.getCurrentJump().getJumper().getPosition()).add(libGdxVector(newHeadRotation.getDirection()));
-//			mainCamera.lookAt(lookAtVector);
-
-//			mainCamera.direction.set(libGdxVector(newHeadRotation.getDirection()));
-//			mainCamera.up.set(libGdxVector(newHeadRotation.getUp()));
 		}
 
 		Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
@@ -255,11 +247,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
 
-//		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
-//		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation()));
-//		game.setJumperHeadRotation(newHeadRotation);
-
-//		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
 
 	private void setDesktopCameraPosAndOrientation() {
@@ -478,7 +465,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
-	//screen clicks should release the parachute
+
 	@Override
 	public void onCardboardTrigger() {
 		screenClick();

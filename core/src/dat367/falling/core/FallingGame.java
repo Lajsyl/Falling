@@ -49,7 +49,7 @@ public class FallingGame {
     public void setJumperHeadRotation(Rotation rotation) {
         currentJump.getJumper().setHeadRotation(rotation);
     }
-    
+
 
     private void setCurrentJump(Jump jump) {
         this.currentJump = jump;
