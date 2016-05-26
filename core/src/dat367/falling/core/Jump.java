@@ -4,7 +4,7 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Jump {
 
-    private World world;
+    private IWorld world;
     private GameMode gameMode;
     private ResourceRequirements resourceRequirements = new ResourceRequirements();
 
@@ -23,7 +23,7 @@ public class Jump {
         return resourceRequirements;
     }
 
-    public World getWorld() {
+    public IWorld getWorld() {
         return world;
     }
 
