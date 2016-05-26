@@ -19,7 +19,7 @@ public class Balloon extends Interactable {
     public Balloon(ResourceRequirements resourceRequirements, Vector position){
         model = new Model("balloon.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
-        collider = new SphereCollider(this, INTERACTABLE_ID, 5);
+        collider = new SphereCollider(this, INTERACTABLE_ID, 5.0f/3);
         CollisionManager.addCollider(collider);
         this.position = position;
     }
@@ -36,7 +36,7 @@ public class Balloon extends Interactable {
 
     public void update(float deltaTime){
         if (enabled) {
-            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5,5,5)));
+            RenderQueue.addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5.0f/3,5.0f/3,5.0f/3)));
         }
     }
 }

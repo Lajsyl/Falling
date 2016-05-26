@@ -154,6 +154,8 @@ public class LevelOne extends BalloonLevel {
         interactableList.add(obstacleNearPlane5);
     }
 
+    // TODO: FIX LEVEL DUE TO INTERACTIBLE SIZE DECREASE
+
     @Override
     public String toString() {
         return "LevelOne";
