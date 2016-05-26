@@ -8,22 +8,35 @@ public class FallingGame {
 
     public static final String BEFORE_GAME_RESTART_EVENT = "BeforeGameRestartEvent";
     public static final String AFTER_GAME_RESTART_EVENT = "AfterGameRestartEvent";
+    public static final String SCREEN_TAP_EVENT = "ScreenTapEvent";
+    public static final String SCREEN_DOUBLE_TAP_EVENT = "ScreenDoubleTapEvent";
 
     public FallingGame() {
         currentJump = new Jump();
+
+        NotificationManager.getDefault().addObserver(SCREEN_TAP_EVENT, new NotificationManager.EventHandler() {
+            @Override
+            public void handleEvent(NotificationManager.Event event) {
+                //Cannot be done before you've stopped
+                if (currentJump.getJumper().getFallState() instanceof LandedState || currentJump.getJumper().getFallState() instanceof CrashedState) {
+                    restartGame();
+                }
+            }
+        });
+
+        NotificationManager.getDefault().addObserver(SCREEN_DOUBLE_TAP_EVENT, new NotificationManager.EventHandler() {
+            @Override
+            public void handleEvent(NotificationManager.Event event) {
+                restartGame();
+            }
+        });
+
     }
 
     public void update(float deltaTime) {
         currentJump.update(deltaTime);
     }
 
-    public void screenClicked(boolean screenClicked) {
-        currentJump.getJumper().setScreenClicked(screenClicked);
-        //Can be done before you've stopped
-        if(currentJump.getJumper().getFallState() instanceof LandedState || currentJump.getJumper().getFallState() instanceof CrashedState){
-            this.restartGame();
-        }
-    }
 
     public void deviceShaken(boolean deviceShaken) {
 
@@ -46,12 +59,12 @@ public class FallingGame {
     public Vector getLookDirection() {
         return currentJump.getJumper().getLookDirection();
     }
-    
-    private void setCurrentJump(Jump jump){
+
+    private void setCurrentJump(Jump jump) {
         this.currentJump = jump;
     }
 
-    private void restartGame(){
+    private void restartGame() {
         NotificationManager.getDefault().registerEvent(BEFORE_GAME_RESTART_EVENT, this);
         setCurrentJump(new Jump());
         NotificationManager.getDefault().registerEvent(AFTER_GAME_RESTART_EVENT, this);
@@ -61,7 +74,4 @@ public class FallingGame {
         return currentJump.getJumper().getBodyRotation();
     }
 
-    public void screenDoubleClick() {
-        restartGame();
-    }
 }

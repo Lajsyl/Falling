@@ -152,10 +152,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void screenClick() {
-		game.screenClicked(true);
+		NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
+
 		if (timeSinceLastScreenPress >= DOUBLEPRESS_TIME_MIN_SECONDS
 				&& timeSinceLastScreenPress <= DOUBLEPRESS_TIME_MAX_SECONDS) {
-			game.screenDoubleClick();
+			NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_DOUBLE_TAP_EVENT, null);
 		}
 		timeSinceLastScreenPress = 0;
 	}
@@ -200,6 +201,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)){
+			NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
+
 			screenClick();
 		}
 
@@ -220,14 +223,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			dX /= MOUSE_SENSITIVITY;
 			dY /= MOUSE_SENSITIVITY;
 
-//			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
-//			mainCamera.normalizeUp();
-//			Vector3 lookDirection = currentLookDirection
-//					.rotateRad(mainCamera.up, -dX)
-//					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
 
-			// TODONE: Replace above with rotating simulatedHeadTransform instead, set headRotation to combination of bodyRotation and simulatedHeadTransform,
-			// TODONE: set camera to headTransform.
 
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
@@ -499,7 +495,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		this.shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
 			@Override
 			public void onShake() {
-				game.screenClicked(true);
+				NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
 			}
 		});
 	}

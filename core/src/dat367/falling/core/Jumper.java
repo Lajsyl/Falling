@@ -42,7 +42,7 @@ public class Jumper extends Observable implements Positioned {
 
 //    private Vector lookDirection;
 //    private Vector upVector = new Vector(0, 1, 0);
-    private boolean screenClicked = false;
+    //private boolean screenClicked = false;
 
     private SphereCollider sphereCollider;
     public static final String NAME = "Jumper";
@@ -162,15 +162,6 @@ public class Jumper extends Observable implements Positioned {
 
     public void setFallState(FallState fallState){ this.fallState = fallState; }
 
-    public void setScreenClicked(boolean screenClicked){
-        this.screenClicked = screenClicked;
-        setChanged();
-        notifyObservers();
-    }
-
-    public boolean getScreenClicked(){
-        return screenClicked;
-    }
 
     public String getFallStateDebugString() {
         return fallState.toString();
