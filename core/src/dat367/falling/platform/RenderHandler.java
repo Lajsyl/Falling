@@ -73,8 +73,8 @@ public class RenderHandler {
         spriteBatch = new SpriteBatch();
 
         debugFont = new BitmapFont();
-        smallFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
-        bigFont = new BitmapFont(Gdx.files.internal("yuppy_tc_53pt.fnt"));
+        smallFont = new BitmapFont(Gdx.files.internal("quadrangle_25.fnt"));
+        bigFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
 
         NotificationManager.addObserver(CrashedState.PLAYER_HAS_CRASHED_EVENT_ID, new NotificationManager.EventHandler() {
 
@@ -178,15 +178,28 @@ public class RenderHandler {
             for(GUITask guiTask : tasks){
                 if(guiTask instanceof GUITextTask){
                     GUITextTask textTask = (GUITextTask)guiTask;
-                    float posX = textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
-                    float posZ = textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
+                    BitmapFont font = textTask.isBigSize() ? bigFont : smallFont;
+                    float posX = textTask.getPosition().getX()*Gdx.graphics.getWidth();//textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
+                    float posZ = textTask.getPosition().getZ()*Gdx.graphics.getHeight();//textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
                     if(textTask.shouldCenterHorizontal()){
-                        final GlyphLayout layout = new GlyphLayout(smallFont, textTask.getText());
+                        final GlyphLayout layout = new GlyphLayout(font, textTask.getText());
                         posX -= layout.width/2f;
                     }
 
-                    smallFont.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
-                    smallFont.draw(spriteBatch, textTask.getText(), posX, posZ);//, Gdx.graphics.getWidth(), Align.center, true );
+                    int edgeThickness = 1;//textTask.isBigSize() ? 2 : 1;
+                    // Draw black text edges
+                    font.setColor(0,0,0, 1);
+                    font.draw(spriteBatch, textTask.getText(), posX+edgeThickness, posZ+edgeThickness);
+                    font.draw(spriteBatch, textTask.getText(), posX+edgeThickness, posZ+0);
+                    font.draw(spriteBatch, textTask.getText(), posX+edgeThickness, posZ-edgeThickness);
+                    font.draw(spriteBatch, textTask.getText(), posX+0, posZ-edgeThickness);
+                    font.draw(spriteBatch, textTask.getText(), posX-edgeThickness, posZ-edgeThickness);
+                    font.draw(spriteBatch, textTask.getText(), posX-edgeThickness, posZ+0);
+                    font.draw(spriteBatch, textTask.getText(), posX-edgeThickness, posZ+edgeThickness);
+                    font.draw(spriteBatch, textTask.getText(), posX+0, posZ+edgeThickness);
+                    // Draw text fill color
+                    font.setColor(textTask.getColour().getX(), textTask.getColour().getY(), textTask.getColour().getZ(), 1);
+                    font.draw(spriteBatch, textTask.getText(), posX, posZ);
                 }
             }
 

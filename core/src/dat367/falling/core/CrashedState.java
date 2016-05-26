@@ -38,13 +38,13 @@ public class CrashedState implements FallState {
         }else {
             String message;
             if (parachutePulled){
-                message = "Beware of where you land";
+                message = "        Beware of\n    where you land...";
             }else{
-                message = "Do not forget to pull the parachute";
+                message = "      Do not forget\nto pull the parachute...";
             }
 
             GUITextTask crashMessage =
-                    new GUITextTask("You have crashed! Game over!\n" + message + "\n\nPress the screen to restart", new Vector(200,200,200), new Vector(.5f, .5f, .65f), true);
+                    new GUITextTask("  You have crashed!\n" + message + "\n\n    Tap the screen\n        to restart", new Vector(200,200,200), new Vector(0.505f, 0, .608f), true, false);
             RenderQueue.addGUITask(crashMessage);
         }
 
