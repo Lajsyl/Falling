@@ -3,14 +3,7 @@ package dat367.falling.core;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class World {
-
-    public static final float AIR_DENSITY = 1.2041f * 5; // kg/m3 (at 20°C)
-
-    // Defined according to the coordinate system used
-    public static final float GRAVITATION = -9.82f * 10;
-    
-    public static final Vector ATMOSPHERE_COLOR = new Vector(165 / 255f, 215 / 255f, 250 / 255f);
+public class World implements IWorld{
 
     private Ground ground;
     private Island island;
