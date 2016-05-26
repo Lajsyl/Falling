@@ -31,6 +31,7 @@ public class FreeFallingState implements FallState, Observer {
     private PositionedSound fallingWind; // Has max volume when tilting straight towards ground
     private PositionedSound tiltingWind; // Has max volume when tilting fully towards a side, is positioned on that side
 
+    //TODO: Denna ska inte ha "sig själv"
     private FallState impendingState = null;
 
     @Override
