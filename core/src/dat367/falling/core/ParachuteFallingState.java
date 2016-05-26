@@ -17,6 +17,8 @@ public class ParachuteFallingState implements FallState {
 
     private float forwardSpeed = 30;
 
+
+    //TODO: Denna ska inte ha "sig själv"
     private FallState impendingState = null;
 
     private PositionedSound parachuteWind;
@@ -35,6 +37,7 @@ public class ParachuteFallingState implements FallState {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 impendingState = new LandedState((HeightMapCollider)event.data.getOtherObject());
+                //Spara denna data istället istället, och sätt en flagga att detta har hänt
             }
         });
     }
