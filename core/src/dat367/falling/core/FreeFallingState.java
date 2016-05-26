@@ -42,7 +42,7 @@ public class FreeFallingState implements FallState, Observer {
         fallingWind.loop();
         tiltingWind = new PinnedPositionedSound(jumper.tiltingWindSound, jumper, new Vector(0, -3, 0), 0.0f);
         tiltingWind.loop();
-        NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.getDefault().addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 float x = jumper.getPosition().getX();

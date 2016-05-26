@@ -27,7 +27,7 @@ public class Airplane {
         airplaneModel = new Model("airplane.g3db");
         resourceRequirements.require(airplaneModel);
 
-        NotificationManager.addObserver(FallState.STATE_CHANGED_EVENT_ID, new NotificationManager.EventHandler<FallState>() {
+        NotificationManager.getDefault().addObserver(FallState.STATE_CHANGED_EVENT_ID, new NotificationManager.EventHandler<FallState>() {
             @Override
             public void handleEvent(NotificationManager.Event<FallState> event) {
                 // If the fall state changed to FreeFalling state, the player has jumped off the airplane

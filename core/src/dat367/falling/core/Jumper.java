@@ -78,7 +78,7 @@ public class Jumper extends Observable implements Positioned {
         if (newState != null) {
             this.fallState = newState;
             fallState.setup(this);
-            NotificationManager.registerEvent(FallState.STATE_CHANGED_EVENT_ID, newState);
+            NotificationManager.getDefault().registerEvent(FallState.STATE_CHANGED_EVENT_ID, newState);
         }
         if (fallState instanceof ParachuteFallingState){
             parachuteUpdate();
@@ -117,7 +117,7 @@ public class Jumper extends Observable implements Positioned {
 
     public void setPosition(Vector position) {
         this.position = position;
-        NotificationManager.registerEvent(getPositionChangedEventID(), this);
+        NotificationManager.getDefault().registerEvent(getPositionChangedEventID(), this);
     }
 
     public Vector getVelocity() {

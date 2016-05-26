@@ -52,9 +52,9 @@ public class FallingGame {
     }
 
     private void restartGame(){
-        NotificationManager.registerEvent(BEFORE_GAME_RESTART_EVENT, this);
+        NotificationManager.getDefault().registerEvent(BEFORE_GAME_RESTART_EVENT, this);
         setCurrentJump(new Jump());
-        NotificationManager.registerEvent(AFTER_GAME_RESTART_EVENT, this);
+        NotificationManager.getDefault().registerEvent(AFTER_GAME_RESTART_EVENT, this);
     }
 
     public Rotation getJumperBodyRotation() {

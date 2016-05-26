@@ -76,7 +76,7 @@ public class RenderHandler {
         smallFont = new BitmapFont(Gdx.files.internal("quadrangle_25.fnt"));
         bigFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
 
-        NotificationManager.addObserver(CrashedState.PLAYER_HAS_CRASHED_EVENT_ID, new NotificationManager.EventHandler() {
+        NotificationManager.getDefault().addObserver(CrashedState.PLAYER_HAS_CRASHED_EVENT_ID, new NotificationManager.EventHandler() {
 
             @Override
             public void handleEvent(NotificationManager.Event event) {

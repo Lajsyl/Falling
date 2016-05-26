@@ -96,13 +96,13 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void setupRestartGameEventHandling() {
-		NotificationManager.addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+		NotificationManager.getDefault().addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.stopAllLoopingSounds();
 			}
 		});
-		NotificationManager.addObserver(FallingGame.AFTER_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
+		NotificationManager.getDefault().addObserver(FallingGame.AFTER_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);

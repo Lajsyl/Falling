@@ -181,14 +181,14 @@ public class ResourceHandler {
 
 
     public void setupSoundEventHandling() {
-        NotificationManager.addObserver(PositionedSound.PLAY_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.getDefault().addObserver(PositionedSound.PLAY_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 makeSoundAvailable(event.data);
                 cardboardAudioEngine.playSound(event.data.getSoundObjectID(), false);
             }
         });
-        NotificationManager.addObserver(PositionedSound.LOOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.getDefault().addObserver(PositionedSound.LOOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 makeSoundAvailable(event.data);
@@ -196,7 +196,7 @@ public class ResourceHandler {
                 loopingSounds.add(event.data.getSoundObjectID());
             }
         });
-        NotificationManager.addObserver(PositionedSound.STOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.getDefault().addObserver(PositionedSound.STOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {
@@ -204,7 +204,7 @@ public class ResourceHandler {
                 }
             }
         });
-        NotificationManager.addObserver(PositionedSound.CHANGE_POSITION_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.getDefault().addObserver(PositionedSound.CHANGE_POSITION_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {
@@ -213,7 +213,7 @@ public class ResourceHandler {
                 }
             }
         });
-        NotificationManager.addObserver(PositionedSound.CHANGE_VOLUME_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
+        NotificationManager.getDefault().addObserver(PositionedSound.CHANGE_VOLUME_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
                 if (event.data.getSoundObjectID() != -1) {

@@ -33,7 +33,7 @@ public class ParachuteFallingState implements FallState {
         jumper.setArea(jumper.PARACHUTE_AREA);
         parachuteWind = new PinnedPositionedSound(jumper.parachuteWindSound, jumper, new Vector(0, 2.5f, 0));
         parachuteWind.loop();
-        NotificationManager.addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.getDefault().addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 impendingState = new LandedState((HeightMapCollider)event.data.getOtherObject());

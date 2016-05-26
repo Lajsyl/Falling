@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class NotificationManager {
+public class NotificationManager {
 
-    private static Map<String, List<EventHandler>> map = new HashMap<String, List<EventHandler>>();
+    private Map<String, List<EventHandler>> map = new HashMap<String, List<EventHandler>>();
 
-    public static <D> void addObserver(String id, EventHandler<D> target) {
+    private static NotificationManager notificationManager;
+
+    public <D> void addObserver(String id, EventHandler<D> target) {
         if (!map.containsKey(id)) {
             map.put(id, new ArrayList<EventHandler>());
         }
@@ -17,7 +19,7 @@ public abstract class NotificationManager {
         map.get(id).add(target);
     }
 
-    public static <D> void registerEvent(String id, D data) {
+    public <D> void registerEvent(String id, D data) {
         Event<D> event = new Event<D>(data);
         List<EventHandler> handlerList = map.get(id);
         if (handlerList != null) {
@@ -35,13 +37,13 @@ public abstract class NotificationManager {
         }
     }
 
-    private static final class NotificationException extends RuntimeException {
+    private final class NotificationException extends RuntimeException {
         public NotificationException(String message) {
             super(message);
         }
     }
 
-    public static final class Event<D>{
+    public final class Event<D>{
         public Event(D data) {
             this.data = data;
         }
@@ -50,6 +52,13 @@ public abstract class NotificationManager {
 
     public interface EventHandler<T>{
         public void handleEvent(Event<T> event);
+    }
+
+    public static NotificationManager getDefault(){
+        if (notificationManager == null){
+            notificationManager = new NotificationManager();
+        }
+        return notificationManager;
     }
 
 }

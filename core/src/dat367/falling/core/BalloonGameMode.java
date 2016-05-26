@@ -31,14 +31,14 @@ public class BalloonGameMode implements GameMode {
         resourceRequirements.require(explosionSound);
 
         // Listen for all relevant collision events
-        NotificationManager.addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.getDefault().addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 balloonCollision(event.data);
             }
         });
 
-        NotificationManager.addObserver(CollisionManager.OBSTACLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
+        NotificationManager.getDefault().addObserver(CollisionManager.OBSTACLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
                 obstacleCollision(event.data);
@@ -46,7 +46,7 @@ public class BalloonGameMode implements GameMode {
         });
 
         // When the player has landed and stopped moving the game is finished
-        NotificationManager.addObserver(LandedState.PLAYER_HAS_STOPPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
+        NotificationManager.getDefault().addObserver(LandedState.PLAYER_HAS_STOPPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
 
             @Override
             public void handleEvent(NotificationManager.Event<Object> event) {
@@ -63,7 +63,7 @@ public class BalloonGameMode implements GameMode {
 //        setGameElementsEnabled(false);
 
         // When the player jumps out of the plane, enable collectibles and obstacles
-        NotificationManager.addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
+        NotificationManager.getDefault().addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
             @Override
             public void handleEvent(NotificationManager.Event<Object> event) {
                 setGameElementsEnabled(true);

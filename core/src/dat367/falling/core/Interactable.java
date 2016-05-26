@@ -26,7 +26,7 @@ public abstract class Interactable implements Positioned{
 
     public void setPosition(Vector position) {
         this.position = position;
-        NotificationManager.registerEvent(getPositionChangedEventID(), this);
+        NotificationManager.getDefault().registerEvent(getPositionChangedEventID(), this);
     }
 
     public abstract void update(float deltaTime);

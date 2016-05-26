@@ -47,7 +47,7 @@ public class LandedState implements FallState {
 
         if(jumper.getVelocity().lengthSquared() < 0.05f){
             jumper.setVelocity(0, 0 , 0);
-            NotificationManager.registerEvent(PLAYER_HAS_STOPPED_EVENT_ID, null);
+            NotificationManager.getDefault().registerEvent(PLAYER_HAS_STOPPED_EVENT_ID, null);
         }
 
         return null;

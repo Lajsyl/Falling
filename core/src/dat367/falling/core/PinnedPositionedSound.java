@@ -12,7 +12,7 @@ public class PinnedPositionedSound extends PositionedSound {
         super(sound, pinToObject.getPosition().add(offsetPosition), volume);
         this.pinToObject = pinToObject;
         this.offsetPosition = offsetPosition;
-        NotificationManager.addObserver(pinToObject.getPositionChangedEventID(), new NotificationManager.EventHandler<Positioned>() {
+        NotificationManager.getDefault().addObserver(pinToObject.getPositionChangedEventID(), new NotificationManager.EventHandler<Positioned>() {
             @Override
             public void handleEvent(NotificationManager.Event<Positioned> event) {
                 if (event.data == pinToObject) {

@@ -33,7 +33,7 @@ public class CollisionManager {
                 CollisionData collisionData = new CollisionData(jumperCollider, collider);
 
                 String eventId = getEventID(collider);
-                NotificationManager.registerEvent(eventId, collisionData);
+                NotificationManager.getDefault().registerEvent(eventId, collisionData);
             }
         }
     }

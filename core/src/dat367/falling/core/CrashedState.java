@@ -20,7 +20,7 @@ public class CrashedState implements FallState {
         jumper.setAcceleration(new Vector(0, 0, 0));
 
         Vector position = jumper.getPosition();
-        NotificationManager.registerEvent(PLAYER_HAS_CRASHED_EVENT_ID, null);
+        NotificationManager.getDefault().registerEvent(PLAYER_HAS_CRASHED_EVENT_ID, null);
 
         // Create shore sound from multiple directions
         for (float angle = 0; angle < 2*Math.PI; angle += 2*Math.PI/3) {

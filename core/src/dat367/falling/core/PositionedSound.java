@@ -28,15 +28,15 @@ public class PositionedSound {
     }
 
     public void play() {
-        NotificationManager.registerEvent(PLAY_SOUND_EVENT, this);
+        NotificationManager.getDefault().registerEvent(PLAY_SOUND_EVENT, this);
     }
 
     public void loop() {
-        NotificationManager.registerEvent(LOOP_SOUND_EVENT, this);
+        NotificationManager.getDefault().registerEvent(LOOP_SOUND_EVENT, this);
     }
 
     public void stop() {
-        NotificationManager.registerEvent(STOP_SOUND_EVENT, this);
+        NotificationManager.getDefault().registerEvent(STOP_SOUND_EVENT, this);
     }
 
 //    new PositionedSound(new Sound("wind01.wav"), new Vector(0, 4000, 0), 1.0).play()
@@ -60,7 +60,7 @@ public class PositionedSound {
 
     public void setPosition(Vector position) {
         this.position = position;
-        NotificationManager.registerEvent(CHANGE_POSITION_SOUND_EVENT, this);
+        NotificationManager.getDefault().registerEvent(CHANGE_POSITION_SOUND_EVENT, this);
     }
 
     public float getVolume() {
@@ -69,6 +69,6 @@ public class PositionedSound {
 
     public void setVolume(float volume) {
         this.volume = volume;
-        NotificationManager.registerEvent(CHANGE_VOLUME_SOUND_EVENT, this);
+        NotificationManager.getDefault().registerEvent(CHANGE_VOLUME_SOUND_EVENT, this);
     }
 }

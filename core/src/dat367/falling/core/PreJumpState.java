@@ -61,7 +61,7 @@ public class PreJumpState implements FallState {
                 if (THROW_OUT_JUMPER) {
                     jumper.setVelocity(20, 0, 0);
                 }
-                NotificationManager.registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
+                NotificationManager.getDefault().registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
                 return new FreeFallingState();
             }
         }
@@ -72,7 +72,7 @@ public class PreJumpState implements FallState {
                 if (THROW_OUT_JUMPER) {
                     jumper.setVelocity(20, 0, 0);
                 }
-                NotificationManager.registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
+                NotificationManager.getDefault().registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
                 return new FreeFallingState();
             }
         }
