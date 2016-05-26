@@ -14,6 +14,6 @@ public class Ground {
     }
 
     public void update(float deltaTime) {
-        RenderQueue.addTask(seaRenderTask);
+        RenderQueue.getDefault().addTask(seaRenderTask);
     }
 }

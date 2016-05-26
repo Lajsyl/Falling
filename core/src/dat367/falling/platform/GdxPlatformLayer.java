@@ -141,7 +141,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 
 	private void updateGame() {
-		RenderQueue.clear();
+		RenderQueue.getDefault().clear();
 		game.update(Gdx.graphics.getDeltaTime());
 		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
 		timeSinceLastScreenPress += Gdx.graphics.getDeltaTime();

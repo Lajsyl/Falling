@@ -130,9 +130,9 @@ public class BalloonGameMode implements GameMode {
         level.update(deltaTime, world.getJumper());
         if(gameIsFinished) {
             String endText = "  Your score was:\n\n\n\n  Tap the screen\n    to play again";
-            RenderQueue.addGUITask(new GUITextTask(endText, new Vector(1, 1, 1), new Vector(0.5f, 0, .61f), true, false));
+            RenderQueue.getDefault().addGUITask(new GUITextTask(endText, new Vector(1, 1, 1), new Vector(0.5f, 0, .61f), true, false));
             String scoreText = Integer.toString(1200);
-            RenderQueue.addGUITask(new GUITextTask(scoreText, new Vector(1, 1, 1), new Vector(0.505f, 0, .565f), true, true));
+            RenderQueue.getDefault().addGUITask(new GUITextTask(scoreText, new Vector(1, 1, 1), new Vector(0.505f, 0, .565f), true, true));
         }
     }
 

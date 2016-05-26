@@ -6,28 +6,36 @@ import java.util.Queue;
 
 public class RenderQueue {
 
-    private static Queue<RenderTask> queue = new LinkedList<RenderTask>();
-    private static Queue<GUITask> guiQueue = new LinkedList<GUITask>();
+    private Queue<RenderTask> queue = new LinkedList<RenderTask>();
+    private Queue<GUITask> guiQueue = new LinkedList<GUITask>();
 
-    public static void addTask(RenderTask task) {
+    public void addTask(RenderTask task) {
         queue.add(task);
     }
 
-    public static void addGUITask(GUITask guiTask){
+    public void addGUITask(GUITask guiTask){
         guiQueue.add(guiTask);
     }
 
-    public static void clear() {
+    private static RenderQueue renderQueue;
+
+    public void clear() {
         queue.clear();
         guiQueue.clear();
     }
 
-    public static Iterable<RenderTask> getTasks() {
+    public Iterable<RenderTask> getTasks() {
         return Collections.unmodifiableCollection(queue);
     }
 
-    public static Iterable<GUITask> getGUITasks() {
+    public Iterable<GUITask> getGUITasks() {
         return Collections.unmodifiableCollection(guiQueue);
     }
 
+    public static RenderQueue getDefault(){
+        if(renderQueue == null){
+            renderQueue = new RenderQueue();
+        }
+        return renderQueue;
+    }
 }

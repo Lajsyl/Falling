@@ -28,7 +28,7 @@ public class Cloud {
         this.position = position.add(velocity.scale(deltaTime)).add(additional);
 
         RenderTask cloudTask = new QuadRenderTask(quad, position, new Rotation(), new Vector(scale,1,scale));
-        RenderQueue.addTask(cloudTask);
+        RenderQueue.getDefault().addTask(cloudTask);
     }
 
     public Vector getPosition() {

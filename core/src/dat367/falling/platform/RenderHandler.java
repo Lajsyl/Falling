@@ -106,7 +106,7 @@ public class RenderHandler {
     private void render3D(Camera camera){
         modelBatch.begin(camera);
         {
-            Iterable<RenderTask> tasks = RenderQueue.getTasks();
+            Iterable<RenderTask> tasks = RenderQueue.getDefault().getTasks();
             for (RenderTask task : tasks) {
 
                 if (task instanceof ModelRenderTask) {
@@ -174,7 +174,7 @@ public class RenderHandler {
     private void render2D(Camera camera){
         spriteBatch.begin();
         {
-            Iterable<GUITask> tasks = RenderQueue.getGUITasks();
+            Iterable<GUITask> tasks = RenderQueue.getDefault().getGUITasks();
             for(GUITask guiTask : tasks){
                 if(guiTask instanceof GUITextTask){
                     GUITextTask textTask = (GUITextTask)guiTask;

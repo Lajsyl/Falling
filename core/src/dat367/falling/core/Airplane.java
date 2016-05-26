@@ -47,7 +47,7 @@ public class Airplane {
         }
 
 //        if (!playerHasJumpedOffAirplane) {
-            RenderQueue.addTask(new ModelRenderTask(
+            RenderQueue.getDefault().addTask(new ModelRenderTask(
                     airplaneModel,
                     position,
                     new Rotation(),

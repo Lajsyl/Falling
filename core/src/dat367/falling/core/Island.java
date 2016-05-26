@@ -31,7 +31,7 @@ public class Island implements Positioned {
     }
 
     public void update(float deltaTime) {
-//        RenderQueue.addTask(renderIsland);
+//        RenderQueue.getDefault().addTask(renderIsland);
     }
 
     @Override

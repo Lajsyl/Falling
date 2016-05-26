@@ -200,7 +200,7 @@ public class Jumper extends Observable implements Positioned {
 
     private void parachuteUpdate(){
         RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,3,0)), bodyRotation, new Vector(1,1,1));
-        RenderQueue.addTask(parachuteRender);
+        RenderQueue.getDefault().addTask(parachuteRender);
     }
 
 }

@@ -45,7 +45,7 @@ public class CrashedState implements FallState {
 
             GUITextTask crashMessage =
                     new GUITextTask("  You have crashed!\n" + message + "\n\n    Tap the screen\n        to restart", new Vector(200,200,200), new Vector(0.505f, 0, .608f), true, false);
-            RenderQueue.addGUITask(crashMessage);
+            RenderQueue.getDefault().addGUITask(crashMessage);
         }
 
 
