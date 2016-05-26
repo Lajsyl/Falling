@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NotificationManager {
+public abstract class NotificationManager {
 
     private static Map<String, List<EventHandler>> map = new HashMap<String, List<EventHandler>>();
 
