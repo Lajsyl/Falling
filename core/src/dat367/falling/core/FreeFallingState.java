@@ -10,7 +10,7 @@ import dat367.falling.platform_abstraction.RenderQueue;
 import java.util.Observable;
 import java.util.Observer;
 
-public class FreeFallingState implements FallState, Observer {
+public class FreeFallingState implements FallState {
 
     private boolean parachutePulled = false;
 
@@ -36,7 +36,6 @@ public class FreeFallingState implements FallState, Observer {
 
     @Override
     public void setup(final Jumper jumper) {
-        jumper.addObserver(this);
         uprightRotation = jumper.getBodyRotation();
         fallingWind = new PinnedPositionedSound(jumper.fallingWindSound, jumper, new Vector(0, -3, 0));
         fallingWind.loop();
@@ -52,16 +51,17 @@ public class FreeFallingState implements FallState, Observer {
                 impendingState = new CrashedState(false);
             }
         });
+        NotificationManager.getDefault().addObserver(FallingGame.SCREEN_TAP_EVENT, new NotificationManager.EventHandler() {
+            @Override
+            public void handleEvent(NotificationManager.Event event) {
+                parachutePulled = true;
+            }
+        });
+
     }
 
 
-    @Override // from Observer
-    public void update(Observable o, Object arg) {
-        if (o instanceof Jumper) {
-            Jumper jumper = (Jumper) o;
-            parachutePulled = jumper.getScreenClicked();
-        }
-    }
+
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {

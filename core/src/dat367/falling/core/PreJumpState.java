@@ -57,13 +57,13 @@ public class PreJumpState implements FallState {
 
         if (JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
             // If the player makes a jump in reality, jump them out of the plane in the game
-            if (jumper.getScreenClicked()) {
+            /*if (jumper.getScreenClicked()) {
                 if (THROW_OUT_JUMPER) {
                     jumper.setVelocity(20, 0, 0);
                 }
                 NotificationManager.getDefault().registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
                 return new FreeFallingState();
-            }
+            }*/
         }
         if (LOOK_DOWN_TO_JUMP_FROM_PLANE) {
             // If the player leans out far enough, jump!

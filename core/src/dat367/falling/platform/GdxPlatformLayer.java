@@ -152,10 +152,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	private void screenClick() {
-		game.screenClicked(true);
+		NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
+
 		if (timeSinceLastScreenPress >= DOUBLEPRESS_TIME_MIN_SECONDS
 				&& timeSinceLastScreenPress <= DOUBLEPRESS_TIME_MAX_SECONDS) {
-			game.screenDoubleClick();
+			NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_DOUBLE_TAP_EVENT, null);
 		}
 		timeSinceLastScreenPress = 0;
 	}
@@ -220,14 +221,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			dX /= MOUSE_SENSITIVITY;
 			dY /= MOUSE_SENSITIVITY;
 
-//			Vector3 currentLookDirection = libGdxVector(game.getLookDirection());
-//			mainCamera.normalizeUp();
-//			Vector3 lookDirection = currentLookDirection
-//					.rotateRad(mainCamera.up, -dX)
-//					.rotateRad(mainCamera.up.cpy().nor().crs(mainCamera.direction.cpy().nor()), dY);
-
-			// TODONE: Replace above with rotating simulatedHeadTransform instead, set headRotation to combination of bodyRotation and simulatedHeadTransform,
-			// TODONE: set camera to headTransform.
 
 			Vector direction = desktopSimulatedHeadTransform.getDirection();
 			Vector up = desktopSimulatedHeadTransform.getUp();
@@ -238,11 +231,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 //			System.out.println(desktopSimulatedHeadTransform.getUp());
 
-//			Vector3 lookAtVector = libGdxVector(game.getCurrentJump().getJumper().getPosition()).add(libGdxVector(newHeadRotation.getDirection()));
-//			mainCamera.lookAt(lookAtVector);
-
-//			mainCamera.direction.set(libGdxVector(newHeadRotation.getDirection()));
-//			mainCamera.up.set(libGdxVector(newHeadRotation.getUp()));
 		}
 
 		Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
@@ -259,11 +247,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
 
-//		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
-//		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation()));
-//		game.setJumperHeadRotation(newHeadRotation);
-
-//		System.out.println(game.getCurrentJump().getJumper().getBodyRotation().getDirection());
 	}
 
 	private void setDesktopCameraPosAndOrientation() {
@@ -482,7 +465,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	}
 
-	//screen clicks should release the parachute
+
 	@Override
 	public void onCardboardTrigger() {
 		screenClick();
@@ -499,7 +482,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		this.shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
 			@Override
 			public void onShake() {
-				game.screenClicked(true);
+				NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
 			}
 		});
 	}
