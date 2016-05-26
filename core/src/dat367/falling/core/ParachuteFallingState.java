@@ -105,12 +105,12 @@ public class ParachuteFallingState implements FallState {
 
         float drag;
         if (jumper.getVelocity().getY() < 0) {
-            drag = 0.5f * World.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
+            drag = 0.5f * IWorld.AIR_DENSITY * yVelocitySquared * jumper.getArea() * jumper.getDragCoefficient();
         } else {
             drag = 0;
         }
 
-        float newY = (World.GRAVITATION*90 + drag)/90;
+        float newY = (IWorld.GRAVITATION*90 + drag)/90;
 
         return new Vector(0,newY,0);
     }

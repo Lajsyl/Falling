@@ -126,7 +126,7 @@ public class BalloonGameMode implements GameMode {
         System.out.println("mine hit");
     }
 
-    public void update(float deltaTime, World world) {
+    public void update(float deltaTime, IWorld world) {
         level.update(deltaTime, world.getJumper());
         if(gameIsFinished) {
             String endText = "  Your score was:\n\n\n\n  Tap the screen\n    to play again";
