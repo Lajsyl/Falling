@@ -15,7 +15,10 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import dat367.falling.core.*;
+import dat367.falling.core.CrashedState;
+import dat367.falling.core.FallingGame;
+import dat367.falling.core.IWorld;
+import dat367.falling.core.NotificationManager;
 import dat367.falling.math.Matrix;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
@@ -71,7 +74,7 @@ public class RenderHandler {
 
         debugFont = new BitmapFont();
         smallFont = new BitmapFont(Gdx.files.internal("quadrangle_25.fnt"));
-        bigFont = new BitmapFont(Gdx.files.internal("quadrangle.fnt"));
+        bigFont = new BitmapFont(Gdx.files.internal("quadrangle_32.fnt"));
 
         NotificationManager.getDefault().addObserver(CrashedState.PLAYER_HAS_CRASHED_EVENT_ID, new NotificationManager.EventHandler() {
 
@@ -86,7 +89,7 @@ public class RenderHandler {
 
         if(!hasCrashed){
             Vector c = IWorld.ATMOSPHERE_COLOR;
-            Gdx.gl.glClearColor(c.getX(), c.getY(), c.getZ(), 1.0f); // (Bright desaturated sky blue)
+            Gdx.gl.glClearColor(c.getX(), c.getY(), c.getZ(), 1.0f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
             render3D(camera);
