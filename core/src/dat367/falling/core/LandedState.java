@@ -37,13 +37,17 @@ public class LandedState implements FallState {
         float x = jumper.getPosition().getX();
         float z = jumper.getPosition().getZ();
         float groundHeight;
-        if (landingTerrain.pointIsInsideXZBoundary(jumper.getPosition())) {
-            groundHeight = landingTerrain.getHeight(x, z);
-        } else {
-            groundHeight = landingTerrain.getBasePosition().getY();
+
+        // "Glue" jumper to the ground
+        if (landingTerrain != null) {
+            if (landingTerrain.pointIsInsideXZBoundary(jumper.getPosition())) {
+                groundHeight = landingTerrain.getHeight(x, z);
+            } else {
+                groundHeight = landingTerrain.getBasePosition().getY();
+            }
+            float y = groundHeight + Jumper.BODY_HEIGHT;
+            jumper.setPosition(x, y, z);
         }
-        float y = groundHeight + Jumper.BODY_HEIGHT;
-        jumper.setPosition(x, y, z);
 
         if(jumper.getVelocity().lengthSquared() < 0.05f){
             jumper.setVelocity(0, 0 , 0);
