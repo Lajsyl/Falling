@@ -13,6 +13,8 @@ public class Island implements Positioned {
     HeightMapCollider heightMapCollider;
     public static final String ID = "Island";
 
+    private Model blip = new Model("balloon.g3db");
+
     public Island(ResourceRequirements resourceRequirements, Vector position) {
         this.position = position;
 
@@ -27,11 +29,29 @@ public class Island implements Positioned {
         resourceRequirements.require(heightMap);
         heightMapCollider = new HeightMapCollider(this, ID, heightMap, position, 2*islandRadius, 2*islandRadius, islandHeight);
         CollisionManager.addCollider(heightMapCollider);
-
     }
 
     public void update(float deltaTime) {
 //        RenderQueue.getDefault().addTask(renderIsland);
+
+        for (int z = -1100; z < 1100; z += 35) {
+            for (int x = -1100; x < 1100; x += 35) {
+
+                Vector xzPosition = new Vector(x, 0, z);
+                if (heightMapCollider.pointIsInsideXZBoundary(xzPosition)) {
+
+                    Vector position = new Vector(x, heightMapCollider.getHeight(x, z), z);
+                    RenderTask currentBlip = new ModelRenderTask(
+                            blip,
+                            position,
+                            new Rotation(),
+                            new Vector(1f, 1f, 1f)
+                    );
+                    RenderQueue.getDefault().addTask(currentBlip);
+                }
+
+            }
+        }
     }
 
     @Override
