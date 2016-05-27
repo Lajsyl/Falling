@@ -12,7 +12,7 @@ public class Airplane {
     public static final Vector VELOCITY = new Vector(0, 0, 85f);
 
     public static final Rotation LOOK_OUT_DIRECTION = new Rotation(new Vector(0.975f, 0, -0.070f).normalized(), new Vector(0, 1, 0));
-    public static final Vector HEAD_START_POSITION_OFFSET = new Vector(0.0f, 0.6f, -1.95f);
+    public static final Vector HEAD_START_POSITION_OFFSET = new Vector(-0.06f, 0.6f, -1.95f - 0.15f); // -0.15f so that text is more readible;
 
     private Vector position;
     private Vector actualVelocity = new Vector(0, 0, 0);
