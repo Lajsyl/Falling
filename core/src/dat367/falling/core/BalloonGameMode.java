@@ -80,7 +80,9 @@ public class BalloonGameMode implements GameMode {
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
-        balloonCombo += 1;
+        if (balloonCombo < NUMBER_OF_BALLOON_SOUNDS) {
+            balloonCombo += 1;
+        }
         score += 100*balloonCombo;
         System.out.println(score);
 
