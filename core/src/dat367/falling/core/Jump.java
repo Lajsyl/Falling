@@ -4,13 +4,13 @@ import dat367.falling.platform_abstraction.ResourceRequirements;
 
 public class Jump {
 
-    private IWorld world;
+    private World world;
     private GameMode gameMode;
     private ResourceRequirements resourceRequirements = new ResourceRequirements();
 
     public Jump() {
         // Create world
-        world = new World(resourceRequirements);
+        world = new DefaultWorld(resourceRequirements);
         gameMode = new BalloonGameMode(resourceRequirements, new LevelOne(resourceRequirements));
     }
 
@@ -23,7 +23,7 @@ public class Jump {
         return resourceRequirements;
     }
 
-    public IWorld getWorld() {
+    public World getWorld() {
         return world;
     }
 

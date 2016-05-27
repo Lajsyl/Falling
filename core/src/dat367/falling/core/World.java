@@ -1,42 +1,19 @@
 package dat367.falling.core;
 
 import dat367.falling.math.Vector;
-import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class World implements IWorld{
+public interface World {
 
-    private Ground ground;
-    private Island island;
-    private CloudSimulator cloudSimulator;
-    private Jumper jumper;
-    private Airplane airplane;
+    float AIR_DENSITY = 1.2041f * 5; // kg/m3 (at 20°C)
 
+    // Defined according to the coordinate system used
+    float GRAVITATION = -9.82f * 10;
 
-    public World(ResourceRequirements resourceRequirements) {
-        CollisionManager.clear();
+    // Bright desaturated sky blue
+    Vector ATMOSPHERE_COLOR = new Vector(165 / 255f, 215 / 255f, 250 / 255f);
 
-        airplane = new Airplane(resourceRequirements, new Vector(0, 4000, 0));
-        ground = new Ground(resourceRequirements);
-        island = new Island(resourceRequirements, new Vector(0,0,0));
+    void update(float deltaTime);
 
-        // Create jumper using the airplane metrics
-        jumper = new Jumper(resourceRequirements, airplane.getHeadStartPosition(), airplane.getLookOutDirection());
+    Jumper getJumper();
 
-        cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
-
-    }
-
-    public void update(float deltaTime) {
-        jumper.update(deltaTime);
-        ground.update(deltaTime);
-        island.update(deltaTime);
-        cloudSimulator.update(deltaTime, jumper, airplane);
-        airplane.update(deltaTime);
-
-        CollisionManager.update(deltaTime);
-    }
-
-    public Jumper getJumper() {
-        return jumper;
-    }
 }
