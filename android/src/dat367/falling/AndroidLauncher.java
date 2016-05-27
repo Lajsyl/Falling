@@ -23,9 +23,6 @@ public class AndroidLauncher extends CardBoardAndroidApplication {
 		GdxPlatformLayer gdxPlatformLayer = new GdxPlatformLayer(true);
 		gdxPlatformLayer.setCardboardAudioEngine(cardboardAudioEngine);
 
-		shakeListener = new ShakeListener(this);
-		gdxPlatformLayer.setShakeListener(shakeListener);
-
 		initialize(gdxPlatformLayer, config);
 	}
 

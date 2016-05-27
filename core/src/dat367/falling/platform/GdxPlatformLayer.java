@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.CardBoardApplicationListener;
 import com.badlogic.gdx.backends.android.CardboardCamera;
-import com.badlogic.gdx.backends.android.ShakeListener;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -15,7 +14,6 @@ import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 import dat367.falling.core.FallingGame;
 import dat367.falling.core.NotificationManager;
-import dat367.falling.core.PreJumpState;
 import dat367.falling.math.Rotation;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.RenderQueue;
@@ -45,7 +43,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Rotation desktopSimulatedHeadTransform;
 
 	private CardboardAudioEngine cardboardAudioEngine;
-	private ShakeListener shakeListener;
 
 	public static final float DOUBLEPRESS_TIME_MIN_SECONDS = 0.050f;
 	public static final float DOUBLEPRESS_TIME_MAX_SECONDS = 0.500f;
@@ -66,9 +63,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			resourceHandler.setupSoundEventHandling();
-			if (PreJumpState.JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
-				setupShakeEventHandling();
-			}
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -129,12 +123,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void dispose() {
-		/*modelBatch.dispose();
-		spriteBatch.dispose();
-		for (String sound : preloadedSounds) {
-			cardboardAudioEngine.unloadSoundFile(sound);
-		}
-		preloadedSounds.clear();*/
 		// TODO: Dispose of all resources!
 	}
 
@@ -145,10 +133,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		game.update(Gdx.graphics.getDeltaTime());
 		resourceHandler.updateAnimations(Gdx.graphics.getDeltaTime());
 		timeSinceLastScreenPress += Gdx.graphics.getDeltaTime();
-	}
-
-	private String getFallStateString() {
-		return game.getCurrentJump().getJumper().getFallStateDebugString();
 	}
 
 	private void screenClick() {
@@ -426,7 +410,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Vector upDirection = yawPitchLeftDirection.scale((float)Math.sin(roll))
 							.add(yawPitchUpDirection.scale((float)Math.cos(roll)));
 
-//		return upDirection;
 		float x = upDirection.getX();
 		float y = upDirection.getY();
 		float z = upDirection.getZ();
@@ -471,37 +454,15 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		screenClick();
 	}
 
-
+	//---- UTILITIES ----//
 
 	// It seems that the cardboard coordinate system swaps x and z???
 	private Vector convertToCardboardCoordinateSystem(Vector position) {
 		return new Vector(position.getZ(), position.getY(), position.getX());
 	}
 
-	private void setupShakeEventHandling() {
-		this.shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
-			@Override
-			public void onShake() {
-				NotificationManager.getDefault().registerEvent(FallingGame.SCREEN_TAP_EVENT, null);
-			}
-		});
-	}
-
-	public void setShakeListener(ShakeListener shakeListener) {
-		this.shakeListener = shakeListener;
-	}
-
-	//---- UTILITIES ----//
-
 	private Vector3 libGdxVector(Vector vector) {
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
 	}
-
-
-	private Vector gameVector(Vector3 vector) {
-		return new Vector(vector.x, vector.y, vector.z);
-	}
-
-
 
 }

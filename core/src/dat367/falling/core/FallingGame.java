@@ -1,7 +1,6 @@
 package dat367.falling.core;
 
 import dat367.falling.math.Rotation;
-import dat367.falling.math.Vector;
 
 public class FallingGame {
     private Jump currentJump;
@@ -35,11 +34,6 @@ public class FallingGame {
 
     public void update(float deltaTime) {
         currentJump.update(deltaTime);
-    }
-
-
-    public void deviceShaken(boolean deviceShaken) {
-
     }
 
     public Jump getCurrentJump() {
