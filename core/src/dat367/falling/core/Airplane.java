@@ -19,13 +19,16 @@ public class Airplane {
     private boolean playerHasJumpedOffAirplane = false;
     private final float ACCELERATION_SCALE = 0.3f;
 
-    private Model airplaneModel;
+    private Model airplaneModel = new Model("airplane.g3db");
+    private Model introNoteModel = new Model("intro_note.g3db");
+    private Model scoringNoteModel = new Model("scoring_note.g3db");
 
     public Airplane(ResourceRequirements resourceRequirements, Vector position) {
         this.position = position;
 
-        airplaneModel = new Model("airplane.g3db");
         resourceRequirements.require(airplaneModel);
+        resourceRequirements.require(introNoteModel);
+        resourceRequirements.require(scoringNoteModel);
 
         NotificationManager.getDefault().addObserver(FallState.STATE_CHANGED_EVENT_ID, new NotificationManager.EventHandler<FallState>() {
             @Override
@@ -49,6 +52,18 @@ public class Airplane {
 //        if (!playerHasJumpedOffAirplane) {
             RenderQueue.getDefault().addTask(new ModelRenderTask(
                     airplaneModel,
+                    position,
+                    new Rotation(),
+                    new Vector(1, 1, 1)
+            ));
+            RenderQueue.getDefault().addTask(new ModelRenderTask(
+                    introNoteModel,
+                    position,
+                    new Rotation(),
+                    new Vector(1, 1, 1)
+            ));
+            RenderQueue.getDefault().addTask(new ModelRenderTask(
+                    scoringNoteModel,
                     position,
                     new Rotation(),
                     new Vector(1, 1, 1)
