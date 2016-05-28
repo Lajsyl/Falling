@@ -98,8 +98,6 @@ public class ParachuteFallingState implements FallState {
         return calcAccY(jumper).add(calcAccXZ(jumper));
     }
 
-    //Looks exactly like the one in FreeFalling, except different surface area...
-    //TODO adjust for optimal speed
     private Vector calcAccY(Jumper jumper){
         float yVelocitySquared = (float) Math.pow(jumper.getVelocity().getY(), 2);
 
@@ -160,7 +158,6 @@ public class ParachuteFallingState implements FallState {
     }
 
     private float calculateArea(float turnAmount){
-//        float turnAmount = Math.abs(rotationalSpeed)/MAX_ROTATIONAL_SPEED;
         return Jumper.PARACHUTE_AREA - (Jumper.PARACHUTE_AREA-Jumper.PARACHUTE_AREA_AT_FULL_TURN) * turnAmount;
 
     }

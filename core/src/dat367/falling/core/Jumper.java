@@ -65,11 +65,6 @@ public class Jumper extends Observable implements Positioned {
         CollisionManager.addCollider(sphereCollider);
         this.bodyRotation = bodyRotation;
 
-//        this.rotation = rotation;
-
-//        this.neutralLookDirection = neutralLookDirection;
-//        this.lookDirection = neutralLookDirection;
-
         fallState.setup(this);
     }
 
