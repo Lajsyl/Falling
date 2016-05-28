@@ -12,7 +12,10 @@ public class FallingGame {
 
     public FallingGame() {
         currentJump = new Jump();
+        setupScreenTapEventHandlers();
+    }
 
+    private void setupScreenTapEventHandlers() {
         NotificationManager.getDefault().addObserver(SCREEN_TAP_EVENT, new NotificationManager.EventHandler() {
             @Override
             public void handleEvent(NotificationManager.Event event) {
@@ -29,7 +32,6 @@ public class FallingGame {
                 restartGame();
             }
         });
-
     }
 
     public void update(float deltaTime) {
@@ -52,6 +54,7 @@ public class FallingGame {
     private void restartGame() {
         NotificationManager.getDefault().registerEvent(BEFORE_GAME_RESTART_EVENT, this);
         setCurrentJump(new Jump());
+        setupScreenTapEventHandlers();
         NotificationManager.getDefault().registerEvent(AFTER_GAME_RESTART_EVENT, this);
     }
 
