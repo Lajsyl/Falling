@@ -79,9 +79,13 @@ public class FreeFallingState implements FallState {
             return new ParachuteFallingState();
         }
         if (impendingState != null) {
+            fallingWind.stop();
+            tiltingWind.stop();
             return impendingState;
         }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
+            fallingWind.stop();
+            tiltingWind.stop();
             PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
             landingWaterPositionedSound.play();
             return new CrashedState(false);

@@ -11,8 +11,6 @@ public class Island implements Positioned {
     HeightMapCollider heightMapCollider;
     public static final String ID = "Island";
 
-    private Model blip = new Model("balloon.g3db");
-
     public Island(ResourceRequirements resourceRequirements, Vector position) {
         this.position = position;
         float islandRadius = 500.0f;
@@ -24,6 +22,7 @@ public class Island implements Positioned {
 
     public void update(float deltaTime) {
         // Visual debugging of the heightmap
+//        Model blip = new Model("balloon.g3db");
 //        for (int z = -1100; z < 1100; z += 35) {
 //            for (int x = -1100; x < 1100; x += 35) {
 //
