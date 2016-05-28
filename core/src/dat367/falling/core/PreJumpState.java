@@ -16,7 +16,6 @@ public class PreJumpState implements FallState {
 
     private final float JUMP_THRESHOLD = 0.93f;
 
-    public static final boolean JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE = false;
     public static final boolean LOOK_DOWN_TO_JUMP_FROM_PLANE = true;
 
     private PositionedSound airplaneWind;
@@ -55,16 +54,6 @@ public class PreJumpState implements FallState {
         Vector finalHeadPosition = hipPosition.add(outwardsComponent).add(upComponent);
         jumper.setPosition(finalHeadPosition);
 
-        if (JUMP_IN_REAL_LIFE_TO_JUMP_FROM_PLANE) {
-            // If the player makes a jump in reality, jump them out of the plane in the game
-            /*if (jumper.getScreenClicked()) {
-                if (THROW_OUT_JUMPER) {
-                    jumper.setVelocity(20, 0, 0);
-                }
-                NotificationManager.getDefault().registerEvent(PLAYER_HAS_JUMPED_EVENT_ID, null);
-                return new FreeFallingState();
-            }*/
-        }
         if (LOOK_DOWN_TO_JUMP_FROM_PLANE) {
             // If the player leans out far enough, jump!
             double lookDownAmount = FallingMath.clamp01(down.dot(lookDirection));
