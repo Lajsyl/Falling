@@ -55,6 +55,7 @@ public class Airplane {
                     new Rotation(),
                     new Vector(1, 1, 1)
             ));
+        if (!playerHasJumpedOffAirplane) {
             RenderQueue.getDefault().addTask(new ModelRenderTask(
                     introNoteModel,
                     position,
@@ -67,6 +68,7 @@ public class Airplane {
                     new Rotation(),
                     new Vector(1, 1, 1)
             ));
+        }
     }
 
     public Vector getActualVelocity() {

@@ -14,8 +14,6 @@ public class Balloon extends Interactable {
 
     private Model model;
 
-    private boolean enabled = true;
-
     public Balloon(ResourceRequirements resourceRequirements, Vector position){
         model = new Model("balloon.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
