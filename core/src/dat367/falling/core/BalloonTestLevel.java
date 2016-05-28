@@ -151,6 +151,10 @@ public class BalloonTestLevel extends BalloonLevel {
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
+        // Make interactibles (except the the two closest below) initially disabled to improve frame rate in airplane
+        for (Interactable interactable : interactableList) {
+            interactable.setEnabled(false);
+        }
 
         Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-2.8f, 4005-300, 0));
         interactableList.add(balloonNearPlane);
