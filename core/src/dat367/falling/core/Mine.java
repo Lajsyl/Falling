@@ -14,13 +14,19 @@ public class Mine extends Interactable {
     public static final String POSITION_CHANGED_EVENT_ID = "ObstaclePositionChangedEvent";
 
     private Model model;
+    private float explosiveness;
 
-    public Mine(ResourceRequirements resourceRequirements, Vector position) {
+    public Mine(ResourceRequirements resourceRequirements, Vector position, float explosiveness) {
         model = new Model("mine.g3db", true, true, BalloonGameMode.BALLOON_MAX_DRAW_DISTANCE, BalloonGameMode.BALLOON_FADE_OUT_DISTANCE);
         resourceRequirements.require(model);
         collider = new SphereCollider(this, INTERACTABLE_ID, 5.0f/3);
         CollisionManager.addCollider(collider);
         this.position = position;
+        this.explosiveness = explosiveness;
+    }
+
+    public Mine(ResourceRequirements resourceRequirements, Vector position) {
+        this(resourceRequirements, position, 1.0f);
     }
 
     @Override
@@ -37,6 +43,14 @@ public class Mine extends Interactable {
         if (enabled) {
             RenderQueue.getDefault().addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5.0f/3,5.0f/3,5.0f/3)));
         }
+    }
+
+    public float getExplosiveness() {
+        return explosiveness;
+    }
+
+    public void setExplosiveness(float explosiveness) {
+        this.explosiveness = explosiveness;
     }
 }
 

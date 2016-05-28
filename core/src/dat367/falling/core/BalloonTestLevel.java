@@ -152,18 +152,10 @@ public class BalloonTestLevel extends BalloonLevel {
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
 
-        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-13.3f, 4015-300, 0));
+        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-2.8f, 4005-300, 0));
         interactableList.add(balloonNearPlane);
-        Interactable obstacleNearPlane = new Mine(resourceRequirements, new Vector(0, 3930-300, -50));
+        Interactable obstacleNearPlane = new Mine(resourceRequirements, new Vector(0, 3950-300, -28.5f), 1.2f);
         interactableList.add(obstacleNearPlane);
-        Interactable obstacleNearPlane2 = new Mine(resourceRequirements, new Vector(-20, 3960-300, -50));
-        interactableList.add(obstacleNearPlane2);
-        Interactable obstacleNearPlane3 = new Mine(resourceRequirements, new Vector(-30, 3990-300, -50));
-        interactableList.add(obstacleNearPlane3);
-        Interactable obstacleNearPlane4 = new Mine(resourceRequirements, new Vector(-35, 4010-300, -50));
-        interactableList.add(obstacleNearPlane4);
-        Interactable obstacleNearPlane5 = new Mine(resourceRequirements, new Vector(-35, 4030-300, -50));
-        interactableList.add(obstacleNearPlane5);
     }
 
     @Override

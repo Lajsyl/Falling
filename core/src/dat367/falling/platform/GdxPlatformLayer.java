@@ -106,6 +106,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
 				renderHandler.reset();
+				renderHandler.setupCrashedEventHandler();
 			}
 		});
 	}
