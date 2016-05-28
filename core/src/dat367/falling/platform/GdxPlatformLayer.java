@@ -213,8 +213,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			up = desktopSimulatedHeadTransform.getUp();
 
 
-//			System.out.println(desktopSimulatedHeadTransform.getUp());
-
 		}
 
 		Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
@@ -238,10 +236,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Vector jumperHeadPosition = game.getCurrentJump().getJumper().getPosition();
 		mainCamera.position.set(libGdxVector(jumperHeadPosition));
 
-		// Set camera orientation depending on jumper look direction
-//		Vector jumperLookDirection = game.getCurrentJump().getJumper().getLookDirection();
-//		Vector lookAtPoint = jumperHeadPosition.add(jumperLookDirection);
-//		mainCamera.lookAt(libGdxVector(lookAtPoint));
+		// Set camera orientation depending on jumper rotation
 		Rotation bodyRotation = game.getJumperBodyRotation();
 		Rotation headRotation = game.getCurrentJump().getJumper().getHeadRotation();
 
@@ -337,14 +332,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private void updateHeadPlacementForPositionalSound(HeadTransform paramHeadTransform) {
 		Vector position = convertToCardboardCoordinateSystem(new Vector(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z));
 		cardboardAudioEngine.setHeadPosition(position.getX(), position.getY(), position.getZ());
-//		cardboardAudioEngine.setHeadPosition(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
 		Rotation head = getCurrentHeadRotation(paramHeadTransform);
 		Vector xAxis = head.getDirection();
 		Vector yAxis = head.getUp();
 		Vector zAxis = head.getRight();
-//		Vector xAxis = head.getRight().scale(-1);
-//		Vector yAxis = head.getUp();
-//		Vector zAxis = head.getDirection();
 		Quaternion headQuaternion = new Quaternion().setFromAxes(xAxis.getX(), xAxis.getY(), xAxis.getZ(),
 				yAxis.getX(), yAxis.getY(), yAxis.getZ(),
 				zAxis.getX(), zAxis.getY(), zAxis.getZ());
@@ -383,7 +374,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		float x = (float)(Math.cos(yaw)*Math.cos(pitch));
 		float y = (float)(Math.sin(pitch));
 		float z = (float)(-Math.sin(yaw)*Math.cos(pitch));
-//		return new Vector(x, y, z);
 
 		return bodyRotation.getDirection().scale(x)
 				.add(bodyRotation.getUp().scale(y))

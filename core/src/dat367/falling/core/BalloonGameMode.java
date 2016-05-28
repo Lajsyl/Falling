@@ -106,7 +106,7 @@ public class BalloonGameMode implements GameMode {
     }
 
     private void obstacleCollision(CollisionManager.CollisionData collisionData) {
-        // Experiment with bouncing on mine
+        // Bounce on mine
         Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
         Mine mine = (Mine)collisionData.getOtherObject().getParent();
         Vector yBounce = new Vector(0, 220.0f, 0);
@@ -114,10 +114,8 @@ public class BalloonGameMode implements GameMode {
         Vector obstaclePos = collisionData.getOtherObject().getPosition();
         Vector xzBounce = playerPos.sub(obstaclePos).projectOntoPlaneXZ().scale(100.0f);//new Vector(jumper.getVelocity().getX(), 0, jumper.getVelocity().getZ());
         jumper.setVelocity(xzBounce.add(yBounce));
-//        PositionedSound explosionPositionedSound = new PinnedPositionedSound(explosionSound, collisionData.getJumperObject().getParent(), new Vector(0, -5, 0));
         PositionedSound explosionPositionedSound = new PositionedSound(explosionSound, collisionData.getOtherObject().getPosition());
         explosionPositionedSound.play();
-//        jumper.setVelocity(jumper.getVelocity().getX(), -1000.0f, jumper.getVelocity().getZ());
         // --------------------------------
 
         collisionData.getOtherObject().setEnabled(false);

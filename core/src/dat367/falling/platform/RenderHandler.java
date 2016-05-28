@@ -157,7 +157,7 @@ public class RenderHandler {
                             }
                         }
 
-                        // NOTE: No rotation (for now?)!
+                        // NOTE: No rotation!
                         modelInstanceCopy.transform = modelInstanceCopy.transform
                                 .translate(libGdxVector(task.getPosition()))
                                 .scale(task.getScale().getX(), task.getScale().getY(), task.getScale().getZ());
@@ -179,8 +179,8 @@ public class RenderHandler {
                 if(guiTask instanceof GUITextTask){
                     GUITextTask textTask = (GUITextTask)guiTask;
                     BitmapFont font = textTask.isBigSize() ? bigFont : smallFont;
-                    float posX = textTask.getPosition().getX()*Gdx.graphics.getWidth();//textTask.getPosition().getX()*Gdx.graphics.getBackBufferWidth();
-                    float posZ = textTask.getPosition().getZ()*Gdx.graphics.getHeight();//textTask.getPosition().getZ()*Gdx.graphics.getBackBufferHeight();
+                    float posX = textTask.getPosition().getX()*Gdx.graphics.getWidth();
+                    float posZ = textTask.getPosition().getZ()*Gdx.graphics.getHeight();
                     if(textTask.shouldCenterHorizontal()){
                         final GlyphLayout layout = new GlyphLayout(font, textTask.getText());
                         posX -= layout.width/2f;
