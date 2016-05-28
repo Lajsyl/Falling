@@ -37,6 +37,10 @@ public class NotificationManager {
         }
     }
 
+    public <D> void clear() {
+        map.clear();
+    }
+
     private final class NotificationException extends RuntimeException {
         public NotificationException(String message) {
             super(message);

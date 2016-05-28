@@ -85,7 +85,7 @@ public class ResourceHandler {
 
     private void loadModels(ResourceRequirements resourceRequirements) {
         for (Model model : resourceRequirements.getModels()) {
-            String fileName = model.getModelFileName();
+                String fileName = model.getModelFileName();
             if (!models.containsKey(fileName)) {
 
                 com.badlogic.gdx.graphics.g3d.Model gdxModel = modelLoader.loadModel(Gdx.files.getFileHandle(fileName, Files.FileType.Internal));
@@ -226,6 +226,7 @@ public class ResourceHandler {
     private void makeSoundAvailable(PositionedSound sound) {
         if (sound.getSoundObjectID() == -1) { // If cardboard sound object does not exist, create it
             if (!preloadedSounds.contains(sound.getSoundFileName())) { // If sound is not preloaded, load it
+                System.out.println(sound);
                 cardboardAudioEngine.preloadSoundFile(sound.getSoundFileName());
                 preloadedSounds.add(sound.getSoundFileName());
             }

@@ -94,6 +94,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.stopAllLoopingSounds();
+				NotificationManager.getDefault().clear();
+				setupRestartGameEventHandling();
+				if (platformIsAndroid) {
+					resourceHandler.setupSoundEventHandling();
+				}
 			}
 		});
 		NotificationManager.getDefault().addObserver(FallingGame.AFTER_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
@@ -113,12 +118,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void pause() {
-
+		if (platformIsAndroid) {
+			cardboardAudioEngine.pause();
+		}
 	}
 
 	@Override
 	public void resume() {
-
+		if (platformIsAndroid) {
+			cardboardAudioEngine.resume();
+		}
 	}
 
 	@Override
