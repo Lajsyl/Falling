@@ -94,7 +94,6 @@ public class SimpleShader implements Shader {
         //
         // Set specific uniforms
         //
-
         if (renderable.userData instanceof Quad) {
             final Quad quad = (Quad) renderable.userData;
             setQuadUniforms(quad);
@@ -129,11 +128,6 @@ public class SimpleShader implements Shader {
         if (model.shouldFadeOut()) {
             maxDrawDistance = model.getMaxDrawDistance();
             maxOpacityDistance = model.getMaxDrawDistance() - model.getFadeOutDistance();
-
-            //float cameraObjectDistanceSqr = currentCamera.position.cpy().sub(renderablePosition).len2();
-            //float maxOpacityDistanceSqr = maxOpacityDistance * maxOpacityDistance;
-            //boolean depthMask = cameraObjectDistanceSqr < maxOpacityDistanceSqr;
-            //renderContext.setDepthMask(depthMask);
         } else {
             // Some arbitrary big number, so objects that shouldn't fade wont.
             final float drawDistance = 10000000; /* 10 million meters. */

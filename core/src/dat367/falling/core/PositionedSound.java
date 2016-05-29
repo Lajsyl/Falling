@@ -39,9 +39,6 @@ public class PositionedSound {
         NotificationManager.getDefault().registerEvent(STOP_SOUND_EVENT, this);
     }
 
-//    new PositionedSound(new Sound("wind01.wav"), new Vector(0, 4000, 0), 1.0).play()
-
-
     public int getSoundObjectID() {
         return soundObjectID;
     }

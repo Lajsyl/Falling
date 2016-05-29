@@ -38,7 +38,6 @@ public class ResourceHandler {
     private UBJsonReader jsonReader = new UBJsonReader();
     private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
 
-
     public void loadResources(ResourceRequirements resourceRequirements, boolean platformIsAndroid) {
         loadModels(resourceRequirements);
         loadQuads(resourceRequirements);

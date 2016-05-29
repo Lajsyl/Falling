@@ -140,8 +140,6 @@ public class FreeFallingState implements FallState {
             targetVelocity = targetVelocity.normalized().scale(maxSpeed);
         }
 
-
-        //TODO find a good-looking way to do this
         float turnAmount = targetVelocity.length()/maxSpeed;
         jumper.setArea(Jumper.BODY_AREA - (Jumper.BODY_AREA-Jumper.BODY_AREA_AT_FULL_TURN) * turnAmount);
 
