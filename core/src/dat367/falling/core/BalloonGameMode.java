@@ -27,7 +27,6 @@ public class BalloonGameMode implements GameMode {
     private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements, BalloonLevel level) {
-
         initBalloonSounds(resourceRequirements);
         resourceRequirements.require(explosionSound);
         resourceRequirements.require(applauseSound);
@@ -43,7 +42,7 @@ public class BalloonGameMode implements GameMode {
         NotificationManager.getDefault().addObserver(CollisionManager.OBSTACLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
-                obstacleCollision(event.data);
+                mineCollision(event.data);
             }
         });
 
@@ -56,13 +55,8 @@ public class BalloonGameMode implements GameMode {
             }
         });
 
-
         this.level = level;
         level.create();
-        // Wait with enabling game elements rendering
-        // until after the player jumps out of the plane
-        // in order to improve frame rate
-//        setGameElementsEnabled(false);
 
         // When the player jumps out of the plane, enable collectibles and obstacles
         NotificationManager.getDefault().addObserver(PreJumpState.PLAYER_HAS_JUMPED_EVENT_ID, new NotificationManager.EventHandler<Object>() {
@@ -80,8 +74,10 @@ public class BalloonGameMode implements GameMode {
     }
 
     private void balloonCollision(CollisionManager.CollisionData collisionData) {
+        //Remove the balloon player collided with
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
+
         if (balloonCombo < NUMBER_OF_BALLOON_SOUNDS) {
             balloonCombo += 1;
         }
@@ -114,7 +110,7 @@ public class BalloonGameMode implements GameMode {
         }
     }
 
-    private void obstacleCollision(CollisionManager.CollisionData collisionData) {
+    private void mineCollision(CollisionManager.CollisionData collisionData) {
         // Bounce on mine
         Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
         Mine mine = (Mine)collisionData.getOtherObject().getParent();
@@ -127,10 +123,10 @@ public class BalloonGameMode implements GameMode {
         explosionPositionedSound.play();
         // --------------------------------
 
+        //Remove the mine player collided with
         collisionData.getOtherObject().setEnabled(false);
         collisionData.getOtherObject().setParentEnabled(false);
         balloonCombo = 0;
-        System.out.println("mine hit");
     }
 
     public void update(float deltaTime, World world) {
