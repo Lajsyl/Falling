@@ -21,9 +21,7 @@ public class DefaultWorld implements World {
 
         // Create jumper using the airplane metrics
         jumper = new Jumper(resourceRequirements, airplane.getHeadStartPosition(), airplane.getLookOutDirection());
-
         cloudSimulator = new CloudSimulator(resourceRequirements, jumper);
-
     }
 
     public void update(float deltaTime) {
@@ -32,7 +30,6 @@ public class DefaultWorld implements World {
         island.update(deltaTime);
         cloudSimulator.update(deltaTime, jumper, airplane);
         airplane.update(deltaTime);
-
         CollisionManager.update(deltaTime);
     }
 

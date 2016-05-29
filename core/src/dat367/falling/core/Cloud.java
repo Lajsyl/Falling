@@ -5,6 +5,7 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.*;
 
 public class Cloud {
+
     private Quad quad;
     private Vector position = new Vector(0, 0, 0);
     private Vector velocity = new Vector(0, 0, 0);

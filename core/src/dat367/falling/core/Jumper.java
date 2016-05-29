@@ -40,10 +40,6 @@ public class Jumper extends Observable implements Positioned {
     private Rotation headRotation = new Rotation(new Vector(1, 0, 0), new Vector(0, 1, 0));
     private Rotation adjustmentRotation = new Rotation();
 
-//    private Vector lookDirection;
-//    private Vector upVector = new Vector(0, 1, 0);
-    //private boolean screenClicked = false;
-
     private SphereCollider sphereCollider;
     public static final String NAME = "Jumper";
     public static final String POSITION_CHANGED_EVENT_ID = "JumperPositionChangedEvent";
@@ -157,7 +153,6 @@ public class Jumper extends Observable implements Positioned {
 
     public void setFallState(FallState fallState){ this.fallState = fallState; }
 
-
     public String getFallStateDebugString() {
         return fallState.toString();
     }
@@ -188,5 +183,4 @@ public class Jumper extends Observable implements Positioned {
         RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,3,0)), bodyRotation, new Vector(1,1,1));
         RenderQueue.getDefault().addTask(parachuteRender);
     }
-
 }
