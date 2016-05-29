@@ -38,8 +38,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private static final float Z_FAR = 30000.0f;
 
 	private ResourceHandler resourceHandler = new ResourceHandler();
+	private AudioHandler audioHandler  = new AudioHandler();
 	private RenderHandler renderHandler;
-	private AudioHandler audioHandler;
 
 	private Rotation desktopSimulatedHeadTransform;
 
@@ -59,15 +59,12 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void create() {
 
-		game = new FallingGame();
 
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
-			audioHandler = new AudioHandler(mainCamera, game.getCurrentJump().getResourceRequirements());
 			audioHandler.setupSoundEventHandling();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-			audioHandler = new AudioHandler(mainCamera, game.getCurrentJump().getResourceRequirements());
 
 			// Instead of getting the head transform from a VR device,
 			// we simulate this on desktop with a rotation controlled with the mouse
@@ -76,7 +73,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		setupRestartGameEventHandling();
 
+		game = new FallingGame(); // Game must be initialized after soundEventHandling is setup but before sound files are loaded
 		resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+		audioHandler.loadAudio(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
 		renderHandler = new RenderHandler(resourceHandler, game, platformIsAndroid);
 
 		mainCamera.near = Z_NEAR;
@@ -107,7 +106,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
-				audioHandler.loadAudio(platformIsAndroid);
+				audioHandler.loadAudio(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
 				renderHandler.reset();
 			}
 		});
@@ -330,7 +329,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		// Update things that are affected by game logic
 		updateCamera();
 		Rotation head = getCurrentHeadRotation(paramHeadTransform);
-		audioHandler.updateHeadPlacementForPositionalSound(head);
+		audioHandler.updateHeadPlacementForPositionalSound(mainCamera, head);
 	}
 
 	private void updateCamera() {

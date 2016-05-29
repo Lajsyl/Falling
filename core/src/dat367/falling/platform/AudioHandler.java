@@ -19,20 +19,12 @@ import java.util.Set;
 
 public class AudioHandler {
 
-    Camera mainCamera;
     private CardboardAudioEngine cardboardAudioEngine;
 
     private Set<String> preloadedSounds = new HashSet<String>();
     private List<Integer> loopingSounds = new ArrayList<Integer>();
 
-    private ResourceRequirements resourceRequirements;
-
-    public AudioHandler(Camera mainCamera, ResourceRequirements resourceRequirements){
-        this.mainCamera = mainCamera;
-        this.resourceRequirements = resourceRequirements;
-    }
-
-    public void updateHeadPlacementForPositionalSound(Rotation head) {
+    public void updateHeadPlacementForPositionalSound(Camera mainCamera, Rotation head) {
         Vector position = convertToCardboardCoordinateSystem(new Vector(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z));
         cardboardAudioEngine.setHeadPosition(position.getX(), position.getY(), position.getZ());
         Vector xAxis = head.getDirection();
@@ -44,7 +36,7 @@ public class AudioHandler {
         cardboardAudioEngine.setHeadRotation(headQuaternion.x, headQuaternion.y, headQuaternion.z, headQuaternion.w);
     }
 
-    public void loadAudio(boolean platformIsAndroid){
+    public void loadAudio(ResourceRequirements resourceRequirements, boolean platformIsAndroid){
         if (platformIsAndroid) {
             loadSounds(resourceRequirements);
         }
@@ -144,7 +136,7 @@ public class AudioHandler {
     }
 
 
-    // It seems that the cardboard coordinate system swaps x and z???
+    // The cardboard coordinate system swaps x and z compared to ours
     private Vector convertToCardboardCoordinateSystem(Vector position) {
         return new Vector(position.getZ(), position.getY(), position.getX());
     }
