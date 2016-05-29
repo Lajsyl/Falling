@@ -38,11 +38,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private static final float Z_FAR = 30000.0f;
 
 	private ResourceHandler resourceHandler = new ResourceHandler();
+	private AudioHandler audioHandler  = new AudioHandler();
 	private RenderHandler renderHandler;
 
 	private Rotation desktopSimulatedHeadTransform;
 
-	private CardboardAudioEngine cardboardAudioEngine;
 
 	public static final float DOUBLEPRESS_TIME_MIN_SECONDS = 0.050f;
 	public static final float DOUBLEPRESS_TIME_MAX_SECONDS = 0.500f;
@@ -53,16 +53,16 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	}
 
 	public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
-		this.cardboardAudioEngine = cardboardAudioEngine;
-		resourceHandler.setCardboardAudioEngine(cardboardAudioEngine);
+		audioHandler.setCardboardAudioEngine(cardboardAudioEngine);
 	}
 
 	@Override
 	public void create() {
 
+
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
-			resourceHandler.setupSoundEventHandling();
+			audioHandler.setupSoundEventHandling();
 		} else {
 			mainCamera = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -73,8 +73,9 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		setupRestartGameEventHandling();
 
-		game = new FallingGame();
+		game = new FallingGame(); // Game must be initialized after soundEventHandling is setup but before sound files are loaded
 		resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+		audioHandler.loadAudio(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
 		renderHandler = new RenderHandler(resourceHandler, game, platformIsAndroid);
 
 		mainCamera.near = Z_NEAR;
@@ -93,11 +94,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		NotificationManager.getDefault().addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
-				resourceHandler.stopAllLoopingSounds();
+				audioHandler.stopAllLoopingSounds();
 				NotificationManager.getDefault().clear();
 				setupRestartGameEventHandling();
 				if (platformIsAndroid) {
-					resourceHandler.setupSoundEventHandling();
+					audioHandler.setupSoundEventHandling();
 				}
 			}
 		});
@@ -105,6 +106,7 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
 				resourceHandler.loadResources(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
+				audioHandler.loadAudio(game.getCurrentJump().getResourceRequirements(), platformIsAndroid);
 				renderHandler.reset();
 				renderHandler.setupCrashedEventHandler();
 			}
@@ -120,14 +122,14 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void pause() {
 		if (platformIsAndroid) {
-			cardboardAudioEngine.pause();
+			audioHandler.pause();
 		}
 	}
 
 	@Override
 	public void resume() {
 		if (platformIsAndroid) {
-			cardboardAudioEngine.resume();
+			audioHandler.resume();
 		}
 	}
 
@@ -327,7 +329,8 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 		// Update things that are affected by game logic
 		updateCamera();
-		updateHeadPlacementForPositionalSound(paramHeadTransform);
+		Rotation head = getCurrentHeadRotation(paramHeadTransform);
+		audioHandler.updateHeadPlacementForPositionalSound(mainCamera, head);
 	}
 
 	private void updateCamera() {
@@ -337,19 +340,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Rotation adjustedBodyRotation = bodyRotation.rotate(game.getCurrentJump().getJumper().getAdjustmentRotation());
 		mainCamera.direction.set(libGdxVector(adjustedBodyRotation.getDirection()));
 		mainCamera.up.set(libGdxVector(adjustedBodyRotation.getUp()));
-	}
-
-	private void updateHeadPlacementForPositionalSound(HeadTransform paramHeadTransform) {
-		Vector position = convertToCardboardCoordinateSystem(new Vector(mainCamera.position.x, mainCamera.position.y, mainCamera.position.z));
-		cardboardAudioEngine.setHeadPosition(position.getX(), position.getY(), position.getZ());
-		Rotation head = getCurrentHeadRotation(paramHeadTransform);
-		Vector xAxis = head.getDirection();
-		Vector yAxis = head.getUp();
-		Vector zAxis = head.getRight();
-		Quaternion headQuaternion = new Quaternion().setFromAxes(xAxis.getX(), xAxis.getY(), xAxis.getZ(),
-				yAxis.getX(), yAxis.getY(), yAxis.getZ(),
-				zAxis.getX(), zAxis.getY(), zAxis.getZ());
-		cardboardAudioEngine.setHeadRotation(headQuaternion.x, headQuaternion.y, headQuaternion.z, headQuaternion.w);
 	}
 
 	private Rotation getCurrentHeadRotation(HeadTransform paramHeadTransform) {
