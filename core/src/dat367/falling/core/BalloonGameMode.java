@@ -23,12 +23,14 @@ public class BalloonGameMode implements GameMode {
 
     private List<Sound> balloonSounds = new ArrayList<Sound>();
     private Sound explosionSound = new Sound("explosion.wav");
+    private Sound applauseSound = new Sound("applause.wav");
     private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements, BalloonLevel level) {
 
         initBalloonSounds(resourceRequirements);
         resourceRequirements.require(explosionSound);
+        resourceRequirements.require(applauseSound);
 
         // Listen for all relevant collision events
         NotificationManager.getDefault().addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
@@ -88,6 +90,11 @@ public class BalloonGameMode implements GameMode {
 
         PositionedSound balloonPositionedSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
         balloonPositionedSound.play();
+
+        if (((Balloon) collisionData.getOtherObject().getParent()).isSecretBalloon()) {
+            PositionedSound applausePositionedSound = new PinnedPositionedSound(applauseSound, collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
+            applausePositionedSound.play();
+        }
     }
 
     private void initBalloonSounds(ResourceRequirements resourceRequirements) {

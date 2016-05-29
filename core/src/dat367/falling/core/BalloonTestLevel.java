@@ -156,7 +156,7 @@ public class BalloonTestLevel extends BalloonLevel {
             interactable.setEnabled(false);
         }
 
-        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-2.8f, 4005-300, 0));
+        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-2.8f, 4005-300, 0), true);
         interactableList.add(balloonNearPlane);
         Interactable obstacleNearPlane = new Mine(resourceRequirements, new Vector(0, 3950-300, -28.5f), 1.2f);
         interactableList.add(obstacleNearPlane);
