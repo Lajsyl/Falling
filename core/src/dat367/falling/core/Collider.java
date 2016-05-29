@@ -60,9 +60,7 @@ public abstract class Collider {
     private static boolean sphereHeightMapCollision(SphereCollider sphere, HeightMapCollider heightMap) {
         // Use simplified collision by checking only whether the bottom-most point of the sphere touches the heightMap
         Vector sphereBottom = sphere.getPosition().add(new Vector(0, -sphere.getRadius(), 0));
-        if (heightMap.collidesWithPoint(sphereBottom)) {
-            System.out.println("ISLAND COLLISION!");
-        }
+
         return heightMap.collidesWithPoint(sphereBottom);
     }
 

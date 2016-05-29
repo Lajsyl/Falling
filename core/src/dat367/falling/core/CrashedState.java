@@ -32,7 +32,7 @@ public class CrashedState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-
+        //Write the message after the delay
         if(delay>0){
             delay -= deltaTime;
         }else {
@@ -47,8 +47,6 @@ public class CrashedState implements FallState {
                     new GUITextTask("  You have crashed!\n" + message + "\n\n    Tap the screen\n        to restart", new Vector(200,200,200), new Vector(0.505f, 0, .608f), true, false);
             RenderQueue.getDefault().addGUITask(crashMessage);
         }
-
-
         return null;
     }
 

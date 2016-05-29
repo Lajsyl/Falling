@@ -13,7 +13,7 @@ public class FreeFallingState implements FallState {
 
     private float bodyTiltAmount = 0.0f; // 0 = upright mode, 1 = ground
     private Rotation uprightRotation;
-    public static final float GROUND_MODE_TILT_RADIANS = (float)Math.PI*0.4f;// / 2;
+    public static final float GROUND_MODE_TILT_RADIANS = (float)Math.PI*0.4f;
     public static final float VIEW_MODE_TRANSITION_DURATION = 3.000f; // sec
 
     public final boolean CHAOTIC_JUMP = false;
@@ -50,7 +50,6 @@ public class FreeFallingState implements FallState {
                 parachutePulled = true;
             }
         });
-
     }
 
 
@@ -77,11 +76,13 @@ public class FreeFallingState implements FallState {
             parachuteOpeningPositionedSound.play();
             return new ParachuteFallingState();
         }
+
         if (crashing) {
             fallingWind.stop();
             tiltingWind.stop();
             return new CrashedState(false);
         }
+
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             fallingWind.stop();
             tiltingWind.stop();
@@ -167,7 +168,6 @@ public class FreeFallingState implements FallState {
     private float calculateArea(){
         float turnAmount = 0;
         return Jumper.PARACHUTE_AREA - (Jumper.PARACHUTE_AREA-Jumper.PARACHUTE_AREA_AT_FULL_TURN) * turnAmount;
-
     }
 
     @Override

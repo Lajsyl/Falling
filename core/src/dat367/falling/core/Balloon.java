@@ -39,6 +39,7 @@ public class Balloon extends Interactable {
     }
 
     public void update(float deltaTime){
+        //Draw balloon if enabled
         if (enabled) {
             RenderQueue.getDefault().addTask(new ModelRenderTask(model, getPosition(), new Rotation(), new Vector(5.0f/3,5.0f/3,5.0f/3)));
         }

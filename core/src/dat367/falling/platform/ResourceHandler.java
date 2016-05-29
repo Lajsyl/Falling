@@ -39,8 +39,6 @@ public class ResourceHandler {
     private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
 
 
-
-
     public void loadResources(ResourceRequirements resourceRequirements, boolean platformIsAndroid) {
         loadModels(resourceRequirements);
         loadQuads(resourceRequirements);
@@ -163,15 +161,10 @@ public class ResourceHandler {
         }
     }
 
-
-
-
-
     // It seems that the cardboard coordinate system swaps x and z???
     private Vector convertToCardboardCoordinateSystem(Vector position) {
         return new Vector(position.getZ(), position.getY(), position.getX());
     }
-
 
     public Map<String, ModelInstance> getModels(){
         return new HashMap<String, ModelInstance>(models);

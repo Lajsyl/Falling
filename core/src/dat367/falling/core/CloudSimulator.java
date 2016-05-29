@@ -32,8 +32,6 @@ public class CloudSimulator {
     private Vector defaultWindDirection;
     private Vector basePosition;
 
-    private Vector airplaneVelocity;
-
     private Random random = new Random();
 
 
@@ -63,7 +61,6 @@ public class CloudSimulator {
     }
 
     private boolean cloudIsOutsideBounds(Cloud cloud) {
-
         // Is cloud above "roof"?
         float currentRoof = basePosition.getY() + CLOUD_SPAWN_AREA_HEIGHT / 2;
         if (cloud.getPosition().getY() > currentRoof) {
@@ -96,7 +93,6 @@ public class CloudSimulator {
                     spawnCloud(cloud, jumper.getFallState(), airplane);
                 }
             }
-
             cloud.update(deltaTime, additionalCloudVelocity);
         }
 

@@ -3,6 +3,7 @@ package dat367.falling.core;
 import dat367.falling.math.Rotation;
 
 public class FallingGame {
+
     private Jump currentJump;
 
     public static final String BEFORE_GAME_RESTART_EVENT = "BeforeGameRestartEvent";
@@ -46,7 +47,6 @@ public class FallingGame {
         currentJump.getJumper().setHeadRotation(rotation);
     }
 
-
     private void setCurrentJump(Jump jump) {
         this.currentJump = jump;
     }
@@ -61,5 +61,4 @@ public class FallingGame {
     public Rotation getJumperBodyRotation() {
         return currentJump.getJumper().getBodyRotation();
     }
-
 }

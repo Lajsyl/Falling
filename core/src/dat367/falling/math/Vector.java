@@ -129,5 +129,4 @@ public class Vector {
         df.setMaximumFractionDigits(1);
         return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(z) + ")";
     }
-
 }

@@ -65,8 +65,6 @@ public class PreJumpState implements FallState {
                 return new FreeFallingState();
             }
         }
-
-
         return null;
     }
 
