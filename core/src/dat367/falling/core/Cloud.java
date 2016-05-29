@@ -14,15 +14,7 @@ public class Cloud {
         quad = new Quad("cloud_01.png", true, true, CloudSimulator.CLOUD_SPAWN_AREA_HEIGHT / 2, 250, 1, 1, false);
         resourceRequirements.require(quad);
     }
-
-
-    /**
-     *
-     * Update cloud
-     *
-     * @param deltaTime deltaTime
-     * @param additionalVelocity deltaTime-premultiplied velocity
-     */
+    
     public void update(float deltaTime, Vector additionalVelocity) {
         Vector additional = additionalVelocity.scale(deltaTime);
         this.position = position.add(velocity.scale(deltaTime)).add(additional);
