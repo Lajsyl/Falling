@@ -22,6 +22,7 @@ public class Island implements Positioned {
 
     public void update(float deltaTime) {
         // Visual debugging of the heightmap
+        // Enable for debugging
 //        Model blip = new Model("balloon.g3db");
 //        for (int z = -1100; z < 1100; z += 35) {
 //            for (int x = -1100; x < 1100; x += 35) {
