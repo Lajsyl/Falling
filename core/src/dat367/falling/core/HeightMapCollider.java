@@ -4,12 +4,12 @@ import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.HeightMap;
 
 public class HeightMapCollider extends Collider {
+
     private final HeightMap heightMap;
     private Vector baseCenterPosition;
     private float xDimension;
     private float zDimension;
     private float maxHeight;
-    private float imageX;
 
     public HeightMapCollider(Positioned positioned, String name, HeightMap heightMap, Vector baseCenterPosition, float xDimension, float zDimension, float maxHeight) {
         super(positioned, name);
