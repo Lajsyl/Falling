@@ -26,8 +26,9 @@ import dat367.falling.platform_abstraction.*;
 
 public class RenderHandler {
 
+    private final boolean DEBUG_MODE = false;
+
     private boolean platformIsAndroid;
-    private final boolean USING_DEBUG_CAMERA = false;
 
     private ModelBatch modelBatch;
     private Environment environment;
@@ -203,23 +204,23 @@ public class RenderHandler {
                 }
             }
 
-            debugFont.setColor(Color.CHARTREUSE);
 
-            //TODO this should be removed at finish
-            String debugText =
-                    getFallStateString() + "\n" +
-                            "Camera pos: " + gameVector(camera.position) + "\n" +
-                            "Look dir: " + gameVector(camera.direction) + "\n\n" +
-                            "Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
-                            "Speed: " + game.getCurrentJump().getJumper().getVelocity() + "\n" +
-                            "                                                                                                                        " +
-                            "FPS: " + Gdx.graphics.getFramesPerSecond();
+            if (DEBUG_MODE) {
+                String debugText =
+                        getFallStateString() + "\n" +
+                                "Camera pos: " + gameVector(camera.position) + "\n" +
+                                "Look dir: " + gameVector(camera.direction) + "\n\n" +
+                                "Acceleration: " + game.getCurrentJump().getJumper().getAcceleration() + "\n" +
+                                "Speed: " + game.getCurrentJump().getJumper().getVelocity() + "\n" +
+                                "                                                                                                                        " +
+                                "FPS: " + Gdx.graphics.getFramesPerSecond();
 
-            debugFont.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+                debugFont.setColor(Color.CHARTREUSE);
+                debugFont.draw(spriteBatch, debugText, 50, Gdx.graphics.getHeight() - 60);
+            }
 
-
-            // Draw crosshair etc. for desktop control
-            if (!platformIsAndroid && !USING_DEBUG_CAMERA) {
+            // Draw crosshair etc. for desktop control (if not using debug camera
+            if (!platformIsAndroid && !DEBUG_MODE) {
                 Color color = debugFont.getColor().cpy();
                 {
                     debugFont.setColor(Color.RED);

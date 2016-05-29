@@ -16,4 +16,19 @@ public class QuadRenderTask extends RenderTask {
         return quad;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QuadRenderTask that = (QuadRenderTask) o;
+
+        return quad != null ? quad.equals(that.quad) : that.quad == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return quad != null ? quad.hashCode() : 0;
+    }
 }
