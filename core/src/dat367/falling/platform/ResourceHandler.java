@@ -32,15 +32,11 @@ public class ResourceHandler {
     private Map<String, ModelInstance> models = new HashMap<String, ModelInstance>();
     private Map<String, TextureAttribute> quadTextureAttributes = new HashMap<String, TextureAttribute>();
     private Map<String, HeightMap.ImageBrightnessData> heightMapImages = new HashMap<String, HeightMap.ImageBrightnessData>();
-    private Set<String> preloadedSounds = new HashSet<String>();
-    private List<Integer> loopingSounds = new ArrayList<Integer>();
     private List<AnimationController> animationControllers = new ArrayList<AnimationController>();
     private ModelInstance quadModel;
 
     private UBJsonReader jsonReader = new UBJsonReader();
     private G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
-
-    private CardboardAudioEngine cardboardAudioEngine;
 
 
 
@@ -49,9 +45,7 @@ public class ResourceHandler {
         loadModels(resourceRequirements);
         loadQuads(resourceRequirements);
         loadHeightMaps(resourceRequirements);
-        if (platformIsAndroid) {
-            loadSounds(resourceRequirements);
-        }
+
     }
 
     private void loadHeightMaps(ResourceRequirements resourceRequirements) {
@@ -169,83 +163,7 @@ public class ResourceHandler {
         }
     }
 
-    private void loadSounds(ResourceRequirements resourceRequirements) {
-        for (Sound sound : resourceRequirements.getSounds()) {
-            String fileName = sound.getSoundFileName();
-            if (!preloadedSounds.contains(sound.getSoundFileName())) {
-                cardboardAudioEngine.preloadSoundFile(sound.getSoundFileName());
-                preloadedSounds.add(sound.getSoundFileName());
-            }
-        }
-    }
 
-
-    public void setupSoundEventHandling() {
-        NotificationManager.getDefault().addObserver(PositionedSound.PLAY_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
-            @Override
-            public void handleEvent(NotificationManager.Event<PositionedSound> event) {
-                makeSoundAvailable(event.data);
-                cardboardAudioEngine.playSound(event.data.getSoundObjectID(), false);
-            }
-        });
-        NotificationManager.getDefault().addObserver(PositionedSound.LOOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
-            @Override
-            public void handleEvent(NotificationManager.Event<PositionedSound> event) {
-                makeSoundAvailable(event.data);
-                cardboardAudioEngine.playSound(event.data.getSoundObjectID(), true);
-                loopingSounds.add(event.data.getSoundObjectID());
-            }
-        });
-        NotificationManager.getDefault().addObserver(PositionedSound.STOP_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
-            @Override
-            public void handleEvent(NotificationManager.Event<PositionedSound> event) {
-                if (event.data.getSoundObjectID() != -1) {
-                    cardboardAudioEngine.stopSound(event.data.getSoundObjectID());
-                }
-            }
-        });
-        NotificationManager.getDefault().addObserver(PositionedSound.CHANGE_POSITION_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
-            @Override
-            public void handleEvent(NotificationManager.Event<PositionedSound> event) {
-                if (event.data.getSoundObjectID() != -1) {
-                    Vector pos = convertToCardboardCoordinateSystem(event.data.getPosition());
-                    cardboardAudioEngine.setSoundObjectPosition(event.data.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
-                }
-            }
-        });
-        NotificationManager.getDefault().addObserver(PositionedSound.CHANGE_VOLUME_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
-            @Override
-            public void handleEvent(NotificationManager.Event<PositionedSound> event) {
-                if (event.data.getSoundObjectID() != -1) {
-                    cardboardAudioEngine.setSoundVolume(event.data.getSoundObjectID(), event.data.getVolume());
-                }
-            }
-        });
-    }
-
-    private void makeSoundAvailable(PositionedSound sound) {
-        if (sound.getSoundObjectID() == -1) { // If cardboard sound object does not exist, create it
-            if (!preloadedSounds.contains(sound.getSoundFileName())) { // If sound is not preloaded, load it
-                System.out.println(sound);
-                cardboardAudioEngine.preloadSoundFile(sound.getSoundFileName());
-                preloadedSounds.add(sound.getSoundFileName());
-            }
-            createCardboardSoundObject(sound);
-        }
-    }
-
-    private void createCardboardSoundObject(PositionedSound positionedSound) {
-        positionedSound.setSoundObjectID(cardboardAudioEngine.createSoundObject(positionedSound.getSoundFileName()));
-        Vector pos = convertToCardboardCoordinateSystem(positionedSound.getPosition());
-        cardboardAudioEngine.setSoundObjectPosition(positionedSound.getSoundObjectID(), pos.getX(), pos.getY(), pos.getZ());
-        cardboardAudioEngine.setSoundVolume(positionedSound.getSoundObjectID(), positionedSound.getVolume());
-    }
-
-    public void stopAllLoopingSounds() {
-        while (!loopingSounds.isEmpty()) {
-            cardboardAudioEngine.stopSound(loopingSounds.remove(0));
-        }
-    }
 
 
 
@@ -267,10 +185,6 @@ public class ResourceHandler {
         return new ModelInstance(quadModel);
     }
 
-
-    public void setCardboardAudioEngine(CardboardAudioEngine cardboardAudioEngine) {
-        this.cardboardAudioEngine = cardboardAudioEngine;
-    }
 
     public void updateAnimations(float deltaTime) {
         for (AnimationController animationController : animationControllers) {
