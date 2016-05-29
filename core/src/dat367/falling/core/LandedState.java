@@ -61,4 +61,19 @@ public class LandedState implements FallState {
         return "Landed";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LandedState that = (LandedState) o;
+
+        return landingTerrain != null ? landingTerrain.equals(that.landingTerrain) : that.landingTerrain == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return landingTerrain != null ? landingTerrain.hashCode() : 0;
+    }
 }

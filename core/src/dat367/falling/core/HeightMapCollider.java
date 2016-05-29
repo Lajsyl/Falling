@@ -45,4 +45,29 @@ public class HeightMapCollider extends Collider {
     public Vector getBasePosition() {
         return baseCenterPosition;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HeightMapCollider that = (HeightMapCollider) o;
+
+        if (Float.compare(that.xDimension, xDimension) != 0) return false;
+        if (Float.compare(that.zDimension, zDimension) != 0) return false;
+        if (Float.compare(that.maxHeight, maxHeight) != 0) return false;
+        if (heightMap != null ? !heightMap.equals(that.heightMap) : that.heightMap != null) return false;
+        return baseCenterPosition != null ? baseCenterPosition.equals(that.baseCenterPosition) : that.baseCenterPosition == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = heightMap != null ? heightMap.hashCode() : 0;
+        result = 31 * result + (baseCenterPosition != null ? baseCenterPosition.hashCode() : 0);
+        result = 31 * result + (xDimension != +0.0f ? Float.floatToIntBits(xDimension) : 0);
+        result = 31 * result + (zDimension != +0.0f ? Float.floatToIntBits(zDimension) : 0);
+        result = 31 * result + (maxHeight != +0.0f ? Float.floatToIntBits(maxHeight) : 0);
+        return result;
+    }
 }

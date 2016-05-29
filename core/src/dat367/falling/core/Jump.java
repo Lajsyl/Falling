@@ -28,4 +28,25 @@ public class Jump {
     }
 
     public Jumper getJumper() { return world.getJumper(); }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Jump jump = (Jump) o;
+
+        if (world != null ? !world.equals(jump.world) : jump.world != null) return false;
+        if (gameMode != null ? !gameMode.equals(jump.gameMode) : jump.gameMode != null) return false;
+        return resourceRequirements != null ? resourceRequirements.equals(jump.resourceRequirements) : jump.resourceRequirements == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = world != null ? world.hashCode() : 0;
+        result = 31 * result + (gameMode != null ? gameMode.hashCode() : 0);
+        result = 31 * result + (resourceRequirements != null ? resourceRequirements.hashCode() : 0);
+        return result;
+    }
 }

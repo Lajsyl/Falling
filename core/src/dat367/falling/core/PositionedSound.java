@@ -68,4 +68,27 @@ public class PositionedSound {
         this.volume = volume;
         NotificationManager.getDefault().registerEvent(CHANGE_VOLUME_SOUND_EVENT, this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PositionedSound that = (PositionedSound) o;
+
+        if (Float.compare(that.volume, volume) != 0) return false;
+        if (soundObjectID != that.soundObjectID) return false;
+        if (sound != null ? !sound.equals(that.sound) : that.sound != null) return false;
+        return position != null ? position.equals(that.position) : that.position == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sound != null ? sound.hashCode() : 0;
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (volume != +0.0f ? Float.floatToIntBits(volume) : 0);
+        result = 31 * result + soundObjectID;
+        return result;
+    }
 }

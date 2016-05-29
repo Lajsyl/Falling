@@ -172,4 +172,31 @@ public class FreeFallingState implements FallState {
     public String toString() {
         return "Free falling";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FreeFallingState that = (FreeFallingState) o;
+
+        if (Float.compare(that.bodyTiltAmount, bodyTiltAmount) != 0) return false;
+        if (Float.compare(that.rotationZ, rotationZ) != 0) return false;
+        if (Float.compare(that.rotationY, rotationY) != 0) return false;
+        if (Float.compare(that.rotationSpeedZ, rotationSpeedZ) != 0) return false;
+        if (Float.compare(that.rotationSpeedY, rotationSpeedY) != 0) return false;
+        return uprightRotation != null ? uprightRotation.equals(that.uprightRotation) : that.uprightRotation == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (bodyTiltAmount != +0.0f ? Float.floatToIntBits(bodyTiltAmount) : 0);
+        result = 31 * result + (uprightRotation != null ? uprightRotation.hashCode() : 0);
+        result = 31 * result + (rotationZ != +0.0f ? Float.floatToIntBits(rotationZ) : 0);
+        result = 31 * result + (rotationY != +0.0f ? Float.floatToIntBits(rotationY) : 0);
+        result = 31 * result + (rotationSpeedZ != +0.0f ? Float.floatToIntBits(rotationSpeedZ) : 0);
+        result = 31 * result + (rotationSpeedY != +0.0f ? Float.floatToIntBits(rotationSpeedY) : 0);
+        return result;
+    }
 }

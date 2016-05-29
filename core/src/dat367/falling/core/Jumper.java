@@ -183,4 +183,45 @@ public class Jumper extends Observable implements Positioned {
         RenderTask parachuteRender = new ModelRenderTask(parachute, this.position.add(new Vector(0,3,0)), bodyRotation, new Vector(1,1,1));
         RenderQueue.getDefault().addTask(parachuteRender);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Jumper jumper = (Jumper) o;
+
+        if (Float.compare(jumper.area, area) != 0) return false;
+        if (Float.compare(jumper.dragCoefficient, dragCoefficient) != 0) return false;
+        if (fallState != null ? !fallState.equals(jumper.fallState) : jumper.fallState != null) return false;
+        if (parachute != null ? !parachute.equals(jumper.parachute) : jumper.parachute != null) return false;
+        if (position != null ? !position.equals(jumper.position) : jumper.position != null) return false;
+        if (velocity != null ? !velocity.equals(jumper.velocity) : jumper.velocity != null) return false;
+        if (acceleration != null ? !acceleration.equals(jumper.acceleration) : jumper.acceleration != null)
+            return false;
+        if (bodyRotation != null ? !bodyRotation.equals(jumper.bodyRotation) : jumper.bodyRotation != null)
+            return false;
+        if (headRotation != null ? !headRotation.equals(jumper.headRotation) : jumper.headRotation != null)
+            return false;
+        if (adjustmentRotation != null ? !adjustmentRotation.equals(jumper.adjustmentRotation) : jumper.adjustmentRotation != null)
+            return false;
+        return sphereCollider != null ? sphereCollider.equals(jumper.sphereCollider) : jumper.sphereCollider == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fallState != null ? fallState.hashCode() : 0;
+        result = 31 * result + (parachute != null ? parachute.hashCode() : 0);
+        result = 31 * result + (area != +0.0f ? Float.floatToIntBits(area) : 0);
+        result = 31 * result + (dragCoefficient != +0.0f ? Float.floatToIntBits(dragCoefficient) : 0);
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (velocity != null ? velocity.hashCode() : 0);
+        result = 31 * result + (acceleration != null ? acceleration.hashCode() : 0);
+        result = 31 * result + (bodyRotation != null ? bodyRotation.hashCode() : 0);
+        result = 31 * result + (headRotation != null ? headRotation.hashCode() : 0);
+        result = 31 * result + (adjustmentRotation != null ? adjustmentRotation.hashCode() : 0);
+        result = 31 * result + (sphereCollider != null ? sphereCollider.hashCode() : 0);
+        return result;
+    }
 }

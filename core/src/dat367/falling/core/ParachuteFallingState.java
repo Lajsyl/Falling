@@ -160,4 +160,31 @@ public class ParachuteFallingState implements FallState {
     public String toString() {
         return "Parachute";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ParachuteFallingState that = (ParachuteFallingState) o;
+
+        if (Float.compare(that.rotationalSpeed, rotationalSpeed) != 0) return false;
+        if (Float.compare(that.rotationalAcceleration, rotationalAcceleration) != 0) return false;
+        if (Float.compare(that.forwardSpeed, forwardSpeed) != 0) return false;
+        if (landing != that.landing) return false;
+        if (landingData != null ? !landingData.equals(that.landingData) : that.landingData != null) return false;
+        return parachuteWind != null ? parachuteWind.equals(that.parachuteWind) : that.parachuteWind == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (rotationalSpeed != +0.0f ? Float.floatToIntBits(rotationalSpeed) : 0);
+        result = 31 * result + (rotationalAcceleration != +0.0f ? Float.floatToIntBits(rotationalAcceleration) : 0);
+        result = 31 * result + (forwardSpeed != +0.0f ? Float.floatToIntBits(forwardSpeed) : 0);
+        result = 31 * result + (landingData != null ? landingData.hashCode() : 0);
+        result = 31 * result + (landing ? 1 : 0);
+        result = 31 * result + (parachuteWind != null ? parachuteWind.hashCode() : 0);
+        return result;
+    }
 }

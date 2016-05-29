@@ -52,6 +52,25 @@ public class Mine extends Interactable {
     public void setExplosiveness(float explosiveness) {
         this.explosiveness = explosiveness;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Mine mine = (Mine) o;
+
+        if (Float.compare(mine.explosiveness, explosiveness) != 0) return false;
+        return model != null ? model.equals(mine.model) : mine.model == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = model != null ? model.hashCode() : 0;
+        result = 31 * result + (explosiveness != +0.0f ? Float.floatToIntBits(explosiveness) : 0);
+        return result;
+    }
 }
 
 

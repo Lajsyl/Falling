@@ -57,4 +57,25 @@ public class Island implements Positioned {
     public void setEnabled(boolean enabled) {
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Island island = (Island) o;
+
+        if (position != null ? !position.equals(island.position) : island.position != null) return false;
+        if (heightMap != null ? !heightMap.equals(island.heightMap) : island.heightMap != null) return false;
+        return heightMapCollider != null ? heightMapCollider.equals(island.heightMapCollider) : island.heightMapCollider == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = position != null ? position.hashCode() : 0;
+        result = 31 * result + (heightMap != null ? heightMap.hashCode() : 0);
+        result = 31 * result + (heightMapCollider != null ? heightMapCollider.hashCode() : 0);
+        return result;
+    }
 }

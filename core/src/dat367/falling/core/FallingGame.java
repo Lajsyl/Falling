@@ -61,4 +61,20 @@ public class FallingGame {
     public Rotation getJumperBodyRotation() {
         return currentJump.getJumper().getBodyRotation();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FallingGame that = (FallingGame) o;
+
+        return currentJump != null ? currentJump.equals(that.currentJump) : that.currentJump == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return currentJump != null ? currentJump.hashCode() : 0;
+    }
 }

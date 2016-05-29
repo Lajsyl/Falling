@@ -18,4 +18,20 @@ public class SphereCollider extends Collider {
     public float getRadius(){
         return radius;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SphereCollider that = (SphereCollider) o;
+
+        return Float.compare(that.radius, radius) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (radius != +0.0f ? Float.floatToIntBits(radius) : 0);
+    }
 }

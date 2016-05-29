@@ -36,4 +36,24 @@ public class PinnedPositionedSound extends PositionedSound {
         setPosition(pinToObject.getPosition().add(offsetPosition));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        PinnedPositionedSound that = (PinnedPositionedSound) o;
+
+        if (pinToObject != null ? !pinToObject.equals(that.pinToObject) : that.pinToObject != null) return false;
+        return offsetPosition != null ? offsetPosition.equals(that.offsetPosition) : that.offsetPosition == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (pinToObject != null ? pinToObject.hashCode() : 0);
+        result = 31 * result + (offsetPosition != null ? offsetPosition.hashCode() : 0);
+        return result;
+    }
 }

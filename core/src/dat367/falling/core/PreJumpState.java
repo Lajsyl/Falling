@@ -8,7 +8,6 @@ public class PreJumpState implements FallState {
     public static final String PLAYER_HAS_JUMPED_EVENT_ID = "PLAYER_HAS_JUMPED_EVENT_ID";
 
     private final double BACK_ROTATION_MAX = Math.toRadians(75.0);
-    private final float HIP_TO_HEAD_DISTANCE = 0.8f; // should be as big as leanout arc radius
     private final float LEANOUT_ARC_HEIGHT = 0.5f; // the shape of the arc when leaning out
     private final float LEANOUT_ARC_DEPTH = 0.8f; // the shape of the arc when leaning out
 
@@ -71,5 +70,27 @@ public class PreJumpState implements FallState {
     @Override
     public String toString() {
         return "About to jump";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PreJumpState that = (PreJumpState) o;
+
+        if (airplaneWind != null ? !airplaneWind.equals(that.airplaneWind) : that.airplaneWind != null) return false;
+        if (airplaneLeanoutWind != null ? !airplaneLeanoutWind.equals(that.airplaneLeanoutWind) : that.airplaneLeanoutWind != null)
+            return false;
+        return hipPosition != null ? hipPosition.equals(that.hipPosition) : that.hipPosition == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = airplaneWind != null ? airplaneWind.hashCode() : 0;
+        result = 31 * result + (airplaneLeanoutWind != null ? airplaneLeanoutWind.hashCode() : 0);
+        result = 31 * result + (hipPosition != null ? hipPosition.hashCode() : 0);
+        return result;
     }
 }
