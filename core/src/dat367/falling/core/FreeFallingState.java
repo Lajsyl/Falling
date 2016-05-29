@@ -25,8 +25,7 @@ public class FreeFallingState implements FallState {
     private PositionedSound fallingWind; // Has max volume when tilting straight towards ground
     private PositionedSound tiltingWind; // Has max volume when tilting fully towards a side, is positioned on that side
 
-    //TODO: Denna ska inte ha "sig själv"
-    private FallState impendingState = null;
+    private boolean crashing = false;
 
     @Override
     public void setup(final Jumper jumper) {
@@ -42,7 +41,7 @@ public class FreeFallingState implements FallState {
                 float z = jumper.getPosition().getZ();
                 float y = ((HeightMapCollider)event.data.getOtherObject()).getHeight(x, z) + Jumper.BODY_HEIGHT;
                 jumper.setPosition(x, y, z);
-                impendingState = new CrashedState(false);
+                crashing = true;
             }
         });
         NotificationManager.getDefault().addObserver(FallingGame.SCREEN_TAP_EVENT, new NotificationManager.EventHandler() {
@@ -78,10 +77,10 @@ public class FreeFallingState implements FallState {
             parachuteOpeningPositionedSound.play();
             return new ParachuteFallingState();
         }
-        if (impendingState != null) {
+        if (crashing) {
             fallingWind.stop();
             tiltingWind.stop();
-            return impendingState;
+            return new CrashedState(false);
         }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             fallingWind.stop();

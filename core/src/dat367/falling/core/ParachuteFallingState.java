@@ -17,9 +17,8 @@ public class ParachuteFallingState implements FallState {
 
     private float forwardSpeed = 30;
 
-
-    //TODO: Denna ska inte ha "sig själv"
-    private FallState impendingState = null;
+    private HeightMapCollider landingData;
+    private boolean landing = false;
 
     private PositionedSound parachuteWind;
 
@@ -36,8 +35,8 @@ public class ParachuteFallingState implements FallState {
         NotificationManager.getDefault().addObserver(CollisionManager.ISLAND_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
             @Override
             public void handleEvent(NotificationManager.Event<CollisionManager.CollisionData> event) {
-                impendingState = new LandedState((HeightMapCollider)event.data.getOtherObject());
-                //Spara denna data istället istället, och sätt en flagga att detta har hänt
+                landingData = (HeightMapCollider)event.data.getOtherObject();
+                landing = true;
             }
         });
     }
@@ -61,6 +60,9 @@ public class ParachuteFallingState implements FallState {
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
 
+        if(landing){
+            return new LandedState((landingData));
+        }
         jumper.setAcceleration(calculateAcceleration(jumper));
 
         Vector v0 = jumper.getVelocity();
@@ -75,10 +77,6 @@ public class ParachuteFallingState implements FallState {
         jumper.setVelocity(velocity);
         jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
 
-        if (impendingState != null) {
-            parachuteWind.stop();
-            return impendingState;
-        }
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             parachuteWind.stop();
             PositionedSound landingWaterPositionedSound = new PositionedSound(jumper.landingWaterSound, jumper.getPosition().add(new Vector(0,-1,0)));
