@@ -68,4 +68,21 @@ public class HeightMap {
             return pixelBrightness.length;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HeightMap heightMap = (HeightMap) o;
+
+        // Don't count brightness data, the data is derived from file name
+        return heightMapFileName != null ? heightMapFileName.equals(heightMap.heightMapFileName) : heightMap.heightMapFileName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return heightMapFileName != null ? heightMapFileName.hashCode() : 0;
+    }
 }

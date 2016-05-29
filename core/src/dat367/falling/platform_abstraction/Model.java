@@ -45,4 +45,29 @@ public class Model {
     public float getFadeOutDistance() {
         return fadeOutDistance;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Model model = (Model) o;
+
+        if (cullFaces != model.cullFaces) return false;
+        if (shouldFadeOut != model.shouldFadeOut) return false;
+        if (Float.compare(model.maxDrawDistance, maxDrawDistance) != 0) return false;
+        if (Float.compare(model.fadeOutDistance, fadeOutDistance) != 0) return false;
+        return modelFileName != null ? modelFileName.equals(model.modelFileName) : model.modelFileName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = modelFileName != null ? modelFileName.hashCode() : 0;
+        result = 31 * result + (cullFaces ? 1 : 0);
+        result = 31 * result + (shouldFadeOut ? 1 : 0);
+        result = 31 * result + (maxDrawDistance != +0.0f ? Float.floatToIntBits(maxDrawDistance) : 0);
+        result = 31 * result + (fadeOutDistance != +0.0f ? Float.floatToIntBits(fadeOutDistance) : 0);
+        return result;
+    }
 }
