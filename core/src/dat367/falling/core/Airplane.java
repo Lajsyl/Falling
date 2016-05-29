@@ -87,4 +87,36 @@ public class Airplane {
     public Rotation getLookOutDirection() {
         return LOOK_OUT_DIRECTION;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Airplane airplane = (Airplane) o;
+
+        if (playerHasJumpedOffAirplane != airplane.playerHasJumpedOffAirplane) return false;
+        if (Float.compare(airplane.ACCELERATION_SCALE, ACCELERATION_SCALE) != 0) return false;
+        if (position != null ? !position.equals(airplane.position) : airplane.position != null) return false;
+        if (actualVelocity != null ? !actualVelocity.equals(airplane.actualVelocity) : airplane.actualVelocity != null)
+            return false;
+        if (airplaneModel != null ? !airplaneModel.equals(airplane.airplaneModel) : airplane.airplaneModel != null)
+            return false;
+        if (introNoteModel != null ? !introNoteModel.equals(airplane.introNoteModel) : airplane.introNoteModel != null)
+            return false;
+        return scoringNoteModel != null ? scoringNoteModel.equals(airplane.scoringNoteModel) : airplane.scoringNoteModel == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = position != null ? position.hashCode() : 0;
+        result = 31 * result + (actualVelocity != null ? actualVelocity.hashCode() : 0);
+        result = 31 * result + (playerHasJumpedOffAirplane ? 1 : 0);
+        result = 31 * result + (ACCELERATION_SCALE != +0.0f ? Float.floatToIntBits(ACCELERATION_SCALE) : 0);
+        result = 31 * result + (airplaneModel != null ? airplaneModel.hashCode() : 0);
+        result = 31 * result + (introNoteModel != null ? introNoteModel.hashCode() : 0);
+        result = 31 * result + (scoringNoteModel != null ? scoringNoteModel.hashCode() : 0);
+        return result;
+    }
 }

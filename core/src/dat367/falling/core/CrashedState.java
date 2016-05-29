@@ -54,4 +54,23 @@ public class CrashedState implements FallState {
     public String toString() {
         return "Crashed...";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CrashedState that = (CrashedState) o;
+
+        if (Float.compare(that.delay, delay) != 0) return false;
+        return parachutePulled == that.parachutePulled;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (delay != +0.0f ? Float.floatToIntBits(delay) : 0);
+        result = 31 * result + (parachutePulled ? 1 : 0);
+        return result;
+    }
 }

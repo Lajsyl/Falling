@@ -48,4 +48,23 @@ public class Balloon extends Interactable {
     public boolean isSecretBalloon() {
         return isSecretBalloon;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Balloon balloon = (Balloon) o;
+
+        if (isSecretBalloon != balloon.isSecretBalloon) return false;
+        return model != null ? model.equals(balloon.model) : balloon.model == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = model != null ? model.hashCode() : 0;
+        result = 31 * result + (isSecretBalloon ? 1 : 0);
+        return result;
+    }
 }

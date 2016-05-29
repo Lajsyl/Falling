@@ -43,4 +43,27 @@ public class Cloud {
     public float getScale() {
         return scale;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cloud cloud = (Cloud) o;
+
+        if (Float.compare(cloud.scale, scale) != 0) return false;
+        if (quad != null ? !quad.equals(cloud.quad) : cloud.quad != null) return false;
+        if (position != null ? !position.equals(cloud.position) : cloud.position != null) return false;
+        return velocity != null ? velocity.equals(cloud.velocity) : cloud.velocity == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = quad != null ? quad.hashCode() : 0;
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (velocity != null ? velocity.hashCode() : 0);
+        result = 31 * result + (scale != +0.0f ? Float.floatToIntBits(scale) : 0);
+        return result;
+    }
 }

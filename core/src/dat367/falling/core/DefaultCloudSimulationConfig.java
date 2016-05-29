@@ -30,4 +30,23 @@ public class DefaultCloudSimulationConfig implements CloudSimulator.CloudSimulat
     public float getWindSpeedForHeight(float height) {
         return (height / maxHeight) * 15.0f;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DefaultCloudSimulationConfig that = (DefaultCloudSimulationConfig) o;
+
+        if (Float.compare(that.maxHeight, maxHeight) != 0) return false;
+        return random != null ? random.equals(that.random) : that.random == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = random != null ? random.hashCode() : 0;
+        result = 31 * result + (maxHeight != +0.0f ? Float.floatToIntBits(maxHeight) : 0);
+        return result;
+    }
 }

@@ -147,4 +147,37 @@ public class BalloonGameMode implements GameMode {
                 ", score=" + score +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BalloonGameMode that = (BalloonGameMode) o;
+
+        if (balloonCombo != that.balloonCombo) return false;
+        if (score != that.score) return false;
+        if (gameIsFinished != that.gameIsFinished) return false;
+        if (NUMBER_OF_BALLOON_SOUNDS != that.NUMBER_OF_BALLOON_SOUNDS) return false;
+        if (level != null ? !level.equals(that.level) : that.level != null) return false;
+        if (balloonSounds != null ? !balloonSounds.equals(that.balloonSounds) : that.balloonSounds != null)
+            return false;
+        if (explosionSound != null ? !explosionSound.equals(that.explosionSound) : that.explosionSound != null)
+            return false;
+        return applauseSound != null ? applauseSound.equals(that.applauseSound) : that.applauseSound == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = level != null ? level.hashCode() : 0;
+        result = 31 * result + balloonCombo;
+        result = 31 * result + score;
+        result = 31 * result + (gameIsFinished ? 1 : 0);
+        result = 31 * result + (balloonSounds != null ? balloonSounds.hashCode() : 0);
+        result = 31 * result + (explosionSound != null ? explosionSound.hashCode() : 0);
+        result = 31 * result + (applauseSound != null ? applauseSound.hashCode() : 0);
+        result = 31 * result + NUMBER_OF_BALLOON_SOUNDS;
+        return result;
+    }
 }

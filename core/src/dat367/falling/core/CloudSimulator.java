@@ -187,5 +187,33 @@ public class CloudSimulator {
         return basePosition.getY();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        CloudSimulator that = (CloudSimulator) o;
+
+        if (activeClouds != null ? !activeClouds.equals(that.activeClouds) : that.activeClouds != null) return false;
+        if (passiveClouds != null ? !passiveClouds.equals(that.passiveClouds) : that.passiveClouds != null)
+            return false;
+        if (simulationConfig != null ? !simulationConfig.equals(that.simulationConfig) : that.simulationConfig != null)
+            return false;
+        if (defaultWindDirection != null ? !defaultWindDirection.equals(that.defaultWindDirection) : that.defaultWindDirection != null)
+            return false;
+        if (basePosition != null ? !basePosition.equals(that.basePosition) : that.basePosition != null) return false;
+        return random != null ? random.equals(that.random) : that.random == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = activeClouds != null ? activeClouds.hashCode() : 0;
+        result = 31 * result + (passiveClouds != null ? passiveClouds.hashCode() : 0);
+        result = 31 * result + (simulationConfig != null ? simulationConfig.hashCode() : 0);
+        result = 31 * result + (defaultWindDirection != null ? defaultWindDirection.hashCode() : 0);
+        result = 31 * result + (basePosition != null ? basePosition.hashCode() : 0);
+        result = 31 * result + (random != null ? random.hashCode() : 0);
+        return result;
+    }
 }
