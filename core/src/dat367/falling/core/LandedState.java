@@ -28,7 +28,6 @@ public class LandedState implements FallState {
         }
     }
 
-    // TODO: Might create a change in position as to mimic the shock when landing
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
         jumper.setVelocity(jumper.getVelocity().scale(0.98f));

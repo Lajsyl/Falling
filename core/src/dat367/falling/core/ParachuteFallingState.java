@@ -59,23 +59,21 @@ public class ParachuteFallingState implements FallState {
 
     @Override
     public FallState handleFalling(float deltaTime, Jumper jumper) {
-
         if(landing){
             return new LandedState((landingData));
         }
         jumper.setAcceleration(calculateAcceleration(jumper));
 
-        Vector v0 = jumper.getVelocity();
+        Vector initialVelocity = jumper.getVelocity();
 
         rotationalAcceleration = calculateRotationalAcceleration(deltaTime, jumper);
         rotationalSpeed = calculateRotationalSpeed(deltaTime);
         jumper.setBodyRotation(new Rotation(jumper.getBodyRotation().getDirection().rotateAroundY(rotationalSpeed), jumper.getBodyRotation().getUp()));
 
-
         Vector velocity = calculateVelocity(deltaTime, jumper);
 
         jumper.setVelocity(velocity);
-        jumper.setPosition(calculatePosition(deltaTime, jumper, v0));
+        jumper.setPosition(calculatePosition(deltaTime, jumper, initialVelocity));
 
         if (jumper.getPosition().getY() <= Jumper.BODY_HEIGHT){
             parachuteWind.stop();
@@ -83,14 +81,12 @@ public class ParachuteFallingState implements FallState {
             landingWaterPositionedSound.play();
             return new CrashedState(true);
         }
-
         return null;
     }
 
     private Vector calcAccXZ(Jumper jumper) {
         return new Vector(0, 0, 0);
     }
-
 
     private Vector calculateAcceleration(Jumper jumper){
         return calcAccY(jumper).add(calcAccXZ(jumper));

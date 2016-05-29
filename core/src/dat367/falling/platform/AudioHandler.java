@@ -60,6 +60,7 @@ public class AudioHandler {
 
 
     public void setupSoundEventHandling() {
+        //Listen for sound events
         NotificationManager.getDefault().addObserver(PositionedSound.PLAY_SOUND_EVENT, new NotificationManager.EventHandler<PositionedSound>() {
             @Override
             public void handleEvent(NotificationManager.Event<PositionedSound> event) {
@@ -126,7 +127,6 @@ public class AudioHandler {
         }
     }
 
-
     public  void pause(){
         cardboardAudioEngine.pause();
     }
@@ -134,7 +134,6 @@ public class AudioHandler {
     public void resume(){
         cardboardAudioEngine.resume();
     }
-
 
     // The cardboard coordinate system swaps x and z compared to ours
     private Vector convertToCardboardCoordinateSystem(Vector position) {
