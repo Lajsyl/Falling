@@ -11,7 +11,6 @@ import dat367.falling.platform.GdxPlatformLayer;
 public class AndroidLauncher extends CardBoardAndroidApplication {
 
 	private CardboardAudioEngine cardboardAudioEngine; // VR Sound
-	private ShakeListener shakeListener; // Shake events
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
