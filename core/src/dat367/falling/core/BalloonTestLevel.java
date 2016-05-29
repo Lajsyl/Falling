@@ -40,20 +40,18 @@ public class BalloonTestLevel extends BalloonLevel {
             float x = (float)Math.cos(step) * 60 + offsetX;
             float z = (float)Math.sin(step) * 60 + offsetZ;
 
-            // Every 100 meters from 1000m and up.
-            float y = currentHeight;
-            currentHeight += 100;
-
-            Interactable balloon = new Balloon(resourceRequirements, new Vector(x, y, z));
+            Interactable balloon = new Balloon(resourceRequirements, new Vector(x, currentHeight, z));
             x -= (2.75f+.25f*i);
             z -= (2.75f+.25f*i);
-            Interactable o1 = new Mine(resourceRequirements, new Vector(x, y, z));
+            Interactable mine1 = new Mine(resourceRequirements, new Vector(x, currentHeight, z));
             x += (2.75f+.25f*i)*2;
             z += (2.75f+.25f*i)*2;
-            Interactable o2 = new Mine(resourceRequirements, new Vector(x, y, z));
+            Interactable mine2 = new Mine(resourceRequirements, new Vector(x, currentHeight, z));
             interactableList.add(balloon);
-            interactableList.add(o1);
-            interactableList.add(o2);
+            interactableList.add(mine1);
+            interactableList.add(mine2);
+
+            currentHeight += 100;
         }
 
         // Space between sprial and next balloon +100
@@ -112,43 +110,36 @@ public class BalloonTestLevel extends BalloonLevel {
         currentHeight += 190;
         offsetX += 120;
         offsetZ += 80;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 120;
         offsetX += 10;
         offsetZ += 90;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 200;
         offsetX -= 50;
         offsetZ += 120;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 150;
         offsetX -= 60;
         offsetZ -= 70;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 160;
         offsetX -= 15;
         offsetZ -= 90;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 190;
         offsetX -= 25;
         offsetZ -= 110;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         currentHeight += 100;
         offsetX += 10;
         offsetZ += 50;
-
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
         // Make interactibles (except the the two closest below) initially disabled to improve frame rate in airplane
