@@ -23,12 +23,14 @@ public class BalloonGameMode implements GameMode {
 
     private List<Sound> balloonSounds = new ArrayList<Sound>();
     private Sound explosionSound = new Sound("explosion.wav");
+    private Sound applauseSound = new Sound("applause.wav");
     private final int NUMBER_OF_BALLOON_SOUNDS = 13;
 
     public BalloonGameMode(ResourceRequirements resourceRequirements, BalloonLevel level) {
 
         initBalloonSounds(resourceRequirements);
         resourceRequirements.require(explosionSound);
+        resourceRequirements.require(applauseSound);
 
         // Listen for all relevant collision events
         NotificationManager.getDefault().addObserver(CollisionManager.COLLECTIBLE_COLLISION_EVENT_ID, new NotificationManager.EventHandler<CollisionManager.CollisionData>() {
@@ -88,6 +90,11 @@ public class BalloonGameMode implements GameMode {
 
         PositionedSound balloonPositionedSound = new PinnedPositionedSound(getBalloonSound(balloonCombo), collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
         balloonPositionedSound.play();
+
+        if (((Balloon) collisionData.getOtherObject().getParent()).isSecretBalloon()) {
+            PositionedSound applausePositionedSound = new PinnedPositionedSound(applauseSound, collisionData.getJumperObject().getParent(), new Vector(0, 1, 0));
+            applausePositionedSound.play();
+        }
     }
 
     private void initBalloonSounds(ResourceRequirements resourceRequirements) {
@@ -111,7 +118,7 @@ public class BalloonGameMode implements GameMode {
         // Bounce on mine
         Jumper jumper = (Jumper)collisionData.getJumperObject().getParent();
         Mine mine = (Mine)collisionData.getOtherObject().getParent();
-        Vector yBounce = new Vector(0, 220.0f, 0);
+        Vector yBounce = new Vector(0, 220.0f*mine.getExplosiveness(), 0);
         Vector playerPos = collisionData.getJumperObject().getPosition();
         Vector obstaclePos = collisionData.getOtherObject().getPosition();
         Vector xzBounce = playerPos.sub(obstaclePos).projectOntoPlaneXZ().scale(100.0f);//new Vector(jumper.getVelocity().getX(), 0, jumper.getVelocity().getZ());
@@ -131,7 +138,7 @@ public class BalloonGameMode implements GameMode {
         if(gameIsFinished) {
             String endText = "  Your score was:\n\n\n\n  Tap the screen\n    to play again";
             RenderQueue.getDefault().addGUITask(new GUITextTask(endText, new Vector(1, 1, 1), new Vector(0.5f, 0, .61f), true, false));
-            String scoreText = Integer.toString(1200);
+            String scoreText = Integer.toString(score);
             RenderQueue.getDefault().addGUITask(new GUITextTask(scoreText, new Vector(1, 1, 1), new Vector(0.505f, 0, .565f), true, true));
         }
     }

@@ -3,9 +3,9 @@ package dat367.falling.core;
 import dat367.falling.math.Vector;
 import dat367.falling.platform_abstraction.ResourceRequirements;
 
-public class LevelOne extends BalloonLevel {
+public class BalloonTestLevel extends BalloonLevel {
 
-    public LevelOne(ResourceRequirements resourceRequirements){
+    public BalloonTestLevel(ResourceRequirements resourceRequirements){
         super(resourceRequirements);
     }
 
@@ -13,8 +13,8 @@ public class LevelOne extends BalloonLevel {
     public void create() {
         // Creates a balloons and obstacles from the bottom and up, starting at currentHeight, offsetX and offsetZ
         int currentHeight = 500;
-        int offsetX = 100;
-        int offsetZ = -100;
+        int offsetX = 150;
+        int offsetZ = -50;
 
         // Create slalom by alternating balloons and obstacles
         for (int i = 0; i < 4; i++) {
@@ -45,11 +45,11 @@ public class LevelOne extends BalloonLevel {
             currentHeight += 100;
 
             Interactable balloon = new Balloon(resourceRequirements, new Vector(x, y, z));
-            x -= (7+(i/2)-.5f);
-            z -= (7+(i/2)-.5f);
+            x -= (2.75f+.25f*i);
+            z -= (2.75f+.25f*i);
             Interactable o1 = new Mine(resourceRequirements, new Vector(x, y, z));
-            x += ((7+(i/2))-.5f)*2;
-            z += ((7+(i/2))-.5f)*2;
+            x += (2.75f+.25f*i)*2;
+            z += (2.75f+.25f*i)*2;
             Interactable o2 = new Mine(resourceRequirements, new Vector(x, y, z));
             interactableList.add(balloon);
             interactableList.add(o1);
@@ -57,67 +57,73 @@ public class LevelOne extends BalloonLevel {
         }
 
         // Space between sprial and next balloon +100
-        currentHeight += 50;
+        currentHeight += 30;
 
-        interactableList.add(new Mine(resourceRequirements, new Vector(offsetX-15,currentHeight-23,offsetZ+15)));
+        interactableList.add(new Mine(resourceRequirements, new Vector(offsetX-11,currentHeight-21,offsetZ+11)));
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             interactableList.add(balloon);
-            currentHeight += 23;
+            currentHeight += 25;
             offsetX += 15;
             offsetZ -= 15;
         }
 
-        // Space between line and next line +23
-        currentHeight += 70;
+        // Space between line and next line +25
+        currentHeight += 60;
 
         offsetZ -= 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             interactableList.add(balloon);
-            currentHeight += 23;
+            currentHeight += 25;
             offsetX -= 15;
             offsetZ -= 15;
         }
 
-        // Space between line and next line +23
-        currentHeight += 95;
+        // Space between line and next line +25
+        currentHeight += 65;
 
         offsetX -= 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             interactableList.add(balloon);
-            currentHeight += 23;
+            currentHeight += 25;
             offsetX -= 15;
             offsetZ += 15;
         }
 
-        // Space between line and next line +23
-        currentHeight += 120;
+        // Space between line and next line +25
+        currentHeight += 70;
 
         offsetZ += 30;
         // Create steep line of balloons
         for (int i = 0; i < 3; i++){
             Interactable balloon = new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ));
             interactableList.add(balloon);
-            currentHeight += 23;
+            currentHeight += 25;
             offsetX += 15;
             offsetZ += 15;
         }
 
         // Space between line and next balloon +23
-        currentHeight += 210;
+        currentHeight += 190;
         offsetX += 120;
         offsetZ += 80;
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
-        currentHeight += 300;
-        offsetX -= 40;
-        offsetZ += 200;
+        currentHeight += 120;
+        offsetX += 10;
+        offsetZ += 90;
+
+        interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+
+        currentHeight += 200;
+        offsetX -= 50;
+        offsetZ += 120;
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
@@ -127,9 +133,15 @@ public class LevelOne extends BalloonLevel {
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
-        currentHeight += 350;
-        offsetX -= 40;
-        offsetZ -= 200;
+        currentHeight += 160;
+        offsetX -= 15;
+        offsetZ -= 90;
+
+        interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
+
+        currentHeight += 190;
+        offsetX -= 25;
+        offsetZ -= 110;
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
@@ -139,25 +151,19 @@ public class LevelOne extends BalloonLevel {
 
         interactableList.add(new Balloon(resourceRequirements, new Vector(offsetX, currentHeight, offsetZ)));
 
+        // Make interactibles (except the the two closest below) initially disabled to improve frame rate in airplane
+        for (Interactable interactable : interactableList) {
+            interactable.setEnabled(false);
+        }
 
-        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-13.3f, 4015, 0));
+        Interactable balloonNearPlane = new Balloon(resourceRequirements, new Vector(-2.8f, 4005-300, 0), true);
         interactableList.add(balloonNearPlane);
-        Interactable obstacleNearPlane = new Mine(resourceRequirements, new Vector(0, 3930, -50));
+        Interactable obstacleNearPlane = new Mine(resourceRequirements, new Vector(0, 3950-300, -28.5f), 1.2f);
         interactableList.add(obstacleNearPlane);
-        Interactable obstacleNearPlane2 = new Mine(resourceRequirements, new Vector(-20, 3960, -50));
-        interactableList.add(obstacleNearPlane2);
-        Interactable obstacleNearPlane3 = new Mine(resourceRequirements, new Vector(-30, 3990, -50));
-        interactableList.add(obstacleNearPlane3);
-        Interactable obstacleNearPlane4 = new Mine(resourceRequirements, new Vector(-35, 4010, -50));
-        interactableList.add(obstacleNearPlane4);
-        Interactable obstacleNearPlane5 = new Mine(resourceRequirements, new Vector(-35, 4030, -50));
-        interactableList.add(obstacleNearPlane5);
     }
-
-    // TODO: FIX LEVEL DUE TO INTERACTIBLE SIZE DECREASE
 
     @Override
     public String toString() {
-        return "LevelOne";
+        return "BalloonTestLevel";
     }
 }
