@@ -58,8 +58,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void create() {
-
-
 		if (platformIsAndroid) {
 			mainCamera = new CardboardCamera();
 			audioHandler.setupSoundEventHandling();
@@ -87,10 +85,10 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			// Set position first frame
 			setDesktopCameraPosAndOrientation();
 		}
-
 	}
 
 	private void setupRestartGameEventHandling() {
+		//Listen for restart events
 		NotificationManager.getDefault().addObserver(FallingGame.BEFORE_GAME_RESTART_EVENT, new NotificationManager.EventHandler<FallingGame>() {
 			@Override
 			public void handleEvent(NotificationManager.Event<FallingGame> event) {
@@ -116,7 +114,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-
 	}
 
 	@Override
@@ -160,7 +157,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	//---- DESKTOP-SPECIFIC ----//
 
 	private void desktopUpdate() {
-
 		// Set look direction depending on mouse position
 		handleDesktopControls();
 
@@ -169,13 +165,11 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			handleDebugCameraControl();
 			updateGame();
 		} else {
-
 			// Update game logic
 			updateGame();
 
 			setDesktopCameraPosAndOrientation();
 		}
-
 	}
 
 	private void handleDesktopControls() {
@@ -201,7 +195,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		}
 
 		if (Gdx.input.isCursorCatched()) {
-
 			float dX = Gdx.input.getX() - Gdx.graphics.getBackBufferWidth() / 2.0f;
 			float dY = Gdx.input.getY() - Gdx.graphics.getBackBufferHeight() / 2.0f;
 
@@ -223,8 +216,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 			desktopSimulatedHeadTransform = desktopSimulatedHeadTransform.rotate(up, -dX).rotate(direction.cross(up), -dY);
 			direction = desktopSimulatedHeadTransform.getDirection();
 			up = desktopSimulatedHeadTransform.getUp();
-
-
 		}
 
 		Vector simulatedHeadUp = desktopSimulatedHeadTransform.getUp();
@@ -240,7 +231,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 		Rotation bodyRotation = game.getCurrentJump().getJumper().getBodyRotation();
 		Rotation newHeadRotation = bodyRotation.rotate(desktopSimulatedHeadTransform);
 		game.setJumperHeadRotation(newHeadRotation);
-
 	}
 
 	private void setDesktopCameraPosAndOrientation() {
@@ -259,7 +249,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	@Override
 	public void render() {
 		if (!platformIsAndroid) {
-
 			desktopUpdate();
 
 			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -317,7 +306,6 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 
 	@Override
 	public void onNewFrame(HeadTransform paramHeadTransform) {
-
 		// Update things that affect game logic
 		game.setJumperHeadRotation(getCurrentHeadRotation(paramHeadTransform));
 		if (Gdx.input.justTouched()) {
@@ -454,5 +442,4 @@ public class GdxPlatformLayer implements CardBoardApplicationListener {
 	private Vector3 libGdxVector(Vector vector) {
 		return new Vector3(vector.getX(), vector.getY(), vector.getZ());
 	}
-
 }

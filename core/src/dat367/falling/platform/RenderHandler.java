@@ -26,7 +26,6 @@ import dat367.falling.platform_abstraction.*;
 
 public class RenderHandler {
 
-
     private boolean platformIsAndroid;
     private final boolean USING_DEBUG_CAMERA = false;
 
@@ -89,7 +88,6 @@ public class RenderHandler {
     }
 
     public void renderScene(Camera camera) {
-
         if(!hasCrashed){
             Vector c = World.ATMOSPHERE_COLOR;
             Gdx.gl.glClearColor(c.getX(), c.getY(), c.getZ(), 1.0f);
@@ -103,7 +101,6 @@ public class RenderHandler {
 
 
         render2D(camera);
-
     }
 
     private void render3D(Camera camera){
@@ -244,11 +241,6 @@ public class RenderHandler {
         this.hasCrashed = false;
     }
 
-
-
-
-
-
     private String getFallStateString() {
         return game.getCurrentJump().getJumper().getFallStateDebugString();
     }
@@ -262,7 +254,6 @@ public class RenderHandler {
     }
 
     private Matrix4 libGdxRotationMatrix(Rotation rotation){
-
         Matrix rotMatrix = rotation.getRotationMatrix();
 
         Vector col1 = rotMatrix.getColumn1();
@@ -275,7 +266,5 @@ public class RenderHandler {
                 0, 0, 0, 1};
 
         return new Matrix4(values);
-
     }
-
 }
