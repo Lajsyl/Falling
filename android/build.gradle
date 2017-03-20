@@ -16,7 +16,7 @@ android {
     }
     defaultConfig {
         applicationId "dat367.falling"
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 20
     }
 }
