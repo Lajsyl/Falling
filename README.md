@@ -1,5 +1,7 @@
 # Falling
 
+[The game is now available on Play Store!](https://play.google.com/store/apps/details?id=dat367.falling)
+
 #### Project for the course TDA367
 Contributors to this project are Lisa Karlsson, Simon Moos, Sabrina Samuelsson and Hannes von Essen.
 
